@@ -7,7 +7,7 @@
           <span class="login-status online"></span> <!--change to offline or busy as needed-->              
         </div>
         <div class="nav-profile-text">
-          <span class="font-weight-bold mb-2">Matías Elgueta</span>
+          <span class="font-weight-bold mb-2">Juan San Martín</span>
           <span class="text-secondary text-small">Administrador</span>
         </div>
       </a>
@@ -18,8 +18,8 @@
         <i class="mdi mdi-home menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }">
-      <a class="nav-link" routerLink="" routerLinkActive #students="routerLinkActive">
+    <li class="nav-item" [ngClass]="{ 'active': students.isActive }">
+      <a class="nav-link" routerLink="/students" routerLinkActive #students="routerLinkActive">
         <span class="menu-title">Alumnos</span>
         <i class="mdi mdi-account-multiple-outline menu-icon"></i>
       </a>
