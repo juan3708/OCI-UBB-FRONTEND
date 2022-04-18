@@ -1,0 +1,48 @@
+<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+  <div class="col-lg-10 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><b>Establecimientos</b></h4>
+        <button type="button" style="float: right; margin: 8px;"
+          class="btn btn-gradient-info btn-rounded btn-sm">Registrar establecimiento</button>
+        <div class="table-responsive">
+          <table class="table table-striped" style="text-align: center;">
+            <thead class="table table-bordered">
+              <tr>
+                <th>
+                  <b>Nombre del establecimiento</b>
+                </th>
+                <th>
+                  <b>Profesor encargado</b>
+                </th>
+                <th>
+                  <b>Contacto</b>
+                </th>
+                <th>
+                  <b>Acción</b>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="table table-bordered">
+              <tr *ngFor="let establishment of establishments">
+                <td>
+                  {{establishment.nombre}}
+                </td>
+                <td>
+                  {{establishment.nombre_profesor}}
+                </td>
+                <td>
+                  {{establishment.email_profesor}}
+                </td>
+                <td>
+                  <button type="button" class="btn btn-gradient-info btn-rounded btn-sm">Editar</button>
+                  <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
