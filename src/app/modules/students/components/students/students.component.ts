@@ -21,16 +21,16 @@ export class StudentsComponent implements OnInit {
 
   listStudents(){
     this.studentsService.getStudents().subscribe((resp:any)=>{
-      console.log(resp.alumno);
-      this.students=resp.alumno;
+      console.log(resp.alumnos);
+      this.students=resp.alumnos;
       console.log(this.students);
     });
   }
 
   listEstablishments(){
     this.studentsService.getEstablishments().subscribe((resp:any)=>{
-      console.log(resp.establecimiento);
-      this.establishments=resp.establecimiento;
+      console.log(resp.establecimientos);
+      this.establishments=resp.establecimientos;
       console.log(this.establishments);
     });
   }

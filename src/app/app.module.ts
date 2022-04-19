@@ -46,13 +46,13 @@ import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
     BrowserAnimationsModule,
     FormsModule,
     NgbDatepickerModule,
-    ReactiveFormsModule,
     ChartsModule,
     HttpClientModule,
     CommonModule,
     StudentsModule,
     CoordinatorsModule,
     EstablishmentsModule,
+    ReactiveFormsModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

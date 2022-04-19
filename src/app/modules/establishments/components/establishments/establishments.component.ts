@@ -17,8 +17,8 @@ export class EstablishmentsComponent implements OnInit {
 
   listEstablishments(){
     this.establishmentService.getEstablishments().subscribe((resp:any)=>{
-      console.log(resp.establecimiento);
-      this.establishments=resp.establecimiento;
+      console.log(resp.establecimientos);
+      this.establishments=resp.establecimientos;
       console.log(this.establishments);
     })
   }
