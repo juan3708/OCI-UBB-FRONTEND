@@ -4,7 +4,8 @@
             <div class="card-body">
                 <h4 class="card-title"><b>Ciclos</b></h4>
                 <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" >Crear ciclo</button>
+                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
+                    ciclo</button>
                 <div class="table-responsive">
                     <table class="table table-striped" style="text-align: center;">
                         <thead class="table table-bordered">
@@ -26,6 +27,9 @@
                                 </th>
                                 <th>
                                     <b>Presupuesto</b>
+                                </th>
+                                <th>
+                                    <b>Acciones</b>
                                 </th>
                             </tr>
                         </thead>
@@ -50,11 +54,11 @@
                                     {{cycle.presupuesto}}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        >Editar</button>
                                     <button type="button"
-                                        class="btn btn-gradient-danger btn-rounded btn-sm"
-                                       >Eliminar</button>
+                                        class="btn btn-gradient-info btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentEdit);getCycle(cycle.id)">Editar</button>
+                                    <button type="button"
+                                        class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteCycle(cycle.id)">Eliminar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -64,3 +68,129 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalContent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Crear ciclo</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la creacion del ciclo.
+                        </p>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="year">Anio</label>
+                                <input type="text" class="form-control" id="year" placeholder="1999" #year>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" id="name" placeholder="Nombre" #name>
+                            </div>
+                            <div class="form-group">
+                                <label for="budget">Presupuesto</label>
+                                <input type="text" class="form-control" id="budget" placeholder="100000000" #budget>
+                            </div>
+                            <div class="form-group">
+                                <label for="startDate">Fecha de inicio</label>
+                                <input style="width: 50%;" type="date" class="form-control" id="startDate"
+                                    placeholder="aaaa-mm-dd" #startDate>
+                            </div>
+                            <div class="form-group">
+                                <label for="finishDate">Fecha de termino</label>
+                                <input style="width: 50%;" type="date" class="form-control" id="finishDate"
+                                    placeholder="aaaa-mm-dd" #finishDate>
+                            </div>
+                            <div class="form-group">
+                                <label for="coordinator">Coordinador</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="inputGroupSelect01" #coordinator>
+                                        <option selected>Seleccione un coordinador</option>
+                                        <option *ngFor="let coordinator of coordinators" [value]="coordinator.id">
+                                            {{coordinator.nombre}} {{coordinator.apellidos}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="cycleFormCreate(year.value, name.value, startDate.value, finishDate.value, budget.value, coordinator.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Create Ends -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Editar ciclo</h4>
+              <p class="card-description">
+                Ingrese los campos para la modificacion del ciclo.
+              </p>
+              <form class="forms-sample" #f="ngForm">
+                <div class="form-group">
+                  <label for="year">Año</label>
+                  <input type="text" class="form-control" id="year" [(ngModel)]="cycle.anio" name="year" #year="ngModel">
+                </div>
+                <div class="form-group">
+                  <label for="name">Nombre</label>
+                  <input type="text" class="form-control" id="name" [(ngModel)]="cycle.nombre" name="name" #name="ngModel">
+                </div>
+                <div class="form-group">
+                  <label for="budget">Presupuesto</label>
+                  <input type="text" class="form-control" id="budget" [(ngModel)]="cycle.presupuesto" name="budget" #budget="ngModel">
+                </div>
+                <div class="form-group">
+                  <label for="startDate">Fecha de inicio</label>
+                  <input style="width: 50%;" type="date" class="form-control" id="startDate" [(ngModel)]="cycle.fecha_inicio" name="startDate" #startDate="ngModel">
+                </div>
+                <div class="form-group">
+                    <label for="finishDate">Fecha de termino</label>
+                    <input style="width: 50%;" type="date" class="form-control" id="finishDate" [(ngModel)]="cycle.fecha_termino" name="finishDate" #finishDate="ngModel">
+                  </div>
+                <div class="form-group">
+                  <label for="coordinator">Coordinador</label>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                    </div>
+                    <select class="custom-select" id="coordinator" [(ngModel)]="cycle.coordinador_id" name="coordinator" #coordinator="ngModel">
+                      <option selected>Seleccione un establecimiento</option>
+                      <option *ngFor="let coordinator of coordinators" [value]="coordinator.id">{{coordinator.nombre}} {{coordinator.apellidos}}</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="cycleFormEdit(f, modal)">Editar</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+      </div>
+    </div>
+  </ng-template>
+  <!-- Modal Edit ends -->
