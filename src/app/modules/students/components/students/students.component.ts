@@ -70,7 +70,18 @@ export class StudentsComponent implements OnInit {
         });
         this.listStudents();
       }else{
-        //AQUÍ IRÍA EL SWEETALERT DEL ERROR.
+        if (resp.code == 400) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ingrese correctamente los valores',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al registrar el alumno',
+            text: resp.message
+          });
+        }
       }
     });
   }
@@ -114,5 +125,42 @@ export class StudentsComponent implements OnInit {
         }
       }
     })
+  }
+
+  deleteStudent(id) {
+    let data = {
+      id
+    };
+    Swal.fire({
+      title: '¿Está seguro que desea eliminar este alumno?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.studentsService.deleteStudent(data).subscribe((resp: any) => {
+          console.log(resp);
+          if (resp.code == 200) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Alumno eliminado correctamente',
+              showConfirmButton: false,
+              timer: 2000
+            });
+            this.listStudents();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al eliminar el alumno',
+              text: resp.id 
+            });
+          }
+        });
+      }
+    });
   }
 }

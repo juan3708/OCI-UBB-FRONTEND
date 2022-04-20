@@ -14,14 +14,14 @@ export class EstablishmentsComponent implements OnInit {
 
   establishments;
   establishment = new EstablishmentModel();
-  constructor(private establishmentService: EstablishmentsService, private modalService: NgbModal) { }
+  constructor(private establishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.listEstablishments();
   }
 
   listEstablishments(){
-    this.establishmentService.getEstablishments().subscribe((resp:any)=>{
+    this.establishmentsService.getEstablishments().subscribe((resp:any)=>{
       console.log(resp.establecimientos);
       this.establishments=resp.establecimientos;
       console.log(this.establishments);
@@ -45,7 +45,7 @@ export class EstablishmentsComponent implements OnInit {
       telefono: establishmentPhoneNumber
     };
     console.log(data);
-    this.establishmentService.createEstablishment(data).subscribe((resp: any) => {
+    this.establishmentsService.createEstablishment(data).subscribe((resp: any) => {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
@@ -77,7 +77,7 @@ export class EstablishmentsComponent implements OnInit {
     let data = {
       id
     };
-    this.establishmentService.getEstablishmentById(data).subscribe((resp: any) => {
+    this.establishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
       console.log(id);
       console.log(resp);
       this.establishment = resp.establecimiento;
@@ -86,7 +86,7 @@ export class EstablishmentsComponent implements OnInit {
   }
 
   establishmentFormEdit(form: NgForm, modal){
-    this.establishmentService.editEstablishment(this.establishment).subscribe((resp: any)=> {
+    this.establishmentsService.editEstablishment(this.establishment).subscribe((resp: any)=> {
       console.log(resp);
       if(resp.code == 200){
         modal.dismiss();
@@ -110,6 +110,43 @@ export class EstablishmentsComponent implements OnInit {
             text: resp.message
           });
         }
+      }
+    })
+  }
+
+  deleteEstablishment(id) {
+    let data = {
+      id
+    };
+    Swal.fire({
+      title: '¿Está seguro que desea eliminar este establecimiento?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.establishmentsService.deleteEstablecimiento(data).subscribe((resp: any) => {
+          console.log(resp);
+          if (resp.code == 200) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Establecimiento eliminado correctamente',
+              showConfirmButton: false,
+              timer: 2000
+            });
+            this.listEstablishments();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al eliminar el establecimiento',
+              text: resp.id 
+            });
+          }
+        })
       }
     })
   }

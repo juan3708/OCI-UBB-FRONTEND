@@ -116,7 +116,7 @@ export class CoordinatorsComponent implements OnInit {
     };
     Swal.fire({
       title: '¿Esta seguro que desea eliminar este coordinador?',
-      text: "No se puede revertir esta operacion.",
+      text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',

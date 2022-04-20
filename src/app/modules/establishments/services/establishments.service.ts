@@ -30,4 +30,9 @@ export class EstablishmentsService {
     const option = { headers: this.headers };
     return this.http.put(url+'/establecimiento/edit', data, option);
   }
+
+  deleteEstablecimiento(id) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/establecimiento/delete', id, option);
+  }
 }

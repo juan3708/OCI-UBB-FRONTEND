@@ -36,4 +36,9 @@ export class StudentsService {
     const option = { headers: this.headers };
     return this.http.put(url+'/alumno/edit', data, option);
   }
+
+  deleteStudent(id) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/alumno/delete', id, option);
+  }
 }

@@ -36,7 +36,7 @@
                 </td>
                 <td>
                   <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getStudent(student.id)">Editar</button>
-                  <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm">Eliminar</button>
+                  <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteStudent(student.id)" >Eliminar</button>
                 </td>
               </tr>
             </tbody>
