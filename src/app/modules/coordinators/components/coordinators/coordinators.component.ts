@@ -82,10 +82,11 @@ export class CoordinatorsComponent implements OnInit {
     });
   }
 
-  onSubmit(form: NgForm, modal){
-    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any)=> {
+
+  onSubmit(form: NgForm, modal) {
+    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any) => {
       console.log(resp);
-      if(resp.code == 200){
+      if (resp.code == 200) {
         modal.dismiss();
         Swal.fire({
           icon: 'success',
@@ -94,7 +95,7 @@ export class CoordinatorsComponent implements OnInit {
           timer: 2000
         });
         this.listCoordinators();
-      }else{
+      } else {
         if (resp.code == 400) {
           Swal.fire({
             icon: 'error',
@@ -107,6 +108,43 @@ export class CoordinatorsComponent implements OnInit {
             text: resp.message
           });
         }
+      }
+    })
+  }
+
+  deleteCoordinator(id) {
+    let data = {
+      id
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea eliminar este coordinador?',
+      text: "No se puede revertir esta operacion.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.coordinatorsService.deleteCoordinator(data).subscribe((resp: any) => {
+          console.log(resp);
+          if (resp.code == 200) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Coordinador eliminado correctamente',
+              showConfirmButton: false,
+              timer: 2000
+            });
+            this.listCoordinators();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al eliminar el coordinador',
+              text: resp.id 
+            });
+          }
+        })
       }
     })
   }

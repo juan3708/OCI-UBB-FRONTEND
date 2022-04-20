@@ -1,0 +1,66 @@
+<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><b>Ciclos</b></h4>
+                <button type="button" style="float: right; margin: 8px;"
+                    class="btn btn-gradient-info btn-rounded btn-sm" >Crear ciclo</button>
+                <div class="table-responsive">
+                    <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                            <tr>
+                                <th>
+                                    <b>Año</b>
+                                </th>
+                                <th>
+                                    <b>Nombre</b>
+                                </th>
+                                <th>
+                                    <b>Fecha Inicio</b>
+                                </th>
+                                <th>
+                                    <b>Fecha Termino</b>
+                                </th>
+                                <th>
+                                    <b>Coordinador</b>
+                                </th>
+                                <th>
+                                    <b>Presupuesto</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                            <tr *ngFor="let cycle of cycles">
+                                <td>
+                                    {{cycle.nombre}}
+                                </td>
+                                <td>
+                                    {{cycle.anio}}
+                                </td>
+                                <td>
+                                    {{cycle.fecha_inicio}}
+                                </td>
+                                <td>
+                                    {{cycle.fecha_termino}}
+                                </td>
+                                <td>
+                                    {{cycle.nombre_coordinador}} {{cycle.apellidos_coordinador}}
+                                </td>
+                                <td>
+                                    {{cycle.presupuesto}}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                        >Editar</button>
+                                    <button type="button"
+                                        class="btn btn-gradient-danger btn-rounded btn-sm"
+                                       >Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -23,6 +23,7 @@ import { TodoListComponent } from './apps/todo-list/todo-list.component';
 import { StudentsModule } from './modules/students/students.module';
 import { EstablishmentsModule } from './modules/establishments/establishments.module';
 import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
+import { CycleModule } from './modules/cycle/cycle.module';
 
 
 
@@ -52,6 +53,7 @@ import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
     StudentsModule,
     CoordinatorsModule,
     EstablishmentsModule,
+    CycleModule,
     ReactiveFormsModule
   ],
   providers: [ThemeService],

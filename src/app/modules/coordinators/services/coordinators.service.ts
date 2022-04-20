@@ -1,8 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TouchSequence } from 'selenium-webdriver';
 import { url } from 'src/environments/environment';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -31,6 +29,11 @@ export class CoordinatorsService {
   editCoordinator(data) {
     const option = { headers: this.headers };
     return this.http.put(url + '/coordinador/edit', data, option);
+  }
+
+  deleteCoordinator(id) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/coordinador/delete',id,option);
   }
 }
 

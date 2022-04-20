@@ -30,6 +30,12 @@
         <i class="mdi mdi-account-multiple-outline menu-icon"></i>
       </a>
     </li>
+    <li class="nav-item" [ngClass]="{ 'active': cycle.isActive }">
+      <a class="nav-link" routerLink="/cycle" routerLinkActive #cycle="routerLinkActive">
+        <span class="menu-title">Ciclos</span>
+        <i class="mdi mdi-account-multiple-outline menu-icon"></i>
+      </a>
+    </li>
     <li class="nav-item" [ngClass]="{ 'active': establishments.isActive }">
       <a class="nav-link" routerLink="/establishments" routerLinkActive #establishments="routerLinkActive">
         <span class="menu-title">Establecimientos</span>
