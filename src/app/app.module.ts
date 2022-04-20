@@ -14,7 +14,6 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TodoComponent } from './apps/todo-list/todo/todo.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { ContentAnimateDirective } from './shared/directives/content-animate.directive';
@@ -45,7 +44,6 @@ import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
     NgbModule,
     BrowserAnimationsModule,
     FormsModule,
-    NgbDatepickerModule,
     ChartsModule,
     HttpClientModule,
     CommonModule,

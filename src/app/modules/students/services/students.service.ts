@@ -26,4 +26,14 @@ export class StudentsService {
     const option = {headers:this.headers};
     return this.http.post(url+'/alumno/create', data, option);
   }
+
+  getStudentById(id) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/alumno/getbyid/', id, option);
+  }
+
+  editStudent(data) {
+    const option = { headers: this.headers };
+    return this.http.put(url+'/alumno/edit', data, option);
+  }
 }

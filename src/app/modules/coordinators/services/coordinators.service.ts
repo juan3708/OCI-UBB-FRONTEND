@@ -15,22 +15,22 @@ export class CoordinatorsService {
   constructor(private http: HttpClient) { }
 
   getCoordinators() {
-    return this.http.get(url + '/coordinador/all');
+    return this.http.get(url+'/coordinador/all');
   }
 
   createCoordinator(data) {
     const option = { headers: this.headers };
-    return this.http.post(url + '/coordinador/create', data, option);
+    return this.http.post(url+'/coordinador/create', data, option);
   }
 
   getCoordinatorById(id) {
     const option = { headers: this.headers };
-    return this.http.post(url + '/coordinador/getbyid/', id, option);
+    return this.http.post(url+'/coordinador/getbyid/', id, option);
   }
 
   editCoordinator(data) {
     const option = { headers: this.headers };
-    return this.http.put(url + '/coordinador/edit', data, option);
+    return this.http.put(url+'/coordinador/edit', data, option);
   }
 }
 
