@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CoordinatorsService } from '../../services/coordinators.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { CoordinatorModel } from '../../../../../models/coordinator.model';
-import { FormGroup, NgForm } from '@angular/forms';
+import { CoordinatorModel } from 'src/models/coordinator.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-coordinators',
@@ -13,7 +13,6 @@ import { FormGroup, NgForm } from '@angular/forms';
 export class CoordinatorsComponent implements OnInit {
 
   coordinators;
-  coordinatorEdit: FormGroup;
   coordinator = new CoordinatorModel();
   constructor(private coordinatorsService: CoordinatorsService, private modalService: NgbModal) { }
 
@@ -82,9 +81,8 @@ export class CoordinatorsComponent implements OnInit {
     });
   }
 
-
-  onSubmit(form: NgForm, modal) {
-    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any) => {
+  coordinatorFormEdit(form: NgForm, modal){
+    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any)=> {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();

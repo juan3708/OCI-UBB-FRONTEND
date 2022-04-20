@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CoordinatorsRoutingModule } from './coordinators-routing.module';
 import { CoordinatorsComponent } from './components/coordinators/coordinators.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     CoordinatorsRoutingModule,
+    NgbModule,
     FormsModule,
     ReactiveFormsModule
   ]
