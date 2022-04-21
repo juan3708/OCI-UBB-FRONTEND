@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +18,14 @@ import { TodoComponent } from './apps/todo-list/todo/todo.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { ContentAnimateDirective } from './shared/directives/content-animate.directive';
 import { TodoListComponent } from './apps/todo-list/todo-list.component';
+
+import { StudentsModule } from './modules/students/students.module';
+import { EstablishmentsModule } from './modules/establishments/establishments.module';
+import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
+import { CycleModule } from './modules/cycle/cycle.module';
+
+
+
 
 @NgModule({
   declarations: [
@@ -35,8 +45,14 @@ import { TodoListComponent } from './apps/todo-list/todo-list.component';
     NgbModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule,
-    ChartsModule
+    ChartsModule,
+    HttpClientModule,
+    CommonModule,
+    StudentsModule,
+    CoordinatorsModule,
+    EstablishmentsModule,
+    CycleModule,
+    ReactiveFormsModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]
