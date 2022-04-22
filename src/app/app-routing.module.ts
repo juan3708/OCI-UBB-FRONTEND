@@ -18,7 +18,9 @@ const routes: Routes = [
   { path: 'students', loadChildren: () => import('./modules/students/students-routing.module').then(m => m.StudentsRoutingModule) },
   { path: 'coordinators', loadChildren: () => import('./modules/coordinators/coordinators-routing.module').then(m => m.CoordinatorsRoutingModule) },
   { path: 'establishments', loadChildren: () => import('./modules/establishments/establishments-routing.module').then(m => m.EstablishmentsRoutingModule) },
-  { path: 'cycle', loadChildren: () => import('./modules/cycle/cycle-routing.module').then(m => m.CycleRoutingModule) }
+  { path: 'cycle', loadChildren: () => import('./modules/cycle/cycle-routing.module').then(m => m.CycleRoutingModule) },
+  { path: 'activities', loadChildren: () => import('./modules/activities/activities-routing.module').then(m => m.ActivitiesRoutingModule) }
+
 ];
 
 @NgModule({

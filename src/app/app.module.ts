@@ -23,6 +23,8 @@ import { StudentsModule } from './modules/students/students.module';
 import { EstablishmentsModule } from './modules/establishments/establishments.module';
 import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
 import { CycleModule } from './modules/cycle/cycle.module';
+import { ActivitiesModule } from './modules/activities/activities.module';
+
 
 
 
@@ -52,7 +54,8 @@ import { CycleModule } from './modules/cycle/cycle.module';
     CoordinatorsModule,
     EstablishmentsModule,
     CycleModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ActivitiesModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]
