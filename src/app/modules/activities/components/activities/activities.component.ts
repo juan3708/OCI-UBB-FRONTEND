@@ -16,6 +16,17 @@ export class ActivitiesComponent implements OnInit {
   activities;
   cycles;
   activity = new ActivitiesModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private activitiesService: ActivitiesService, private CycleService: CycleService, private modalService : NgbModal) { }
 
   ngOnInit(): void {
@@ -25,9 +36,7 @@ export class ActivitiesComponent implements OnInit {
 
   listActivities(){
     this.activitiesService.getActivities().subscribe((resp: any) =>{
-      console.log(resp.actividades);
       this.activities = resp.actividades;
-      console.log(this.activities);
     })
   }
 
@@ -53,21 +62,19 @@ export class ActivitiesComponent implements OnInit {
     this.activitiesService.createActivity(data).subscribe((resp:any)=>{
       if(resp.code===200){        
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Actividad creada correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Se ha creado correctamente'
         });
         this.listActivities();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Ingrese correctamente los valores',
+            title: 'Ingrese correctamente los valores'
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al crear la actividad',
             text: resp.message
@@ -90,21 +97,19 @@ export class ActivitiesComponent implements OnInit {
     this.activitiesService.editActivity(this.activity).subscribe((resp: any)=>{
       if(resp.code == 200){
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
           title: 'Actividad editada correctamente',
-          showConfirmButton: false,
-          timer: 2000
         });
         this.listActivities();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar la actividad',
             text: resp.message
@@ -131,15 +136,13 @@ export class ActivitiesComponent implements OnInit {
       if (result.isConfirmed) {
         this.activitiesService.deleteActivity(data).subscribe((resp: any) => {
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
               title: 'Actividad eliminada correctamente',
-              showConfirmButton: false,
-              timer: 2000
             });
             this.listActivities();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar la actividad',
               text: resp.id 

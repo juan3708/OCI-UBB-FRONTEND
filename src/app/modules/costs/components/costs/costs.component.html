@@ -1,0 +1,316 @@
+<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><b>Gastos</b></h4>
+                <button type="button" style="float: right; margin: 8px;"
+                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
+                    gasto</button>
+                <div class="table-responsive">
+                    <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                            <tr>
+                                <th>
+                                    <b>Fecha</b>
+                                </th>
+                                <th>
+                                    <b>Valor Total</b>
+                                </th>
+                                <th>
+                                    <b>Ciclo</b>
+                                </th>
+                                <th>
+                                    <b>Actividad/Competencia</b>
+                                </th>
+                                <th>
+                                    <b>Acciones</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                            <tr *ngFor="let cost of costs">
+                                <td>
+                                    {{cost.fecha | date:"dd/MM/yyyy"}}
+                                </td>
+                                <td>
+                                    {{cost.valor | currency: 'CLP':"$"}}
+                                </td>
+                                <td>
+                                    {{cost.ciclo.nombre}}
+                                </td>
+                                <td *ngIf="cost.actividad == null&&cost.competencia == null">
+                                    No aplica
+                                </td>
+                                <td *ngIf="cost.actividad &&cost.competencia">
+                                    {{cost.actividad.nombre}}/{{cost.competencia.tipo}}
+                                </td>
+                                <td *ngIf="cost.actividad && cost.competencia == null">
+                                    {{cost.actividad.nombre}}
+                                </td>
+                                <td *ngIf="cost.competencia && cost.actividad == null">
+                                    {{cost.competencia.tipo}}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentDetails);getCost(cost.id)">Ver detalle</button>
+                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentEdit);getCost(cost.id)">Editar</button>
+                                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                        (click)="deleteCost(cost.id);getCost(cost.id)">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Details starts -->
+<ng-template class="modal fade" #ModalContentDetails let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Detalles</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped" style="text-align: center;">
+                                <thead class="table table-bordered">
+                                    <tr>
+                                        <th>
+                                            <b>Nombre</b>
+                                        </th>
+                                        <th>
+                                            <b>Valor</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table table-bordered">
+                                    <tr *ngFor="let detail of detailsList">
+                                        <td>
+                                            {{detail.nombre}}
+                                        </td>
+                                        <td>
+                                            {{detail.valor | currency: 'CLP':"$"}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Details Ends -->
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalContent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body" [formGroup]="costsFormCreate">
+                        <h4 class="card-title">Crear Gasto</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la creacion del gasto.
+                        </p>
+                        <div class="form-group">
+                            <label for="date">Fecha</label>
+                            <input style="width: 50%;" type="date" class="form-control" id="date"
+                                placeholder="aaaa-mm-dd" formControlName="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="cycle">Ciclo</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                </div>
+                                <select class="custom-select" (change)="chargeForCycle($event.target.value)"
+                                    formControlName="cycle">
+                                    <option selected>Seleccione un ciclo</option>
+                                    <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="activities.length >= 1">
+                            <label for="activity">Actividad</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" formControlName="activity">
+                                    <option selected>Seleccione una actividad</option>
+                                    <option *ngFor="let activity of activities" [value]="activity.id">
+                                        {{activity.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" *ngIf="competencies.length >= 1">
+                            <label for="competition">Competencia</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" formControlName="competition">
+                                    <option selected>Seleccione una competencia</option>
+                                    <option *ngFor="let competition of competencies" [value]="competition.id">
+                                        {{competition.tipo}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-info" (click)="addDetail()">Agregar detalle</button>
+                        </div>
+                        <br>
+                        <ng-container formArrayName="details">
+                            <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
+                                <div [formGroupName]="i">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Nombre"
+                                            formControlName="name">
+                                    </div>
+                                    <div>
+                                        <label for="priceDetail">Valor</label>
+                                        <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                            formControlName="priceDetail">
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-danger" (click)="removeDetail(i)">Eliminar
+                                            detalle</button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="createCosts(costsFormCreate.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Create Ends -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Editar Gasto</h4>
+                        <p class="card-description">
+                            Ingrese los campos para editar el gasto.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="form-group">
+                                <label for="date">Fecha</label>
+                                <input style="width: 50%;" type="date" class="form-control" id="date"
+                                    placeholder="aaaa-mm-dd" [(ngModel)]="cost.fecha" name="date" #date="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="cycle">Ciclo</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" (change)="chargeForCycle($event.target.value)"
+                                        id="cycle" [(ngModel)]="cost.ciclo_id" name="cycle" #cycle="ngModel">
+                                        <option selected>Seleccione un ciclo</option>
+                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="cost.actividad_id !=null">
+                                <label for="activity">Actividad</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="inputGroupSelect01" id="activity"
+                                        [(ngModel)]="cost.actividad_id" name="activity" #activity="ngModel">
+                                        <option selected>Seleccione una actividad</option>
+                                        <option *ngFor="let activity of activities" [value]="activity.id">
+                                            {{activity.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="cost.competencia_id !=null">
+                                <label for="competition">Competencia</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="inputGroupSelect01" id="competition"
+                                        [(ngModel)]="cost.competencia_id" name="competition" #competition="ngModel">
+                                        <option selected>Seleccione una competencia</option>
+                                        <option *ngFor="let competition of competencies" [value]="competition.id">
+                                            {{competition.tipo}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-info" (click)="addDetail()">Agregar
+                                    detalle</button>
+                            </div>
+                            <br>
+                            <ng-container formArrayName="details">
+                                <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
+                                    <div [formGroupName]="i">
+                                        <div>
+                                            <label for="name">Nombre</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Nombre"
+                                                formControlName="name">
+                                        </div>
+                                        <div>
+                                            <label for="priceDetail">Valor</label>
+                                            <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                                formControlName="priceDetail">
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-danger"
+                                                (click)="removeDetail(i)">Eliminar
+                                                detalle</button>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="createCosts(costsFormCreate.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Edit starts -->

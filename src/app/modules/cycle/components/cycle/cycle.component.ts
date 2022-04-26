@@ -16,6 +16,17 @@ export class CycleComponent implements OnInit {
   coordinators;
   cyclesEdit: FormGroup;
   cycle = new CycleModel;
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
 
   constructor(private CycleService: CycleService, private modalService: NgbModal){}
 
@@ -26,17 +37,13 @@ export class CycleComponent implements OnInit {
 
   listCycles(){
     this.CycleService.getCycles().subscribe((resp: any)=>{
-      console.log(resp.ciclos);
       this.cycles = resp.ciclos;
-      console.log(this.cycles);
     });
   }
 
   listCoordinators(){
     this.CycleService.getCoordinators().subscribe((resp: any)=>{
-      console.log(resp.coordinadores);
       this.coordinators = resp.coordinadores;
-      console.log(this.coordinators);
     });
   }
 
@@ -45,7 +52,6 @@ export class CycleComponent implements OnInit {
   }
 
   cycleFormCreate(year, name, startDate, finishDate, budget, coordinator, modal){
-    console.log(year, name, startDate, finishDate, budget, coordinator); 
     let data ={
       anio: year,
       nombre: name,
@@ -56,24 +62,21 @@ export class CycleComponent implements OnInit {
     };
 
     this.CycleService.createCycle(data).subscribe((resp:any)=>{
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Ciclo creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Ciclo creado correctamente'
         });
         this.listCycles();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al crear el ciclo',
             text: resp.message
@@ -88,10 +91,7 @@ getCycle(id){
     id
   };
   this.CycleService.getCycleById(data).subscribe((resp: any)=>{
-    console.log(id);
-    console.log(resp);
     this.cycle = resp.ciclo;
-    console.log(this.cycle);
   })
 }
 
@@ -111,9 +111,8 @@ getCycle(id){
     }).then((result) => {
       if (result.isConfirmed) {
         this.CycleService.deleteCycle(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
               title: 'Ciclo eliminado correctamente',
               showConfirmButton: false,
@@ -121,7 +120,7 @@ getCycle(id){
             });
             this.listCycles();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el ciclo',
               text: resp.id 
@@ -134,24 +133,21 @@ getCycle(id){
 
   cycleFormEdit(form: NgForm, modal){
     this.CycleService.editCycle(this.cycle).subscribe((resp: any)=> {
-      console.log(resp);
       if(resp.code == 200){
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Ciclo editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Ciclo editado correctamente'
         });
         this.listCycles();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar el ciclo',
             text: resp.message

@@ -24,6 +24,8 @@ import { EstablishmentsModule } from './modules/establishments/establishments.mo
 import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
 import { CycleModule } from './modules/cycle/cycle.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
+import { CompetenciesModule } from './modules/competencies/competencies.module';
+import { CostsModule } from './modules/costs/costs.module';
 
 
 
@@ -55,7 +57,9 @@ import { ActivitiesModule } from './modules/activities/activities.module';
     EstablishmentsModule,
     CycleModule,
     ReactiveFormsModule,
-    ActivitiesModule
+    ActivitiesModule,
+    CompetenciesModule,
+    CostsModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

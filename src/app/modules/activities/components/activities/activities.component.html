@@ -33,7 +33,7 @@
                                     {{activity.nombre}}
                                 </td>
                                 <td>
-                                    {{activity.fecha}}
+                                    {{activity.fecha | date:"dd/MM/yyyy"}}
                                 </td>
                                 <td>
                                     {{activity.descripcion}}
@@ -42,8 +42,8 @@
                                     {{activity.ciclo.nombre}}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getActivity(activity.id)">Editar</button>
+                                    <!-- <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentEdit);getActivity(activity.id)">Editar</button> -->
                                     <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                         (click)="deleteActivity(activity.id)">Eliminar</button>
                                 </td>
