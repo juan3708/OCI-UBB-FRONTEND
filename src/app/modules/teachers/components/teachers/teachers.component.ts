@@ -13,7 +13,18 @@ import { TeachersService } from '../../services/teachers.service';
 export class TeachersComponent implements OnInit {
 
   teachers;
-  teacher = new TeacherModel;
+  teacher = new TeacherModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private teachersService: TeachersService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -59,23 +70,21 @@ export class TeachersComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Profesor creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Profesor creado correctamente'
         });
         this.listTeachers();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Error al crear el profesor',
+            title: 'Error al registrar al profesor',
             text: resp.message
           });
         }
@@ -88,23 +97,21 @@ export class TeachersComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Profesor editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Profesor editado correctamente'
         });
         this.listTeachers();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Error al editar el profesor',
+            title: 'Error al editar al profesor',
             text: resp.message
           });
         }
@@ -130,17 +137,15 @@ export class TeachersComponent implements OnInit {
         this.teachersService.deleteTeacher(data).subscribe((resp: any) => {
           console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
-              title: 'Profesor eliminado correctamente',
-              showConfirmButton: false,
-              timer: 2000
+              title: 'Profesor eliminado correctamente'
             });
             this.listTeachers();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el profesor',
+              title: 'Error al eliminar al profesor',
               text: resp.id 
             });
           }

@@ -13,7 +13,18 @@ import { AssistantsService } from '../../services/assistants.service';
 export class AssistantsComponent implements OnInit {
 
   assistants;
-  assistant = new AssistantModel;
+  assistant = new AssistantModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private assistantsService: AssistantsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -56,23 +67,21 @@ export class AssistantsComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Ayudante creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Ayudante creado correctamente'
         });
         this.listAssistants();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Error al crear el ayudante',
+            title: 'Error al registrar al ayudante',
             text: resp.message
           });
         }
@@ -85,23 +94,21 @@ export class AssistantsComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Ayudante editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Ayudante editado correctamente'
         });
         this.listAssistants();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Error al editar el ayudante',
+            title: 'Error al editar al ayudante',
             text: resp.message
           });
         }
@@ -127,17 +134,15 @@ export class AssistantsComponent implements OnInit {
         this.assistantsService.deleteAssistant(data).subscribe((resp: any) => {
           console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
-              title: 'Ayudante eliminado correctamente',
-              showConfirmButton: false,
-              timer: 2000
+              title: 'Ayudante eliminado correctamente'
             });
             this.listAssistants();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el ayudante',
+              title: 'Error al eliminar al ayudante',
               text: resp.id 
             });
           }

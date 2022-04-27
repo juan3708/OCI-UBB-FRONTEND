@@ -14,7 +14,18 @@ export class LessonsComponent implements OnInit {
 
   lessons;
   cycles;
-  lesson = new LessonModel
+  lesson = new LessonModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private lessonsService: LessonsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -65,23 +76,21 @@ export class LessonsComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Clase creada correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Clase creada correctamente'
         });
         this.listLessons();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
-            title: 'Error al crear la clase',
+            title: 'Error al registrar la clase',
             text: resp.message
           });
         }
@@ -94,21 +103,19 @@ export class LessonsComponent implements OnInit {
       console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Clase editada correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Clase editada correctamente'
         });
         this.listLessons();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar la clase',
             text: resp.message
@@ -136,15 +143,13 @@ export class LessonsComponent implements OnInit {
         this.lessonsService.deleteLesson(data).subscribe((resp: any) => {
           console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
-              title: 'Clase eliminada correctamente',
-              showConfirmButton: false,
-              timer: 2000
+              title: 'Clase eliminada correctamente'
             });
             this.listLessons();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar la clase',
               text: resp.id 
