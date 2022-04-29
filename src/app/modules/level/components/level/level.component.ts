@@ -1,42 +1,41 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivitiesModel } from '../../../../../models/activities.model';
-import { ActivitiesService } from '../../services/activities.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LevelModel } from '../../../../../models/level.model';
+import { LevelService } from '../../services/level.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'app-activities',
-  templateUrl: './activities.component.html',
-  styleUrls: ['./activities.component.scss']
+  selector: 'app-level',
+  templateUrl: './level.component.html',
+  styleUrls: ['./level.component.scss']
 })
-export class ActivitiesComponent implements OnInit {
+export class LevelComponent implements OnInit {
 
-  activities;
-  cycles;
-  activity = new ActivitiesModel();
-  Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-  constructor(private activitiesService: ActivitiesService, private CycleService: CycleService, private modalService : NgbModal) { }
+level= new LevelModel();
+levels;
+cycles;
+Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+});
+  constructor(private LevelService: LevelService, private CycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listActivities();
+    this.listLevels();
     this.listCycles();
   }
-
-  listActivities(){
-    this.activitiesService.getActivities().subscribe((resp: any) =>{
-      this.activities = resp.actividades;
+  listLevels(){
+    this.LevelService.getLevels().subscribe((resp: any) =>{
+      this.levels = resp.niveles;
     })
   }
 
@@ -46,27 +45,23 @@ export class ActivitiesComponent implements OnInit {
     })
   }
 
-
-
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
 
-  activityFormCreate(name, description, date, cycle, modal){
+  levelFormCreate(name, cycle, modal){
     let data = {
       nombre: name,
-      descripcion: description,
-      fecha: date,
       ciclo_id: cycle
     };
-    this.activitiesService.createActivity(data).subscribe((resp:any)=>{
+    this.LevelService.createLevel(data).subscribe((resp:any)=>{
       if(resp.code===200){        
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
-        this.listActivities();
+        this.listLevels();
       }else{
         if (resp.code == 400) {
           this.Toast.fire({
@@ -84,24 +79,24 @@ export class ActivitiesComponent implements OnInit {
     })
   }
 
-  getActivity(id){
+  getLevel(id){
     let data = {
       id
     };
-    this.activitiesService.getActivityById(data).subscribe((resp: any)=>{
-      this.activity = resp.actividad;
+    this.LevelService.getLevelById(data).subscribe((resp: any)=>{
+      this.level = resp.nivel;
     })
   }
 
-  activityFormEdit(form: NgForm, modal){
-    this.activitiesService.editActivity(this.activity).subscribe((resp: any)=>{
+  levelFormEdit(form: NgForm, modal){
+    this.LevelService.editLevel(this.level).subscribe((resp: any)=>{
       if(resp.code == 200){
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
-          title: 'Actividad editada correctamente',
+          title: 'Nivel editado correctamente',
         });
-        this.listActivities();
+        this.listLevels();
       }else{
         if (resp.code == 400) {
           this.Toast.fire({
@@ -111,7 +106,7 @@ export class ActivitiesComponent implements OnInit {
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Error al editar la actividad',
+            title: 'Error al editar el nivel',
             text: resp.message
           });
         }
@@ -119,12 +114,12 @@ export class ActivitiesComponent implements OnInit {
     })
   }
 
-  deleteActivity(id){
+  deleteLevel(id){
     let data = {
       id
     };
     Swal.fire({
-      title: '¿Está seguro que desea eliminar esta actividad?',
+      title: '¿Está seguro que desea eliminar este nivel?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -134,17 +129,17 @@ export class ActivitiesComponent implements OnInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.activitiesService.deleteActivity(data).subscribe((resp: any) => {
+        this.LevelService.deleteLevel(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
-              title: 'Actividad eliminada correctamente',
+              title: 'Nivel eliminado correctamente',
             });
-            this.listActivities();
+            this.listLevels();
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar la actividad',
+              title: 'Error al eliminar el nivel',
               text: resp.id 
             });
           }
@@ -153,5 +148,4 @@ export class ActivitiesComponent implements OnInit {
     });
 
   }
-
 }

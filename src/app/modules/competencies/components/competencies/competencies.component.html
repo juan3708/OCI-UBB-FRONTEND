@@ -1,5 +1,5 @@
-<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="col-lg-10 grid-margin stretch-card">
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card"> -->
       <div class="card">
         <div class="card-body">
           <h4 class="card-title"><b>Competencias</b></h4>
@@ -41,8 +41,8 @@
                     {{competition.ciclo.nombre}}
                   </td>
                   <td>
-                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getCompetition(competition.id)">Editar</button>
-                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteCompetition(competition.id)" >Eliminar</button>
+                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i class="mdi mdi-grease-pencil"></i></button>
+                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteCompetition(competition.id)" ><i class="mdi mdi-delete"></i></button>
                   </td>
                 </tr>
               </tbody>
@@ -50,8 +50,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    <!-- </div>
+  </div> -->
   
   <!-- Modal Create starts -->
   <ng-template class="modal fade" #ModalContent let-modal>

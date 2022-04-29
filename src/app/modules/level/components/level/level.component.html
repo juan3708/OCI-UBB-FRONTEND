@@ -1,11 +1,11 @@
-<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;"> -->
-    <!-- <div class="col-lg-10 grid-margin stretch-card"> -->
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card"> -->
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title"><b>Actividades</b></h4>
+                <h4 class="card-title"><b>Niveles</b></h4>
                 <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
-                    actividad</button>
+                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear un
+                    nivel</button>
                 <div class="table-responsive">
                     <table class="table table-striped" style="text-align: center;">
                         <thead class="table table-bordered">
@@ -14,38 +14,26 @@
                                     <b>Nombre</b>
                                 </th>
                                 <th>
-                                    <b>Fecha</b>
-                                </th>
-                                <th>
-                                    <b>Descripción</b>
-                                </th>
-                                <th>
                                     <b>Ciclo</b>
                                 </th>
                                 <th>
-                                    <b>Acción</b>
+                                    <b>Acciones</b>
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="table table-bordered">
-                            <tr *ngFor="let activity of activities">
+                            <tr *ngFor="let level of levels">
                                 <td>
-                                    {{activity.nombre}}
+                                    {{level.nombre}}
                                 </td>
                                 <td>
-                                    {{activity.fecha | date:"dd/MM/yyyy"}}
+                                    {{level.ciclo.nombre}}
                                 </td>
                                 <td>
-                                    {{activity.descripcion}}
-                                </td>
-                                <td>
-                                    {{activity.ciclo.nombre}}
-                                </td>
-                                <td>
-                                     <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getActivity(activity.id)"><i class="mdi mdi-grease-pencil"></i></button>
+                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentEdit);getLevel(level.id)"><i class="mdi mdi-grease-pencil"></i></button>
                                     <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
+                                        (click)="deleteLevel(level.id)"><i class="mdi mdi-delete"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -53,10 +41,10 @@
                 </div>
             </div>
         </div>
-    <!-- </div> -->
-<!-- </div> -->
+    <!-- </div>
+</div> -->
 
-<!-- Modal Create starts  -->
+<!-- Modal Create starts -->
 <ng-template class="modal fade" #ModalContent let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -68,24 +56,15 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Crear actividad</h4>
+                        <h4 class="card-title">Crear nivel</h4>
                         <p class="card-description">
-                            Ingrese los campos para la creacion de la actividad.
+                            Ingrese los campos para la creacion de un nivel.
                         </p>
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name" placeholder="Nombre" #name>
-                            </div>
-                            <div class="form-group">
-                                <label for="description">Descripción</label>
-                                <input type="text" class="form-control" id="description" placeholder="descripcion"
-                                    #description>
-                            </div>
-                            <div class="form-group">
-                                <label for="date">Fecha</label>
-                                <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    placeholder="aaaa-mm-dd" #date>
+                                <input type="text" class="form-control" id="name"
+                                    placeholder="Nombre del nivel" #name>
                             </div>
                             <div class="form-group">
                                 <label for="cycle">Ciclo</label>
@@ -106,13 +85,14 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="activityFormCreate(name.value, description.value, date.value, cycle.value,modal)">Crear</button>
+                (click)="levelFormCreate(name.value, cycle.value, modal)">Crear</button>
             <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
 </ng-template>
+<!-- Modal Create Ends -->
 
-<!-- Modal starts Edit -->
+<!-- Modal Edit starts -->
 <ng-template class="modal fade" #ModalContentEdit let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -124,32 +104,23 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Editar actividad</h4>
+                        <h4 class="card-title">Editar nivel</h4>
                         <p class="card-description">
-                            Ingrese los campos para la modificacion de la actividad.
+                            Ingrese los campos para la modificacion del nivel.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" placeholder="Nombre"
-                                    [(ngModel)]="activity.nombre" name="name" #name="ngModel">
-                            </div>
-                            <div class="form-group">
-                                <label for="description">Descripcion</label>
-                                <input type="text" class="form-control" placeholder="descripcion"
-                                    [(ngModel)]="activity.descripcion" name="description" #description="ngModel">
-                            </div>
-                            <div class="form-group">
-                                <label for="date">Fecha</label>
-                                <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    [(ngModel)]="activity.fecha" name="date" #date="ngModel">
+                                <input type="text" class="form-control" id="name"
+                                    [(ngModel)]="level.nombre" name="name"
+                                    #name="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="cycle">Ciclo</label>
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="cycle" [(ngModel)]="activity.ciclo_id" name="cycle" #cycle>
+                                    <select class="custom-select" id="cycle" [(ngModel)]="level.ciclo_id" name="cycle" #cycle>
                                         <option selected>Seleccione un Ciclo</option>
                                         <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
                                         </option>
@@ -162,10 +133,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="activityFormEdit(f, modal)">Editar</button>
-            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
-                (click)="modal.close()">Cancelar</button>
+            <button type="button" class="btn btn-success" (click)="levelFormEdit(f, modal)">Editar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
 </ng-template>
-<!-- Modal Edit ends -->
+    <!-- Modal Edit Ends -->

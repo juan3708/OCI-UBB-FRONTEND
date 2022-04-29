@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
-import { FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-costs',
@@ -17,9 +17,8 @@ export class CostsComponent implements OnInit {
 
   detail = new DetailsModel();
   detailsList;
-  costEdit = new CostsModel();
   costs;
-  cost;
+  cost = new CostsModel();
   competencies = [];
   activities = [];
   cycles;
@@ -46,13 +45,12 @@ export class CostsComponent implements OnInit {
     details: this.fb.array([])
   });
 
+
   constructor(private CostsService: CostsService, private modalService: NgbModal, private CycleService: CycleService, private fb: FormBuilder) { }
 
   get details() {
     return this.costsFormCreate.controls["details"] as FormArray;
   }
-  get name() { return this.costsFormCreate.get('name'); }
-
 
   addDetail() {
     const detailFormGroup = this.fb.group({
@@ -78,7 +76,7 @@ export class CostsComponent implements OnInit {
       for (let index = 0; index < this.details.length; index++) {
         if (this.details.value[index].name != '') {
           this.total += Number(this.details.value[index].priceDetail);
-        }else{
+        } else {
           this.Toast.fire({
             icon: 'error',
             title: 'Ingrese un nombre al detalle'
@@ -182,10 +180,108 @@ export class CostsComponent implements OnInit {
     let data = {
       id
     };
+    this.details.clear();
     this.CostsService.getCostsById(data).subscribe((resp: any) => {
       this.cost = resp.gastos;
       this.detailsList = resp.gastos.detalles;
+      this.chargeForCycle(this.cost.ciclo_id);
+      this.setCostCreateForm();
     });
+  }
+
+  setCostCreateForm() {
+    this.detailsList.map((d: any) => {
+      const detailFormGroup = this.fb.group({
+        name: d.nombre,
+        priceDetail: d.valor
+      });
+      this.details.push(detailFormGroup);
+    })
+    this.costsFormCreate.setValue({
+      date: this.cost.fecha,
+      price: this.cost.valor,
+      cycle: this.cost.ciclo_id,
+      activity: this.cost.actividad_id,
+      competition: this.cost.competencia_id,
+      details: this.details
+    });
+  }
+
+  editCost(form, modal) {
+    this.total = 0;
+    if (this.details.length > 0) {
+      for (let index = 0; index < this.details.length; index++) {
+        if (this.details.value[index].name != '') {
+          this.total += Number(this.details.value[index].priceDetail);
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Ingrese un nombre al detalle'
+          });
+          return;
+        }
+      }
+      let data = {
+        id: this.cost.id,
+        valor: this.total,
+        fecha: form.date,
+        ciclo_id: form.cycle,
+        actividad_id: form.activity,
+        competencia_id: form.competition
+      };
+      console.log("ID Ciclo", this.cost.id);
+      console.log("DetailsList",this.detailsList);
+      console.log("Details ",this.details.value);
+      console.log("FORM", form);
+      console.log("SUMA GASTO ACTUALIZADA", this.total);
+      /*
+      this.CostsService.editCosts(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          modal.dismiss();
+          let gastos_id = resp.gastos.id;
+          for (let index = 0; index < this.details.length; index++) {
+            let dataDetail = {
+              valor: this.details.value[index].priceDetail,
+              nombre: this.details.value[index].name,
+              gastos_id: gastos_id
+            };
+            this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
+              if (resp.code != 200) {
+                this.Toast.fire({
+                  icon: 'error',
+                  title: 'Error al crear detalle'
+                });
+                return;
+              }
+            })
+          }
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se ha creado correctamente'
+          });
+          this.listCosts();
+          this.clearForm();
+        } else {
+          if (resp.code == 400) {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Ingrese correctamente los valores'
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al crear un gasto',
+              text: resp.message
+            });
+          }
+        }
+      });*/
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Ingrese un detalle porfavor'
+      });
+    }
   }
 
   openModal(ModalContent) {

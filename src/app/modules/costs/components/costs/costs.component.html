@@ -1,5 +1,5 @@
-<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="col-lg-10 grid-margin stretch-card">
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card"> -->
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title"><b>Gastos</b></h4>
@@ -52,11 +52,11 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentDetails);getCost(cost.id)">Ver detalle</button>
+                                        (click)="openModal(ModalContentDetails);getCost(cost.id)"><i class="mdi mdi-eye"></i></button>
                                     <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getCost(cost.id)">Editar</button>
+                                        (click)="openModal(ModalContentEdit);getCost(cost.id)"><i class="mdi mdi-grease-pencil"></i></button>
                                     <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteCost(cost.id);getCost(cost.id)">Eliminar</button>
+                                        (click)="deleteCost(cost.id);getCost(cost.id)"><i class="mdi mdi-delete"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -64,8 +64,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    <!-- </div>
+</div> -->
 <!-- Modal Details starts -->
 <ng-template class="modal fade" #ModalContentDetails let-modal>
     <div class="modal-content">
@@ -223,91 +223,85 @@
         <div class="modal-body">
             <div class="col-12 stretch-card">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body" [formGroup]="costsFormCreate">
                         <h4 class="card-title">Editar Gasto</h4>
                         <p class="card-description">
-                            Ingrese los campos para editar el gasto.
+                            Ingrese los campos para la creacion del gasto.
                         </p>
-                        <form class="forms-sample" #f="ngForm">
-                            <div class="form-group">
-                                <label for="date">Fecha</label>
-                                <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    placeholder="aaaa-mm-dd" [(ngModel)]="cost.fecha" name="date" #date="ngModel">
-                            </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" (change)="chargeForCycle($event.target.value)"
-                                        id="cycle" [(ngModel)]="cost.ciclo_id" name="cycle" #cycle="ngModel">
-                                        <option selected>Seleccione un ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                        </option>
-                                    </select>
+                        <div class="form-group">
+                            <label for="date">Fecha</label>
+                            <input style="width: 50%;" type="date" class="form-control" id="date"
+                                placeholder="aaaa-mm-dd" formControlName="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="cycle">Ciclo</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
                                 </div>
+                                <select class="custom-select" (change)="chargeForCycle($event.target.value)"
+                                    formControlName="cycle">
+                                    <option selected>Seleccione un ciclo</option>
+                                    <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
+                                    </option>
+                                </select>
                             </div>
-                            <div class="form-group" *ngIf="cost.actividad_id !=null">
-                                <label for="activity">Actividad</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="inputGroupSelect01" id="activity"
-                                        [(ngModel)]="cost.actividad_id" name="activity" #activity="ngModel">
-                                        <option selected>Seleccione una actividad</option>
-                                        <option *ngFor="let activity of activities" [value]="activity.id">
-                                            {{activity.nombre}}</option>
-                                    </select>
+                        </div>
+                        <div class="form-group" *ngIf="activities.length >= 1">
+                            <label for="activity">Actividad</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
                                 </div>
+                                <select class="custom-select" id="inputGroupSelect01" formControlName="activity">
+                                    <option selected>Seleccione una actividad</option>
+                                    <option *ngFor="let activity of activities" [value]="activity.id">
+                                        {{activity.nombre}}</option>
+                                </select>
                             </div>
-                            <div class="form-group" *ngIf="cost.competencia_id !=null">
-                                <label for="competition">Competencia</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="inputGroupSelect01" id="competition"
-                                        [(ngModel)]="cost.competencia_id" name="competition" #competition="ngModel">
-                                        <option selected>Seleccione una competencia</option>
-                                        <option *ngFor="let competition of competencies" [value]="competition.id">
-                                            {{competition.tipo}}</option>
-                                    </select>
+                        </div>
+                        <div class="form-group" *ngIf="competencies.length >= 1">
+                            <label for="competition">Competencia</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
                                 </div>
+                                <select class="custom-select" id="inputGroupSelect01" formControlName="competition">
+                                    <option selected>Seleccione una competencia</option>
+                                    <option *ngFor="let competition of competencies" [value]="competition.id">
+                                        {{competition.tipo}}</option>
+                                </select>
                             </div>
-                            <div>
-                                <button type="button" class="btn btn-info" (click)="addDetail()">Agregar
-                                    detalle</button>
-                            </div>
-                            <br>
-                            <ng-container formArrayName="details">
-                                <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
-                                    <div [formGroupName]="i">
-                                        <div>
-                                            <label for="name">Nombre</label>
-                                            <input type="text" class="form-control" id="name" placeholder="Nombre"
-                                                formControlName="name">
-                                        </div>
-                                        <div>
-                                            <label for="priceDetail">Valor</label>
-                                            <input type="number" class="form-control" id="priceDetail" placeholder="$"
-                                                formControlName="priceDetail">
-                                        </div>
-                                        <br>
-                                        <div class="form-group">
-                                            <button type="button" class="btn btn-danger"
-                                                (click)="removeDetail(i)">Eliminar
-                                                detalle</button>
-                                        </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-info" (click)="addDetail()">Agregar detalle</button>
+                        </div>
+                        <br>
+                        <ng-container formArrayName="details">
+                            <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
+                                <div [formGroupName]="i">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Nombre"
+                                            formControlName="name">
                                     </div>
-                                </ng-container>
+                                    <div>
+                                        <label for="priceDetail">Valor</label>
+                                        <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                            formControlName="priceDetail">
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-danger" (click)="removeDetail(i)">Eliminar
+                                            detalle</button>
+                                    </div>
+                                </div>
                             </ng-container>
-                        </form>
+                        </ng-container>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="createCosts(costsFormCreate.value, modal)">Crear</button>
+                (click)="editCost(costsFormCreate.value, modal)">Editar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();clearForm()">Cancelar</button>
         </div>

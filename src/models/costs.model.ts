@@ -5,5 +5,5 @@ export class CostsModel{
     fecha: Date;
     ciclo_id: number;
     actividad_id: number;
-    competencias_id: number;
+    competencia_id: number;
 }

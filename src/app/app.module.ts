@@ -26,6 +26,7 @@ import { CycleModule } from './modules/cycle/cycle.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { CompetenciesModule } from './modules/competencies/competencies.module';
 import { CostsModule } from './modules/costs/costs.module';
+import { LevelModule } from './modules/level/level.module';
 
 
 
@@ -59,7 +60,8 @@ import { CostsModule } from './modules/costs/costs.module';
     ReactiveFormsModule,
     ActivitiesModule,
     CompetenciesModule,
-    CostsModule
+    CostsModule,
+    LevelModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

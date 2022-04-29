@@ -61,6 +61,12 @@
         <i class="mdi mdi-currency-usd menu-icon"></i>
       </a>
     </li>
+    <li class="nav-item" [ngClass]="{ 'active': level.isActive }">
+      <a class="nav-link" routerLink="/level" routerLinkActive #level="routerLinkActive">
+        <span class="menu-title">Nivel</span>
+        <i class="mdi mdi-account-convert menu-icon"></i>
+      </a>
+    </li>
     <li class="nav-item"
       [ngClass]="{'active' : accordions.isActive || buttons.isActive || badges.isActive || breadcrumbs.isActive || dropdowns.isActive || modals.isActive || notifications.isActive || progressbar.isActive || pagination.isActive || tabs.isActive || typography.isActive || tooltips.isActive }">
       <a class="nav-link" (click)="uiBasicCollapsed = !uiBasicCollapsed" [attr.aria-expanded]="uiBasicCollapsed"
