@@ -33,9 +33,9 @@ export class TeachersComponent implements OnInit {
 
   listTeachers() {
     this.teachersService.getTeachers().subscribe((resp: any) => {
-      console.log(resp.profesores);
+      console.log("PROFESORES",resp.profesores);
       this.teachers = resp.profesores;
-      console.log(this.teachers);
+      console.log("TEACHERS",this.teachers);
     });
   }
 

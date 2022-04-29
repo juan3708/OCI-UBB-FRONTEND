@@ -63,7 +63,7 @@ import { AssistantsModule } from './modules/assistants/assistants.module';
     ActivitiesModule,
     CompetenciesModule,
     CostsModule,
-    LevelModule
+    LevelModule,
     TeachersModule,
     LessonsModule,
     AssistantsModule
