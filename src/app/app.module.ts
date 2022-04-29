@@ -18,7 +18,6 @@ import { TodoComponent } from './apps/todo-list/todo/todo.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { ContentAnimateDirective } from './shared/directives/content-animate.directive';
 import { TodoListComponent } from './apps/todo-list/todo-list.component';
-
 import { StudentsModule } from './modules/students/students.module';
 import { EstablishmentsModule } from './modules/establishments/establishments.module';
 import { CoordinatorsModule } from './modules/coordinators/coordinators.module';
@@ -27,6 +26,9 @@ import { ActivitiesModule } from './modules/activities/activities.module';
 import { CompetenciesModule } from './modules/competencies/competencies.module';
 import { CostsModule } from './modules/costs/costs.module';
 import { LevelModule } from './modules/level/level.module';
+import { TeachersModule } from './modules/teachers/teachers.module';
+import { LessonsModule } from './modules/lessons/lessons.module';
+import { AssistantsModule } from './modules/assistants/assistants.module';
 
 
 
@@ -62,6 +64,9 @@ import { LevelModule } from './modules/level/level.module';
     CompetenciesModule,
     CostsModule,
     LevelModule
+    TeachersModule,
+    LessonsModule,
+    AssistantsModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

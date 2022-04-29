@@ -23,7 +23,9 @@ const routes: Routes = [
   { path: 'competencies', loadChildren: () => import('./modules/competencies/competencies-routing.module').then(m => m.CompetenciesRoutingModule) },
   { path: 'costs', loadChildren: () => import('./modules/costs/costs-routing.module').then(m => m.CostsRoutingModule) },
   { path: 'level', loadChildren: () => import('./modules/level/level-routing.module').then(m => m.LevelRoutingModule) },
-
+  { path: 'lessons', loadChildren: () => import('./modules/lessons/lessons-routing.module').then(m => m.LessonsRoutingModule) },
+  { path: 'teachers', loadChildren: () => import('./modules/teachers/teachers-routing.module').then(m => m.TeachersRoutingModule) },
+  { path: 'assistants', loadChildren: () => import('./modules/assistants/assistants-routing.module').then(m => m.AssistantsRoutingModule) }
 
 ];
 
