@@ -40,4 +40,9 @@ export class LessonsService {
   getCycles(){
     return this.http.get(url +'/ciclo/all');
   }
+
+  getLevelById(id){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/nivel/getbyid', id, option);
+  }
 }

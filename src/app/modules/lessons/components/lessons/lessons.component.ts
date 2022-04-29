@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
+import { CycleModel } from 'src/models/cycle.model';
 import { LessonModel } from 'src/models/lesson.model';
+import { LevelModel } from 'src/models/level.model';
 import Swal from 'sweetalert2';
 import { LessonsService } from '../../services/lessons.service';
 
@@ -15,6 +18,9 @@ export class LessonsComponent implements OnInit {
   lessons;
   cycles;
   lesson = new LessonModel();
+  cycle = new CycleModel();
+  level = new LevelModel();
+  levels = [];
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -26,7 +32,7 @@ export class LessonsComponent implements OnInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private modalService: NgbModal) { }
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.listLessons();
@@ -61,16 +67,19 @@ export class LessonsComponent implements OnInit {
       console.log(id);
       console.log(resp);
       this.lesson = resp.clase;
+      this.chargeForCycle(this.lesson.ciclo_id);
+      this.getLevelById(this.lesson.nivel_id);
       console.log(this.lesson);
     });
   }
 
-  lessonFormCreate(content, lessonDate, cycle, modal) {
-    console.log(content, lessonDate, cycle);
+  lessonFormCreate(content, lessonDate, cycle, level, modal) {
+    console.log(content, lessonDate, cycle, level);
     let data = {
       contenido: content,
       fecha: lessonDate,
-      ciclo_id: cycle
+      ciclo_id: cycle,
+      nivel_id: level
     };
     this.lessonsService.createLesson(data).subscribe((resp: any) => {
       console.log(resp);
@@ -158,5 +167,28 @@ export class LessonsComponent implements OnInit {
         })
       }
     })
+  }
+
+  chargeForCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      if (resp.code == 200) {
+        this.levels = resp.ciclo.niveles;
+      } else {
+        this.levels = [];
+      }
+    })
+  }
+
+  getLevelById(id){
+    let data = {
+      id
+    };
+    this.lessonsService.getLessonById(data).subscribe((resp: any) => {
+      this.level = resp.nivel;
+    });
   }
 }
