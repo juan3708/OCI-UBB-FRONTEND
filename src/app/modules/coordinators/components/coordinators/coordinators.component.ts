@@ -13,6 +13,17 @@ import { NgForm } from '@angular/forms';
 export class CoordinatorsComponent implements OnInit {
 
   coordinators;
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   coordinator = new CoordinatorModel();
   constructor(private coordinatorsService: CoordinatorsService, private modalService: NgbModal) { }
 
@@ -22,9 +33,8 @@ export class CoordinatorsComponent implements OnInit {
 
   listCoordinators() {
     this.coordinatorsService.getCoordinators().subscribe((resp: any) => {
-      console.log(resp.coordinadores);
       this.coordinators = resp.coordinadores;
-      console.log(this.coordinators);
+
     })
   }
 
@@ -34,32 +44,29 @@ export class CoordinatorsComponent implements OnInit {
   }
 
   coordinatorFormCreate(rut, name, surname, email, modal) {
-    console.log(rut, name, surname, email);
     let data = {
       rut,
       nombre: name,
       apellidos: surname,
       email
     };
+
     this.coordinatorsService.createCoordinator(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Coordinador creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Coordinador creado correctamente'
         });
         this.listCoordinators();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al crear el coordinador',
             text: resp.message
@@ -74,33 +81,27 @@ export class CoordinatorsComponent implements OnInit {
       id
     };
     this.coordinatorsService.getCoordinatorById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
       this.coordinator = resp.coordinador;
-      console.log(this.coordinator);
     });
   }
 
   coordinatorFormEdit(form: NgForm, modal){
     this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any)=> {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Coordinador editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Coordinador editado correctamente'
         });
         this.listCoordinators();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar el coordinador',
             text: resp.message
@@ -126,17 +127,14 @@ export class CoordinatorsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.coordinatorsService.deleteCoordinator(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
-              title: 'Coordinador eliminado correctamente',
-              showConfirmButton: false,
-              timer: 2000
+              title: 'Coordinador eliminado correctamente'
             });
             this.listCoordinators();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el coordinador',
               text: resp.id 

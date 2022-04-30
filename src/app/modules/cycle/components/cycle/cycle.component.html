@@ -1,5 +1,5 @@
-<div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
-    <div class="col-lg-10 grid-margin stretch-card">
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card"> -->
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title"><b>Ciclos</b></h4>
@@ -51,13 +51,13 @@
                                     {{cycle.presupuesto}}
                                 </td>
                                 <td>
-                                    {{cycle.nombre_coordinador}} {{cycle.apellidos_coordinador}}
+                                    {{cycle.coordinador.nombre}} {{cycle.coordinador.apellido}}
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getCycle(cycle.id)">Editar</button>
+                                        (click)="openModal(ModalContentEdit);getCycle(cycle.id)"><i class="mdi mdi-grease-pencil"></i></button>
                                     <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteCycle(cycle.id)">Eliminar</button>
+                                        (click)="deleteCycle(cycle.id)"><i class="mdi mdi-delete"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -65,8 +65,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    <!-- </div>
+</div> -->
 
 <!-- Modal Create starts -->
 <ng-template class="modal fade" #ModalContent let-modal>

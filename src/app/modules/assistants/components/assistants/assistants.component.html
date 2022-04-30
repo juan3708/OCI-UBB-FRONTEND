@@ -1,0 +1,151 @@
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+    <div class="col-lg-10 grid-margin stretch-card"> -->
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><b>Ayudantes</b></h4>
+                <button type="button" style="float: right; margin: 8px;"
+                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Registrar
+                    Ayudante</button>
+                <div class="table-responsive">
+                    <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                            <tr>
+                                <th>
+                                    <b>RUT</b>
+                                </th>
+                                <th>
+                                    <b>Nombre</b>
+                                </th>
+                                <th>
+                                    <b>Apellidos</b>
+                                </th>
+                                <th>
+                                    <b>Email</b>
+                                </th>
+                                <th>
+                                    <b>Acción</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                            <tr *ngFor="let assistant of assistants">
+                                <td>
+                                    {{assistant.rut}}
+                                </td>
+                                <td>
+                                    {{assistant.nombre}}
+                                </td>
+                                <td>
+                                    {{assistant.apellidos}}
+                                </td>
+                                <td>
+                                    {{assistant.email}}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                        (click)="openModal(ModalContentEdit);getAssistants(assistant.id)"><i class="mdi mdi-grease-pencil"></i></button>
+                                    <button type="button"
+                                        class="btn btn-gradient-danger btn-rounded btn-sm"
+                                        (click)="deleteAssistant(assistant.id)"><i class="mdi mdi-delete"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <!-- </div>
+</div> -->
+
+<!-- Modal Create starts  -->
+<ng-template class="modal fade" #ModalContent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Registrar ayudante</h4>
+                        <p class="card-description">
+                            Ingrese los campos para el registro del ayudante.
+                        </p>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" class="form-control" id="rut" placeholder="12345678-9" #rut>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" id="name" placeholder="Nombre" #name>
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Apellidos</label>
+                                <input type="text" class="form-control" id="surname" placeholder="Apellidos" #surname>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <input type="email" class="form-control" id="email" placeholder="Email" #email>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="assistantFormCreate(rut.value, name.value, surname.value, email.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Create ends  -->
+
+<!-- Modal Edit starts-->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Editar ayudante</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la modificacion del ayudante.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" class="form-control" id="rut" [(ngModel)]="assistant.rut" name="rut" #rut="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" id="name" [(ngModel)]="assistant.nombre" name="name" #name="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Apellidos</label>
+                                <input type="text" class="form-control" id="surname" [(ngModel)]="assistant.apellidos" name="surname" #surname="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <input type="email" class="form-control" id="email" [(ngModel)]="assistant.email" name="email" #email="ngModel">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="assistantFormEdit(f, modal)">Editar</button>
+            <button type="button" id = "closeModal" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Edit ends-->

@@ -4,7 +4,8 @@
       <a href="javascript:;" class="nav-link">
         <div class="nav-profile-image">
           <img src="assets/images/faces/face1.jpg" alt="profile">
-          <span class="login-status online"></span> <!--change to offline or busy as needed-->              
+          <span class="login-status online"></span>
+          <!--change to offline or busy as needed-->
         </div>
         <div class="nav-profile-text">
           <span class="font-weight-bold mb-2">Juan San Martín</span>
@@ -24,10 +25,22 @@
         <i class="mdi mdi-account-multiple-outline menu-icon"></i>
       </a>
     </li>
+    <li class="nav-item" [ngClass]="{ 'active': assistants.isActive }">
+      <a class="nav-link" routerLink="/assistants" routerLinkActive #assistants="routerLinkActive">
+        <span class="menu-title">Ayudantes</span>
+        <i class="mdi mdi-bulletin-board menu-icon"></i>
+      </a>
+    </li>
     <li class="nav-item" [ngClass]="{ 'active': cycle.isActive }">
       <a class="nav-link" routerLink="/cycle" routerLinkActive #cycle="routerLinkActive">
         <span class="menu-title">Ciclos</span>
         <i class="mdi mdi-sync menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" [ngClass]="{ 'active': lessons.isActive }">
+      <a class="nav-link" routerLink="/lessons" routerLinkActive #lessons="routerLinkActive">
+        <span class="menu-title">Clases</span>
+        <i class="mdi mdi-book-open-page-variant menu-icon"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': coordinators.isActive }">
@@ -39,6 +52,36 @@
     <li class="nav-item" [ngClass]="{ 'active': establishments.isActive }">
       <a class="nav-link" routerLink="/establishments" routerLinkActive #establishments="routerLinkActive">
         <span class="menu-title">Establecimientos</span>
+        <i class="mdi mdi-city menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" [ngClass]="{ 'active': activities.isActive }">
+      <a class="nav-link" routerLink="/activities" routerLinkActive #activities="routerLinkActive">
+        <span class="menu-title">Actividades</span>
+        <i class="mdi mdi-note-text menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" [ngClass]="{ 'active': competencies.isActive }">
+      <a class="nav-link" routerLink="/competencies" routerLinkActive #competencies="routerLinkActive">
+        <span class="menu-title">Competencias</span>
+        <i class="mdi mdi-seal menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" [ngClass]="{ 'active': costs.isActive }">
+      <a class="nav-link" routerLink="/costs" routerLinkActive #costs="routerLinkActive">
+        <span class="menu-title">Gastos</span>
+        <i class="mdi mdi-currency-usd menu-icon"></i>
+      </a>
+    </li>
+    <li class="nav-item" [ngClass]="{ 'active': level.isActive }">
+      <a class="nav-link" routerLink="/level" routerLinkActive #level="routerLinkActive">
+        <span class="menu-title">Nivel</span>
+        <i class="mdi mdi-account-convert menu-icon"></i>
+      </a>
+    </li>
+     <li class="nav-item" [ngClass]="{ 'active': teachers.isActive }">
+      <a class="nav-link" routerLink="/teachers" routerLinkActive #teachers="routerLinkActive">
+        <span class="menu-title">Profesores</span>
         <i class="mdi mdi-school menu-icon"></i>
       </a>
     </li>
@@ -50,18 +93,30 @@
       </a>
       <div class="collapse" id="ui-basic" [ngbCollapse]="!uiBasicCollapsed">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/accordions" routerLinkActive="active" #accordions="routerLinkActive">Accordions</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/buttons" routerLinkActive="active" #buttons="routerLinkActive">Buttons</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/badges" routerLinkActive="active" #badges="routerLinkActive">Badges</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/breadcrumbs" routerLinkActive="active" #breadcrumbs="routerLinkActive">Breadcrumbs</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/dropdowns" routerLinkActive="active" #dropdowns="routerLinkActive">Dropdowns</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/modals" routerLinkActive="active" #modals="routerLinkActive">Modals</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/notifications" routerLinkActive="active" #notifications="routerLinkActive">Notifications</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/progressbar" routerLinkActive="active" #progressbar="routerLinkActive">Progress bar</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/pagination" routerLinkActive="active" #pagination="routerLinkActive">Pagination</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/tabs" routerLinkActive="active" #tabs="routerLinkActive">Tabs</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/typography" routerLinkActive="active" #typography="routerLinkActive">Typography</a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/tooltips" routerLinkActive="active" #tooltips="routerLinkActive">Tooltips</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/accordions" routerLinkActive="active"
+              #accordions="routerLinkActive">Accordions</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/buttons" routerLinkActive="active"
+              #buttons="routerLinkActive">Buttons</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/badges" routerLinkActive="active"
+              #badges="routerLinkActive">Badges</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/breadcrumbs" routerLinkActive="active"
+              #breadcrumbs="routerLinkActive">Breadcrumbs</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/dropdowns" routerLinkActive="active"
+              #dropdowns="routerLinkActive">Dropdowns</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/modals" routerLinkActive="active"
+              #modals="routerLinkActive">Modals</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/notifications" routerLinkActive="active"
+              #notifications="routerLinkActive">Notifications</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/progressbar" routerLinkActive="active"
+              #progressbar="routerLinkActive">Progress bar</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/pagination" routerLinkActive="active"
+              #pagination="routerLinkActive">Pagination</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/tabs" routerLinkActive="active"
+              #tabs="routerLinkActive">Tabs</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/typography" routerLinkActive="active"
+              #typography="routerLinkActive">Typography</a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="basic-ui/tooltips" routerLinkActive="active"
+              #tooltips="routerLinkActive">Tooltips</a></li>
         </ul>
       </div>
     </li>
@@ -89,19 +144,26 @@
         <i class="mdi mdi-contacts menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active' : blankPage.isActive || login.isActive || register.isActive || error404.isActive || error500.isActive }">
-      <a class="nav-link" (click)="samplePagesCollapsed = !samplePagesCollapsed"  [attr.aria-expanded]="samplePagesCollapsed" aria-controls="auth">
+    <li class="nav-item"
+      [ngClass]="{ 'active' : blankPage.isActive || login.isActive || register.isActive || error404.isActive || error500.isActive }">
+      <a class="nav-link" (click)="samplePagesCollapsed = !samplePagesCollapsed"
+        [attr.aria-expanded]="samplePagesCollapsed" aria-controls="auth">
         <span class="menu-title">Sample Pages</span>
         <i class="menu-arrow"></i>
         <i class="mdi mdi-medical-bag menu-icon"></i>
       </a>
       <div class="collapse" id="auth" [ngbCollapse]="!samplePagesCollapsed">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" routerLink="general-pages/blank-page" routerLinkActive="active" #blankPage="routerLinkActive"> Blank Page </a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="user-pages/login" routerLinkActive="active" #login="routerLinkActive"> Login </a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="user-pages/register" routerLinkActive="active" #register="routerLinkActive"> Register </a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="error-pages/404" routerLinkActive="active" #error404="routerLinkActive"> 404 </a></li>
-          <li class="nav-item"> <a class="nav-link" routerLink="error-pages/500" routerLinkActive="active" #error500="routerLinkActive"> 500 </a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="general-pages/blank-page" routerLinkActive="active"
+              #blankPage="routerLinkActive"> Blank Page </a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="user-pages/login" routerLinkActive="active"
+              #login="routerLinkActive"> Login </a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="user-pages/register" routerLinkActive="active"
+              #register="routerLinkActive"> Register </a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="error-pages/404" routerLinkActive="active"
+              #error404="routerLinkActive"> 404 </a></li>
+          <li class="nav-item"> <a class="nav-link" routerLink="error-pages/500" routerLinkActive="active"
+              #error500="routerLinkActive"> 500 </a></li>
         </ul>
       </div>
     </li> -->

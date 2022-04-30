@@ -15,6 +15,17 @@ export class StudentsComponent implements OnInit {
   students;
   establishments;
   student = new StudentModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -24,17 +35,13 @@ export class StudentsComponent implements OnInit {
 
   listStudents(){
     this.studentsService.getStudents().subscribe((resp:any)=>{
-      console.log(resp.alumnos);
       this.students=resp.alumnos;
-      console.log(this.students);
     });
   }
 
   listEstablishments(){
     this.studentsService.getEstablishments().subscribe((resp:any)=>{
-      console.log(resp.establecimientos);
       this.establishments=resp.establecimientos;
-      console.log(this.establishments);
     });
   }
 
@@ -43,8 +50,6 @@ export class StudentsComponent implements OnInit {
   }
 
   studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal){
-    console.log(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment);
-    console.log(establishment)
     let data = {
       rut,
       nombre: name,
@@ -59,24 +64,21 @@ export class StudentsComponent implements OnInit {
       establecimiento_id: establishment
     };
     this.studentsService.createStudent(data).subscribe((resp: any) =>{
-      console.log(resp);
-      if(resp.code===200){        
+      if(resp.code==200){        
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Alumno creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Alumno creado correctamente'
         });
         this.listStudents();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al registrar el alumno',
             text: resp.message
@@ -91,33 +93,28 @@ export class StudentsComponent implements OnInit {
       id
     };
     this.studentsService.getStudentById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
       this.student = resp.alumno;
-      console.log(this.student);
     });
   }
 
   studentFormEdit(form: NgForm, modal){
     this.studentsService.editStudent(this.student).subscribe((resp: any)=> {
-      console.log(resp);
+
       if(resp.code == 200){
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Alumno editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Alumno editado correctamente'
         });
         this.listStudents();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar el alumno',
             text: resp.message
@@ -143,17 +140,14 @@ export class StudentsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.studentsService.deleteStudent(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
-              title: 'Alumno eliminado correctamente',
-              showConfirmButton: false,
-              timer: 2000
+              title: 'Alumno eliminado correctamente'
             });
             this.listStudents();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el alumno',
               text: resp.id 

@@ -14,6 +14,17 @@ export class EstablishmentsComponent implements OnInit {
 
   establishments;
   establishment = new EstablishmentModel();
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
   constructor(private establishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -22,9 +33,7 @@ export class EstablishmentsComponent implements OnInit {
 
   listEstablishments(){
     this.establishmentsService.getEstablishments().subscribe((resp:any)=>{
-      console.log(resp.establecimientos);
       this.establishments=resp.establecimientos;
-      console.log(this.establishments);
     })
   }
 
@@ -33,7 +42,6 @@ export class EstablishmentsComponent implements OnInit {
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
-    console.log(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber);
     let data = {
       nombre: establishmentName,
       director,
@@ -44,26 +52,22 @@ export class EstablishmentsComponent implements OnInit {
       email: establishmentEmail,
       telefono: establishmentPhoneNumber
     };
-    console.log(data);
     this.establishmentsService.createEstablishment(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Establecimiento creado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Establecimiento creado correctamente'
         });
         this.listEstablishments();
       } else {
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al registrar el establecimiento',
             text: resp.message
@@ -78,33 +82,27 @@ export class EstablishmentsComponent implements OnInit {
       id
     };
     this.establishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
       this.establishment = resp.establecimiento;
-      console.log(this.establishment);
     });
   }
 
   establishmentFormEdit(form: NgForm, modal){
     this.establishmentsService.editEstablishment(this.establishment).subscribe((resp: any)=> {
-      console.log(resp);
       if(resp.code == 200){
         modal.dismiss();
-        Swal.fire({
+        this.Toast.fire({
           icon: 'success',
-          title: 'Establecimiento editado correctamente',
-          showConfirmButton: false,
-          timer: 2000
+          title: 'Establecimiento editado correctamente'
         });
         this.listEstablishments();
       }else{
         if (resp.code == 400) {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores',
           });
         } else {
-          Swal.fire({
+          this.Toast.fire({
             icon: 'error',
             title: 'Error al editar el establecimiento',
             text: resp.message
@@ -130,9 +128,8 @@ export class EstablishmentsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.establishmentsService.deleteEstablecimiento(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'success',
               title: 'Establecimiento eliminado correctamente',
               showConfirmButton: false,
@@ -140,7 +137,7 @@ export class EstablishmentsComponent implements OnInit {
             });
             this.listEstablishments();
           } else {
-            Swal.fire({
+            this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el establecimiento',
               text: resp.id 
