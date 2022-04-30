@@ -21,6 +21,7 @@ export class CostsComponent implements OnInit {
   cost = new CostsModel();
   competencies = [];
   activities = [];
+  ids = [];
   cycles;
   cycle = new CycleModel();
   total = 0;
@@ -61,7 +62,11 @@ export class CostsComponent implements OnInit {
   }
 
   removeDetail(i: number) {
+    if (this.details.value[i] != undefined) {
+      this.ids.push(this.details.value[i].id);
+    }
     this.details.removeAt(i);
+
   }
 
   clearForm() {
@@ -69,6 +74,7 @@ export class CostsComponent implements OnInit {
     this.costsFormCreate.reset();
     this.competencies = [];
     this.activities = [];
+    this.ids = [];
   }
 
   createCosts(form, modal) {
@@ -192,6 +198,7 @@ export class CostsComponent implements OnInit {
   setCostCreateForm() {
     this.detailsList.map((d: any) => {
       const detailFormGroup = this.fb.group({
+        id: d.id,
         name: d.nombre,
         priceDetail: d.valor
       });
@@ -229,35 +236,130 @@ export class CostsComponent implements OnInit {
         actividad_id: form.activity,
         competencia_id: form.competition
       };
-      console.log("ID Ciclo", this.cost.id);
-      console.log("DetailsList",this.detailsList);
-      console.log("Details ",this.details.value);
-      console.log("FORM", form);
-      console.log("SUMA GASTO ACTUALIZADA", this.total);
-      /*
       this.CostsService.editCosts(data).subscribe((resp: any) => {
         if (resp.code == 200) {
-          modal.dismiss();
           let gastos_id = resp.gastos.id;
-          for (let index = 0; index < this.details.length; index++) {
-            let dataDetail = {
-              valor: this.details.value[index].priceDetail,
-              nombre: this.details.value[index].name,
-              gastos_id: gastos_id
-            };
-            this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
-              if (resp.code != 200) {
-                this.Toast.fire({
-                  icon: 'error',
-                  title: 'Error al crear detalle'
-                });
-                return;
+          modal.dismiss();
+          if (this.detailsList.length == this.details.length && this.ids.length == 0) { //Cuando no se elimina detalle y se modifican los que estan CORRECTO
+            for (let index = 0; index < this.details.length; index++) {
+              let dataDetail = {
+                id: this.details.value[index].id,
+                valor: this.details.value[index].priceDetail,
+                nombre: this.details.value[index].name,
+                gastos_id: gastos_id
+              };
+              this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al editar detalle'
+                  });
+                  return;
+                }
+              })
+            }
+          } else if (this.detailsList.length <= this.details.length && this.ids.length >= 0) { //Cuando se elimina o no y se agregan mas de los que habian
+            for (let index = 0; index < this.details.length; index++) {
+              if (this.details.value[index].id != undefined) {
+                let dataDetail = {
+                  id: this.details.value[index].id,
+                  valor: this.details.value[index].priceDetail,
+                  nombre: this.details.value[index].name,
+                  gastos_id: gastos_id
+                };
+                this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+                  if (resp.code != 200) {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al editar detalle'
+                    });
+                    return;
+                  }
+                })
+              } else {
+                let dataDetail = {
+                  valor: this.details.value[index].priceDetail,
+                  nombre: this.details.value[index].name,
+                  gastos_id: gastos_id
+                };
+                this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
+                  if (resp.code != 200) {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al crear detalle'
+                    });
+                    return;
+                  }
+                })
               }
-            })
+            }
+            for (let index = 0; index < this.ids.length; index++) {
+              let data = {
+                id: this.ids[index]
+              };
+              this.CostsService.deleteDetails(data).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al editar detalle'
+                  });
+                  return;
+                }
+              })
+            }
+          } else if (this.detailsList.length > this.details.length && this.ids.length > 0) { //Cuando se elimina, pero no se agregan mas de los que habian
+            for (let index = 0; index < this.details.length; index++) {
+              if (this.details.value[index].id != undefined) {
+                let dataDetail = {
+                  id: this.details.value[index].id,
+                  valor: this.details.value[index].priceDetail,
+                  nombre: this.details.value[index].name,
+                  gastos_id: gastos_id
+                };
+                this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+                  if (resp.code != 200) {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al editar detalle'
+                    });
+                    return;
+                  }
+                })
+              } else {
+                let dataDetail = {
+                  valor: this.details.value[index].priceDetail,
+                  nombre: this.details.value[index].name,
+                  gastos_id: gastos_id
+                };
+                this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
+                  if (resp.code != 200) {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al crear detalle'
+                    });
+                    return;
+                  }
+                })
+              }
+            }
+            for (let index = 0; index < this.ids.length; index++) {
+              let data = {
+                id: this.ids[index]
+              };
+              this.CostsService.deleteDetails(data).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al editar detalle'
+                  });
+                  return;
+                }
+              })
+            }
           }
           this.Toast.fire({
             icon: 'success',
-            title: 'Se ha creado correctamente'
+            title: 'Se ha editado correctamente'
           });
           this.listCosts();
           this.clearForm();
@@ -270,12 +372,12 @@ export class CostsComponent implements OnInit {
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al crear un gasto',
+              title: 'Error al editar un gasto',
               text: resp.message
             });
           }
         }
-      });*/
+      });
     } else {
       this.Toast.fire({
         icon: 'error',

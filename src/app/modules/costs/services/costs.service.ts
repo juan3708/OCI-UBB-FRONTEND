@@ -48,10 +48,8 @@ export class CostsService {
   }
 
   deleteDetails(id) {
-    let data = {
-      id
-    };
+
     const option = { headers: this.headers };
-    return this.http.post(url + '/detalle/delete', data, option);
+    return this.http.post(url + '/detalle/delete', id, option);
   }
 }
