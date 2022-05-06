@@ -1,61 +1,65 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Clases</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Registrar
-                    Clase</button>
-                <div class="table-responsive">
-                    <table class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>Contenido</b>
-                                </th>
-                                <th>
-                                    <b>Nivel</b>
-                                </th>
-                                <th>
-                                    <b>Fecha</b>
-                                </th>
-                                <th>
-                                    <b>Acción</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let lesson of lessons">
-                                <td>
-                                    {{lesson.contenido}}
-                                </td>
-                                <td>
-                                    {{lesson.nivel.nombre}}
-                                </td>
-                                <td>
-                                    {{lesson.fecha}}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getLessons(lesson.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                                    <button type="button"
-                                        class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteLesson(lesson.id)"><i class="mdi mdi-delete"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Clases</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Registrar
+            Clase</button>
+        <div class="table-responsive">
+            <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Contenido</b>
+                        </th>
+                        <th>
+                            <b>Nivel</b>
+                        </th>
+                        <th>
+                            <b>Fecha</b>
+                        </th>
+                        <th>
+                            <b>Acción</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let lesson of lessons">
+                        <td>
+                            {{lesson.contenido}}
+                        </td>
+                        <td>
+                            {{lesson.nivel.nombre}}
+                        </td>
+                        <td>
+                            {{lesson.fecha}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);getLesson(lesson.id)"><i
+                                    class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteLesson(lesson.id);"><i class="mdi mdi-delete"></i></button>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"><i
+                                    class="mdi mdi-eye"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    <!-- </div>
+    </div>
+</div>
+<!-- </div>
 </div> -->
 
 <!-- Modal Create starts  -->
 <ng-template class="modal fade" #ModalContent let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -82,8 +86,9 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" #cycle>
-                                        <option selected>Seleccione un ciclo</option>
+                                    <select class="custom-select" id="cycle"
+                                        (change)="chargeForCycle($event.target.value)" #cycle>
+                                        <option selected [ngValue]="null">Seleccione un ciclo</option>
                                         <option *ngFor="let cycle of cycles" [value]="cycle.id">
                                             {{cycle.nombre}}</option>
                                     </select>
@@ -94,12 +99,56 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="level" #level>
-                                        <option selected>Seleccione un nivel</option>
+                                    <select class="custom-select" id="level"
+                                        (change)="chargeStudentsPerLevel($event.target.value)" #level>
+                                        <option selected [value]=undefined>Seleccione un nivel</option>
                                         <option *ngFor="let level of levels" [value]="level.id">
                                             {{level.nombre}}</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div *ngIf="levels.length >= 1">
+                                <button type="button" class="btn btn-info"
+                                    (click)="openModal(ModalAddStudentManual);listEstablishments()">Seleccionar alumnos
+                                    manualmente</button>
+                            </div>
+                            <div class="table-responsive" *ngIf="studentsPerLevel.length >= 1">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Rut</b>
+                                            </th>
+                                            <th>
+                                                <b>Nombre</b>
+                                            </th>
+                                            <th>
+                                                <b>Apellidos</b>
+                                            </th>
+                                            <th>
+                                                <b>Eliminar</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let student of studentsPerLevel">
+                                            <td>
+                                                {{student.rut}}
+                                            </td>
+                                            <td>
+                                                {{student.nombre}}
+                                            </td>
+                                            <td>
+                                                {{student.apellidos}}
+                                            </td>
+                                            <td>
+                                                <a type="button" data-dismiss="modal"
+                                                    (click)="removeStudents(student.id)"><i
+                                                        class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </form>
                     </div>
@@ -109,11 +158,191 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
                 (click)="lessonFormCreate(content.value, lessonDate.value, cycle.value, level.value, modal)">Crear</button>
-            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
         </div>
     </div>
 </ng-template>
 <!-- Modal Create ends  -->
+
+<!-- Modal AddStudentManual starts -->
+<ng-template class="modal fade" #ModalAddStudentManual let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Seleccionar alumnos</h4>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="establishment">Establecimiento</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="establishment"
+                                        (change)="getStudentsForEstableshments($event.target.value)" #establishment>
+                                        <option selected>Seleccione un establecimiento</option>
+                                        <option *ngFor="let establishment of establishments" [value]="establishment.id">
+                                            {{establishment.nombre}}</option>
+                                    </select>
+                                </div>
+                                <div class="table-responsive" *ngIf="students.length >= 1">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                                <th>
+                                                    <b>Asignar</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of students">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                                <td>
+                                                    <div class="form-check form-check-success">
+                                                        <label class="form-check-label" aria-label="Asignar">
+                                                            <input type="checkbox"
+                                                                class="form-check-input position-static"
+                                                                style="text-align: center;" [value]="student.id"
+                                                                id="studentLevel"
+                                                                (change)="addOrRemoveStudent($event.target.checked, student)"
+                                                                #studentLevel>
+                                                            <i class="input-helper"></i>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addStudents(modal)">Asignar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();studentsManualAdd=[]">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal AddStudentManual end -->
+
+
+<!-- Modal ModalContentList starts -->
+<ng-template class="modal fade" #ModalContentList let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Registrar Asistencia</h4>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="studentList">Alumnos</label>
+                                <div class="table-responsive">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                                <th>
+                                                    <b>Asistencia</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of studentsLesson;">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                                <!-- <td *ngIf="student.pivot.asistencia == 0">
+                                                    Ausente
+                                                </td>
+                                                <td *ngIf="student.pivot.asistencia == 1">
+                                                    Presente
+                                                </td> -->
+                                                <td>
+                                                    <div id="app" class="checkbox-div">
+                                                        <label class="checker">
+                                                            <input class="checkbox" type="checkbox"
+                                                                id="studentAssistance" name="studentAssistance"
+                                                                (change)="changeStatusAssistance($event.target.checked ? 1: 0, student.id)"
+                                                                [checked]="student.pivot.asistencia == 1"
+                                                                 />
+                                                            <div class="check-bg"></div>
+                                                            <div class="checkmark">
+                                                                <svg viewBox="0 0 100 100">
+                                                                    <path d="M20,55 L40,75 L77,27" fill="none"
+                                                                        stroke="#FFF" stroke-width="15"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round" />
+                                                                </svg>
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="editAssistancePerStudent(modal)">Asignar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();studentsManualAdd=[]">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal ModalContentList end -->
 
 <!-- Modal Edit starts-->
 <ng-template class="modal fade" #ModalContentEdit let-modal>
@@ -134,7 +363,7 @@
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
                                 <label for="content">Contenido</label>
-                                <textarea class="form-control" id="content" rows="4" [(ngModel)]="lesson.contenido" 
+                                <textarea class="form-control" id="content" rows="4" [(ngModel)]="lesson.contenido"
                                     name="content" #content="ngModel"></textarea>
                             </div>
                             <div class="form-group">
@@ -147,8 +376,8 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="cycle" [(ngModel)]="lesson.ciclo_id" 
-                                        name="cycle" (change)="chargeForCycle($event.target.value)" #cycle="ngModel">
+                                    <select class="custom-select" id="cycle" [(ngModel)]="lesson.ciclo_id" name="cycle"
+                                        (change)="chargeForCycle($event.target.value)" #cycle="ngModel">
                                         <option selected>Seleccione un ciclo</option>
                                         <option *ngFor="let cycle of cycles" [value]="cycle.id">
                                             {{cycle.nombre}}</option>
@@ -160,8 +389,8 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="level" [(ngModel)]="lesson.ciclo_id" 
-                                    name="level" #level="ngModel">
+                                    <select class="custom-select" id="level" [(ngModel)]="lesson.ciclo_id" name="level"
+                                        #level="ngModel">
                                         <option selected>Seleccione un nivel</option>
                                         <option *ngFor="let level of levels" [value]="level.id">
                                             {{level.nombre}}</option>
@@ -175,7 +404,8 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="lessonFormEdit(f, modal)">Editar</button>
-            <button type="button" id = "closeModal" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close()">Cancelar</button>
         </div>
     </div>
 </ng-template>

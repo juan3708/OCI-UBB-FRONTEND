@@ -5,6 +5,7 @@ import { CycleService } from '../../../cycle/services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
+import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 
 @Component({
   selector: 'app-level',
@@ -13,34 +14,44 @@ import { NgForm } from '@angular/forms';
 })
 export class LevelComponent implements OnInit {
 
-level= new LevelModel();
-levels;
-cycles;
-Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer)
-    toast.addEventListener('mouseleave', Swal.resumeTimer)
-  }
-});
-  constructor(private LevelService: LevelService, private CycleService: CycleService, private modalService: NgbModal) { }
+  level = new LevelModel();
+  levels;
+  cycles;
+  students = []
+  establishments;
+  studentsIdAddLevel = [];
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+  constructor(private LevelService: LevelService, private CycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.listLevels();
     this.listCycles();
+    this.listEstablishments();
   }
-  listLevels(){
-    this.LevelService.getLevels().subscribe((resp: any) =>{
+  listLevels() {
+    this.LevelService.getLevels().subscribe((resp: any) => {
       this.levels = resp.niveles;
     })
   }
 
-  listCycles(){
-    this.CycleService.getCycles().subscribe((resp: any)=>{
+  listEstablishments() {
+    this.EstablishmentsService.getEstablishments().subscribe((resp: any) => {
+      this.establishments = resp.establecimientos;
+    })
+  }
+
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -48,21 +59,53 @@ Toast = Swal.mixin({
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
+  
+  addOrRemoveStudent(event, student){
+    if(event == true){
+      this.studentsIdAddLevel.push(student);
+    }else{
+      this.studentsIdAddLevel.splice(this.studentsIdAddLevel.indexOf(student),1);
+    }
+    console.log(this.studentsIdAddLevel);
+  }
 
-  levelFormCreate(name, cycle, modal){
+
+  getStudentsForEstableshments(id) {
+    let data = {
+      id
+    };
+    console.log(data);
+    this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
+      console.log(resp);
+      if (resp.code == 200) {
+        this.students = resp.establecimiento.alumnos;
+      }
+    })
+  }
+
+  getLevel(id) {
+    let data = {
+      id
+    };
+    this.LevelService.getLevelById(data).subscribe((resp: any) => {
+      this.level = resp.nivel;
+    })
+  }
+
+  levelFormCreate(name, cycle, modal) {
     let data = {
       nombre: name,
       ciclo_id: cycle
     };
-    this.LevelService.createLevel(data).subscribe((resp:any)=>{
-      if(resp.code===200){        
+    this.LevelService.createLevel(data).subscribe((resp: any) => {
+      if (resp.code === 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
         this.listLevels();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -79,25 +122,16 @@ Toast = Swal.mixin({
     })
   }
 
-  getLevel(id){
-    let data = {
-      id
-    };
-    this.LevelService.getLevelById(data).subscribe((resp: any)=>{
-      this.level = resp.nivel;
-    })
-  }
-
-  levelFormEdit(form: NgForm, modal){
-    this.LevelService.editLevel(this.level).subscribe((resp: any)=>{
-      if(resp.code == 200){
+  levelFormEdit(form: NgForm, modal) {
+    this.LevelService.editLevel(this.level).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Nivel editado correctamente',
         });
         this.listLevels();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -114,7 +148,7 @@ Toast = Swal.mixin({
     })
   }
 
-  deleteLevel(id){
+  deleteLevel(id) {
     let data = {
       id
     };
@@ -140,12 +174,46 @@ Toast = Swal.mixin({
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el nivel',
-              text: resp.id 
+              text: resp.id
             });
           }
         });
       }
     });
 
+  }
+
+  addLevelStudent(modal) {
+    if(this.studentsIdAddLevel.length < 1){
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Seleccione alumnos porfavor'
+      });
+    }else{
+      let data ={
+        nivel_id: this.level.id,
+        alumnos_id: this.studentsIdAddLevel
+      };
+      this.LevelService.levelassociate(data).subscribe((resp:any)=>{
+        console.log(resp);
+        if(resp.code == 200){
+          modal.dismiss();
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se asigno correctamente el nivel'
+          });
+          this.clearForm();
+        }else{
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al asignar el nivel'
+          });
+        }
+      })
+    }
+  }
+  clearForm(){
+    this.students = [];
+    this.studentsIdAddLevel= [];
   }
 }

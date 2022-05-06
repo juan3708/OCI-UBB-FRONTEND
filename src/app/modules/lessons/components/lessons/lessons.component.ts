@@ -7,6 +7,8 @@ import { LessonModel } from 'src/models/lesson.model';
 import { LevelModel } from 'src/models/level.model';
 import Swal from 'sweetalert2';
 import { LessonsService } from '../../services/lessons.service';
+import { LevelService } from '../../../level/services/level.service';
+import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 
 @Component({
   selector: 'app-lessons',
@@ -17,10 +19,19 @@ export class LessonsComponent implements OnInit {
 
   lessons;
   cycles;
+  establishments;
+  bool;
   lesson = new LessonModel();
   cycle = new CycleModel();
   level = new LevelModel();
   levels = [];
+  studentsPerLevel = [];
+  studentsId = [];
+  studentsAssistance = [];
+  students = [];
+  studentsManualAdd = [];
+  studentsLesson = [];
+  studentList;
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -32,7 +43,7 @@ export class LessonsComponent implements OnInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private modalService: NgbModal) { }
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.listLessons();
@@ -41,75 +52,92 @@ export class LessonsComponent implements OnInit {
 
   listLessons() {
     this.lessonsService.getLessons().subscribe((resp: any) => {
-      console.log(resp.clases);
       this.lessons = resp.clases;
-      console.log(this.lessons);
     });
   }
 
   listCycles() {
     this.lessonsService.getCycles().subscribe((resp: any) => {
-      console.log(resp.ciclos);
       this.cycles = resp.ciclos;
-      console.log(this.cycles);
     });
   }
 
-  openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+  listEstablishments() {
+    this.EstablishmentsService.getEstablishments().subscribe((resp: any) => {
+      this.establishments = resp.establecimientos;
+    })
   }
 
-  getLessons(id) {
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'xl' });
+  }
+
+
+  getLevelById(id) {
     let data = {
       id
     };
     this.lessonsService.getLessonById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
-      this.lesson = resp.clase;
-      this.chargeForCycle(this.lesson.ciclo_id);
-      this.getLevelById(this.lesson.nivel_id);
-      console.log(this.lesson);
+      this.level = resp.nivel;
     });
   }
 
+  getStudentsForEstableshments(id) {
+    let data = {
+      id
+    };
+    this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.students = resp.establecimiento.alumnos;
+      }
+    })
+  }
+
   lessonFormCreate(content, lessonDate, cycle, level, modal) {
-    console.log(content, lessonDate, cycle, level);
     let data = {
       contenido: content,
       fecha: lessonDate,
       ciclo_id: cycle,
       nivel_id: level
     };
-    this.lessonsService.createLesson(data).subscribe((resp: any) => {
-      console.log(resp);
-      if (resp.code == 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Clase creada correctamente'
-        });
-        this.listLessons();
-      } else {
-        if (resp.code == 400) {
+    if (this.studentsPerLevel.length >= 1) {
+      this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        if (resp.code == 200) {
+          this.AssignStudentToLesson(resp.clase.id);
+          await new Promise(f => setTimeout(f, 500));
+          modal.dismiss();
           this.Toast.fire({
-            icon: 'error',
-            title: 'Ingrese correctamente los valores',
+            icon: 'success',
+            title: 'Clase creada correctamente'
           });
+          this.listLessons();
+
         } else {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Error al registrar la clase',
-            text: resp.message
-          });
+          if (resp.code == 400) {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Ingrese correctamente los valores',
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al registrar la clase',
+              text: resp.message
+            });
+          }
         }
-      }
-    })
+      })
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor seleccione alumnos',
+      });
+    }
+
   }
 
-  lessonFormEdit(form: NgForm, modal){
-    this.lessonsService.editLesson(this.lesson).subscribe((resp: any)=> {
-      console.log(resp);
+  lessonFormEdit(form: NgForm, modal) {
+    this.lessonsService.editLesson(this.lesson).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -134,9 +162,18 @@ export class LessonsComponent implements OnInit {
     })
   }
 
-  deleteLesson(id) {
+  async deleteLesson(id) {
+    this.getLesson(id);
+    await new Promise(f => setTimeout(f, 800));
+    if (this.studentsLesson.length >= 1) {
+      this.studentsId = this.studentsLesson.map((s: any) => {
+        return s.id;
+      });
+    }
     let data = {
-      id
+      clase_id: id,
+      alumnos_id: this.studentsId
+
     };
     Swal.fire({
       title: '¿Esta seguro que desea eliminar esta clase?',
@@ -150,7 +187,6 @@ export class LessonsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.lessonsService.deleteLesson(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
@@ -161,12 +197,25 @@ export class LessonsComponent implements OnInit {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar la clase',
-              text: resp.id 
+              text: resp.id
             });
           }
         })
       }
     })
+  }
+
+  getLesson(id) {
+    let data = {
+      id
+    };
+    this.lessonsService.getLessonById(data).subscribe((resp: any) => {
+      this.lesson = resp.clase;
+      this.chargeForCycle(this.lesson.ciclo_id);
+      this.getLevelById(this.lesson.nivel_id);
+      this.studentsLesson = resp.clase.alumnos;
+    });
+
   }
 
   chargeForCycle(id) {
@@ -183,12 +232,136 @@ export class LessonsComponent implements OnInit {
     })
   }
 
-  getLevelById(id){
-    let data = {
-      id
-    };
-    this.lessonsService.getLessonById(data).subscribe((resp: any) => {
-      this.level = resp.nivel;
+
+
+  chargeStudentsPerLevel(level) {
+    this.studentsPerLevel = [];
+    if (level != 'undefined') {
+      let data = {
+        id: level
+      };
+      this.LevelService.getLevelById(data).subscribe((resp: any) => {
+        this.studentsPerLevel = resp.nivel.alumnos;
+        if (this.studentsPerLevel.length < 1) {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'No existen alumnos asociados al nivel seleccionado',
+          });
+        }
+      });
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor seleccione un nivel',
+      });
+    }
+  }
+
+  addOrRemoveStudent(event, student) {
+    if (event == true) {
+      this.studentsManualAdd.push(student);
+    } else {
+      this.studentsManualAdd.splice(this.studentsManualAdd.indexOf(student), 1);
+    }
+  }
+
+
+  async chargeAssistance(lesson){
+    this.getLesson(lesson);
+    await new Promise(f => setTimeout(f, 800));
+    this.studentsAssistance = this.studentsLesson.map((s: any) => {
+      let assistance = {
+        alumno_id : s.id,
+        asistencia: s.pivot.asistencia
+      };
+      return assistance;
     });
+    console.log(this.studentsAssistance);
+    this.studentsId = this.studentsAssistance.map((s: any )=>{
+      return s.alumno_id;
+    });
+  }
+
+  changeStatusAssistance(event, student){
+    this.studentsAssistance[this.studentsId.indexOf(student)].asistencia = event;
+    console.log(this.studentsAssistance);
+  }
+
+  editAssistancePerStudent(modal) {
+    let Assistance = this.studentsAssistance.map((s: any) =>{
+      return s.asistencia
+    });
+    let data = {
+      clase_id : this.lesson.id,
+      alumnos_id: this.studentsId,
+      asistencias: Assistance
+    };
+    console.log(data);
+    this.lessonsService.UpdateListLesson(data).subscribe((resp: any )=>{
+      console.log(resp);
+      if(resp.code == 200){
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Asistencia registrada correctamente'
+        });
+        this.listLessons();
+        this.studentsAssistance = [];
+      }else{
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al registrar la asistencia'
+        });
+      }
+    })
+  }
+
+
+  addStudents(modal) {
+    if (this.studentsManualAdd.length >= 1) {
+      this.studentsPerLevel = this.studentsPerLevel.concat(this.studentsManualAdd);
+      this.studentsManualAdd = [];
+      modal.dismiss();
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor seleccione un alumno',
+      });
+    }
+  }
+
+  removeStudents(student) {
+    this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
+  }
+
+  AssignStudentToLesson(lesson_id) {
+    this.studentsId = this.studentsPerLevel.map((s: any) => {
+      return s.id;
+    });
+    let data = {
+      clase_id: lesson_id,
+      alumnos_id: this.studentsId
+    };
+    this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+      console.log(resp.code);
+      if (resp.code != 200) {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al asignar alumnos a la clase',
+        });
+      }
+    })
+  }
+
+
+
+
+  clearForm() {
+    this.levels = [];
+    this.studentsPerLevel = [];
+    this.studentsId = [];
+    this.students = [];
+    this.studentsManualAdd = [];
   }
 }

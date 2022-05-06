@@ -1,47 +1,51 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Niveles</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear un
-                    nivel</button>
-                <div class="table-responsive">
-                    <table class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>Nombre</b>
-                                </th>
-                                <th>
-                                    <b>Ciclo</b>
-                                </th>
-                                <th>
-                                    <b>Acciones</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let level of levels">
-                                <td>
-                                    {{level.nombre}}
-                                </td>
-                                <td>
-                                    {{level.ciclo.nombre}}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getLevel(level.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteLevel(level.id)"><i class="mdi mdi-delete"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Niveles</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Crear un
+            nivel</button>
+        <div class="table-responsive">
+            <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Ciclo</b>
+                        </th>
+                        <th>
+                            <b>Acciones</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let level of levels">
+                        <td>
+                            {{level.nombre}}
+                        </td>
+                        <td>
+                            {{level.ciclo.nombre}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);getLevel(level.id)"><i
+                                    class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteLevel(level.id)"><i class="mdi mdi-delete"></i></button>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                (click)="openModal(ModalAddStudentLevel);getLevel(level.id)"><i
+                                    class="mdi mdi-account-multiple-plus"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    <!-- </div>
+    </div>
+</div>
+<!-- </div>
 </div> -->
 
 <!-- Modal Create starts -->
@@ -63,8 +67,7 @@
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name"
-                                    placeholder="Nombre del nivel" #name>
+                                <input type="text" class="form-control" id="name" placeholder="Nombre del nivel" #name>
                             </div>
                             <div class="form-group">
                                 <label for="cycle">Ciclo</label>
@@ -111,8 +114,7 @@
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name"
-                                    [(ngModel)]="level.nombre" name="name"
+                                <input type="text" class="form-control" id="name" [(ngModel)]="level.nombre" name="name"
                                     #name="ngModel">
                             </div>
                             <div class="form-group">
@@ -120,7 +122,8 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="cycle" [(ngModel)]="level.ciclo_id" name="cycle" #cycle>
+                                    <select class="custom-select" id="cycle" [(ngModel)]="level.ciclo_id" name="cycle"
+                                        #cycle>
                                         <option selected>Seleccione un Ciclo</option>
                                         <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
                                         </option>
@@ -138,4 +141,86 @@
         </div>
     </div>
 </ng-template>
-    <!-- Modal Edit Ends -->
+<!-- Modal Edit Ends -->
+
+<!-- Modal AddStudentLevel starts -->
+<ng-template class="modal fade" #ModalAddStudentLevel let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Asignar Nivel</h4>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="establishment">Establecimiento</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="establishment"
+                                        (change)="getStudentsForEstableshments($event.target.value)" #establishment>
+                                        <option selected>Seleccione un establecimiento</option>
+                                        <option *ngFor="let establishment of establishments" [value]="establishment.id">
+                                            {{establishment.nombre}}</option>
+                                    </select>
+                                </div>
+                                <div class="table-responsive" *ngIf="students.length >= 1">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                                <th>
+                                                    <b>Asignar</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of students">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                                <td>
+                                                    <div class="form-check form-check-success">
+                                                        <label class="form-check-label" aria-label="Asignar">
+                                                            <input type="checkbox" class="form-check-input position-static" style="text-align: center;" [value]="student.id" id="studentLevel" (change)="addOrRemoveStudent($event.target.checked, studentLevel.value)" #studentLevel>
+                                                            <i class="input-helper"></i>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="addLevelStudent(modal)">Asignar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal AddStudentLevel Ends -->
