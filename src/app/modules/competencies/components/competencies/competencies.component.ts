@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CompetenciesModel } from '../../../../../models/competencies.model';
 import { CompetenciesService } from '../../services/competencies.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-competencies',
   templateUrl: './competencies.component.html',
   styleUrls: ['./competencies.component.scss']
 })
-export class CompetenciesComponent implements OnInit {
+export class CompetenciesComponent implements OnInit, OnDestroy {
 
   competition = new CompetenciesModel();
   cycles;
   competencies;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -33,6 +37,10 @@ export class CompetenciesComponent implements OnInit {
   ngOnInit(): void {
     this.listcycles();
     this.listCompetencies();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listcycles() {
@@ -44,6 +52,7 @@ export class CompetenciesComponent implements OnInit {
   listCompetencies() {
     this.CompetenciesService.getCompetencies().subscribe((resp: any) => {
       this.competencies = resp.competencias;
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -151,6 +160,9 @@ export class CompetenciesComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
 }
 
 

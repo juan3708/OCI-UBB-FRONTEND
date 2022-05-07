@@ -29,6 +29,8 @@ import { LevelModule } from './modules/level/level.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { AssistantsModule } from './modules/assistants/assistants.module';
+import { DataTablesModule } from 'angular-datatables';
+
 
 
 
@@ -66,7 +68,8 @@ import { AssistantsModule } from './modules/assistants/assistants.module';
     LevelModule,
     TeachersModule,
     LessonsModule,
-    AssistantsModule
+    AssistantsModule,
+    DataTablesModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

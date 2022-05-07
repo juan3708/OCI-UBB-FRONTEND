@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { AssistantModel } from 'src/models/assistant.model';
 import Swal from 'sweetalert2';
 import { AssistantsService } from '../../services/assistants.service';
@@ -10,10 +12,12 @@ import { AssistantsService } from '../../services/assistants.service';
   templateUrl: './assistants.component.html',
   styleUrls: ['./assistants.component.scss']
 })
-export class AssistantsComponent implements OnInit {
+export class AssistantsComponent implements OnInit, OnDestroy {
 
   assistants;
   assistant = new AssistantModel();
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -29,6 +33,10 @@ export class AssistantsComponent implements OnInit {
 
   ngOnInit(): void {
     this.listAssistants();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listAssistants() {
@@ -36,6 +44,7 @@ export class AssistantsComponent implements OnInit {
       console.log(resp.ayudantes);
       this.assistants = resp.ayudantes;
       console.log(this.assistants);
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -149,5 +158,9 @@ export class AssistantsComponent implements OnInit {
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }

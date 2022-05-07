@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { EstablishmentModel } from 'src/models/establishment.model';
 import Swal from 'sweetalert2';
 import { EstablishmentsService } from '../../services/establishments.service';
@@ -10,10 +12,12 @@ import { EstablishmentsService } from '../../services/establishments.service';
   templateUrl: './establishments.component.html',
   styleUrls: ['./establishments.component.scss']
 })
-export class EstablishmentsComponent implements OnInit {
+export class EstablishmentsComponent implements OnInit, OnDestroy {
 
   establishments;
   establishment = new EstablishmentModel();
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -29,11 +33,16 @@ export class EstablishmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.listEstablishments();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listEstablishments(){
     this.establishmentsService.getEstablishments().subscribe((resp:any)=>{
       this.establishments=resp.establecimientos;
+      this.dtTrigger.next(void 0);
     })
   }
 
@@ -146,5 +155,9 @@ export class EstablishmentsComponent implements OnInit {
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }

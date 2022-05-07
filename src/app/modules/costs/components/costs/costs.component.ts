@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DetailsModel } from '../../../../../models/details.model';
 import { CostsModel } from '../../../../../models/costs.model';
 import { CostsService } from '../../services/costs.service';
@@ -7,13 +7,15 @@ import Swal from 'sweetalert2';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-costs',
   templateUrl: './costs.component.html',
   styleUrls: ['./costs.component.scss']
 })
-export class CostsComponent implements OnInit {
+export class CostsComponent implements OnInit, OnDestroy {
 
   detail = new DetailsModel();
   detailsList;
@@ -25,6 +27,8 @@ export class CostsComponent implements OnInit {
   cycles;
   cycle = new CycleModel();
   total = 0;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -149,12 +153,17 @@ export class CostsComponent implements OnInit {
   ngOnInit(): void {
     this.listCosts();
     this.listCycles();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
 
   listCosts() {
     this.CostsService.getCosts().subscribe((resp: any) => {
       this.costs = resp.gastos;
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -434,4 +443,7 @@ export class CostsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
 }

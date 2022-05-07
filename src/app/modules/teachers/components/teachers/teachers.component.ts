@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { TeacherModel } from 'src/models/teacher.model';
 import Swal from 'sweetalert2';
 import { TeachersService } from '../../services/teachers.service';
@@ -10,10 +12,12 @@ import { TeachersService } from '../../services/teachers.service';
   templateUrl: './teachers.component.html',
   styleUrls: ['./teachers.component.scss']
 })
-export class TeachersComponent implements OnInit {
+export class TeachersComponent implements OnInit, OnDestroy {
 
   teachers;
   teacher = new TeacherModel();
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -29,6 +33,10 @@ export class TeachersComponent implements OnInit {
 
   ngOnInit(): void {
     this.listTeachers();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listTeachers() {
@@ -36,6 +44,7 @@ export class TeachersComponent implements OnInit {
       console.log("PROFESORES",resp.profesores);
       this.teachers = resp.profesores;
       console.log("TEACHERS",this.teachers);
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -152,5 +161,9 @@ export class TeachersComponent implements OnInit {
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }

@@ -1,18 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CoordinatorsService } from '../../services/coordinators.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { CoordinatorModel } from 'src/models/coordinator.model';
 import { NgForm } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-coordinators',
   templateUrl: './coordinators.component.html',
   styleUrls: ['./coordinators.component.scss']
 })
-export class CoordinatorsComponent implements OnInit {
+export class CoordinatorsComponent implements OnInit, OnDestroy {
 
   coordinators;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -29,15 +33,18 @@ export class CoordinatorsComponent implements OnInit {
 
   ngOnInit(): void {
     this.listCoordinators();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listCoordinators() {
     this.coordinatorsService.getCoordinators().subscribe((resp: any) => {
       this.coordinators = resp.coordinadores;
-
+      this.dtTrigger.next(void 0);
     })
   }
-
 
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
@@ -143,5 +150,9 @@ export class CoordinatorsComponent implements OnInit {
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+      this.dtTrigger.unsubscribe();
   }
 }

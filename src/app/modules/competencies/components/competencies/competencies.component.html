@@ -6,7 +6,7 @@
           <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Crear Competencia</button>
           <div class="table-responsive">
-            <table class="table table-striped" style="text-align: center;">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
               <thead class="table table-bordered">
                 <tr>
                   <th >

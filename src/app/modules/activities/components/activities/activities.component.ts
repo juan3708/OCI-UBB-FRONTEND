@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivitiesModel } from '../../../../../models/activities.model';
 import { ActivitiesService } from '../../services/activities.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-activities',
   templateUrl: './activities.component.html',
   styleUrls: ['./activities.component.scss']
 })
-export class ActivitiesComponent implements OnInit {
+export class ActivitiesComponent implements OnInit, OnDestroy {
 
   activities;
   cycles;
   activity = new ActivitiesModel();
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -32,11 +36,16 @@ export class ActivitiesComponent implements OnInit {
   ngOnInit(): void {
     this.listActivities();
     this.listCycles();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listActivities(){
     this.activitiesService.getActivities().subscribe((resp: any) =>{
       this.activities = resp.actividades;
+      this.dtTrigger.next(void 0);
     })
   }
 
@@ -45,8 +54,6 @@ export class ActivitiesComponent implements OnInit {
       this.cycles = resp.ciclos;
     })
   }
-
-
 
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
@@ -151,7 +158,10 @@ export class ActivitiesComponent implements OnInit {
         });
       }
     });
-
   }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+}
 
 }

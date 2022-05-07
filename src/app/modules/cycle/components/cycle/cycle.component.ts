@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CycleService } from '../../services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { FormGroup, NgForm } from '@angular/forms';
 import { CycleModel } from '../../../../../models/cycle.model';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-cycle',
   templateUrl: './cycle.component.html',
   styleUrls: ['./cycle.component.scss']
 })
-export class CycleComponent implements OnInit {
+export class CycleComponent implements OnInit, OnDestroy {
 
   cycles;
   coordinators;
   cyclesEdit: FormGroup;
   cycle = new CycleModel;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -33,11 +37,16 @@ export class CycleComponent implements OnInit {
   ngOnInit(): void {
     this.listCycles();
     this.listCoordinators();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listCycles(){
     this.CycleService.getCycles().subscribe((resp: any)=>{
       this.cycles = resp.ciclos;
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -157,4 +166,7 @@ getCycle(id){
     })
   }
 
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
 }

@@ -1,20 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../../services/students.service';
 import Swal from 'sweetalert2';
 import { StudentModel } from 'src/models/student.model';
 import { NgForm } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.scss']
 })
-export class StudentsComponent implements OnInit {
+export class StudentsComponent implements OnInit, OnDestroy {
 
   students;
   establishments;
   student = new StudentModel();
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -31,11 +35,16 @@ export class StudentsComponent implements OnInit {
   ngOnInit(): void {
     this.listStudents();
     this.listEstablishments();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listStudents(){
     this.studentsService.getStudents().subscribe((resp:any)=>{
       this.students=resp.alumnos;
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -156,5 +165,9 @@ export class StudentsComponent implements OnInit {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }

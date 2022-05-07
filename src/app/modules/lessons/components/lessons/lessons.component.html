@@ -7,7 +7,7 @@
             (click)="openModal(ModalContent)">Registrar
             Clase</button>
         <div class="table-responsive">
-            <table class="table table-striped" style="text-align: center;">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
                 <thead class="table table-bordered">
                     <tr>
                         <th>

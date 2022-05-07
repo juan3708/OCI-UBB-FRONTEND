@@ -5,6 +5,7 @@ import { ActivitiesRoutingModule } from './activities-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActivitiesComponent } from './components/activities/activities.component';
+import { DataTablesModule } from 'angular-datatables';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { ActivitiesComponent } from './components/activities/activities.componen
     ActivitiesRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    DataTablesModule
   ]
 })
 export class ActivitiesModule { }

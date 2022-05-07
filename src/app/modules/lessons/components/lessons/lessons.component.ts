@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
@@ -9,13 +9,15 @@ import Swal from 'sweetalert2';
 import { LessonsService } from '../../services/lessons.service';
 import { LevelService } from '../../../level/services/level.service';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 
 @Component({
   selector: 'app-lessons',
   templateUrl: './lessons.component.html',
   styleUrls: ['./lessons.component.scss']
 })
-export class LessonsComponent implements OnInit {
+export class LessonsComponent implements OnInit, OnDestroy {
 
   lessons;
   cycles;
@@ -32,6 +34,8 @@ export class LessonsComponent implements OnInit {
   studentsManualAdd = [];
   studentsLesson = [];
   studentList;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -48,11 +52,16 @@ export class LessonsComponent implements OnInit {
   ngOnInit(): void {
     this.listLessons();
     this.listCycles();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
   }
 
   listLessons() {
     this.lessonsService.getLessons().subscribe((resp: any) => {
       this.lessons = resp.clases;
+      this.dtTrigger.next(void 0);
     });
   }
 
@@ -354,14 +363,15 @@ export class LessonsComponent implements OnInit {
     })
   }
 
-
-
-
   clearForm() {
     this.levels = [];
     this.studentsPerLevel = [];
     this.studentsId = [];
     this.students = [];
     this.studentsManualAdd = [];
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }
