@@ -36,8 +36,18 @@ export class CycleService {
     return this.http.post(url+'/ciclo/getbyid/', id, option);
   }
 
+  getCycleByFinishDate(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+  }
+
   editCycle(data) {
     const option = { headers: this.headers };
     return this.http.put(url+'/ciclo/edit', data, option);
+  }
+
+  sendEmails(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/mail/inv', data, option);
   }
 }
