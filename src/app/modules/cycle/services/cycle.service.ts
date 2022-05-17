@@ -50,4 +50,59 @@ export class CycleService {
     const option = { headers: this.headers };
     return this.http.post(url +'/mail/inv', data, option);
   }
+
+  chargeEstablishments(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/chargeestablishments', data, option);
+  }
+
+  updateEstablishments(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/updateestablishments', data, option);
+  }
+
+  deleteEstablishments(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/deleteestablishments', data, option);
+  }
+
+  chargeStudents(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/chargestudents', data, option);
+  }
+
+  updateCandidates(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+  }
+
+  updateEnrolled(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+  }
+
+  deleteStudents(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+  }
+
+  getStudentsCandidatePerCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentscandidate', data, option);
+  }
+
+  getStudentsCandidatePerCyclePerFinishDate(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentscandidatepercycleperfinishdate', data, option);
+  }
+
+  getStudentsEnrolledPerCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentsenrolled', data, option);
+  }
+
+  getStudentsEnrolledPerCyclePerFinishDate(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentsenrolledpercycleperfinishdate', data, option);
+  }
 }

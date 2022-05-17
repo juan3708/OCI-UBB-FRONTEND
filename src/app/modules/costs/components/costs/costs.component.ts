@@ -9,6 +9,7 @@ import { CycleModel } from '../../../../../models/cycle.model';
 import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-costs',
@@ -21,6 +22,7 @@ export class CostsComponent implements OnInit, OnDestroy {
   detailsList;
   costs;
   cost = new CostsModel();
+  currentDate;
   competencies = [];
   activities = [];
   ids = [];
@@ -97,7 +99,7 @@ export class CostsComponent implements OnInit, OnDestroy {
       let data = {
         valor: this.total,
         fecha: form.date,
-        ciclo_id: form.cycle,
+        ciclo_id: this.cycle.id,
         actividad_id: form.activity,
         competencia_id: form.competition
       }
@@ -125,7 +127,7 @@ export class CostsComponent implements OnInit, OnDestroy {
             icon: 'success',
             title: 'Se ha creado correctamente'
           });
-          this.listCosts();
+          this.listCostsPerCycle();
           this.clearForm();
         } else {
           if (resp.code == 400) {
@@ -151,7 +153,9 @@ export class CostsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.listCosts();
+    //this.listCosts();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.listCycles();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -175,21 +179,52 @@ export class CostsComponent implements OnInit, OnDestroy {
     });
   }
 
+  listCostsPerCycle() {
+    let data = {
+      id: this.cycle.id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.costs = resp.ciclo.gastos;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.costs = resp.ciclo.gastos;
+        this.competencies = resp.ciclo.competencias;
+        this.activities = resp.ciclo.actividades;
+        this.dtTrigger.next(void 0);
+      } else {
+        this.competencies = [];
+        this.activities = [];
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
   chargeForCycle(id) {
     let data = {
       id
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      if (resp.code == 200) {
-        this.competencies = resp.ciclo.competencias;
-        this.activities = resp.ciclo.actividades;
-      } else {
-        this.competencies = [];
-        this.activities = [];
-      }
+      this.costs = resp.ciclo.gastos;
+      // this.competencies = resp.ciclo.competencias;
+      // this.activities = resp.ciclo.actividades;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
     })
-  };
+  }
 
   getCost(id) {
     let data = {
@@ -199,7 +234,6 @@ export class CostsComponent implements OnInit, OnDestroy {
     this.CostsService.getCostsById(data).subscribe((resp: any) => {
       this.cost = resp.gastos;
       this.detailsList = resp.gastos.detalles;
-      this.chargeForCycle(this.cost.ciclo_id);
       this.setCostCreateForm();
     });
   }
@@ -241,7 +275,7 @@ export class CostsComponent implements OnInit, OnDestroy {
         id: this.cost.id,
         valor: this.total,
         fecha: form.date,
-        ciclo_id: form.cycle,
+        ciclo_id: this.cycle.id,
         actividad_id: form.activity,
         competencia_id: form.competition
       };
@@ -370,7 +404,7 @@ export class CostsComponent implements OnInit, OnDestroy {
             icon: 'success',
             title: 'Se ha editado correctamente'
           });
-          this.listCosts();
+          this.listCostsPerCycle();
           this.clearForm();
         } else {
           if (resp.code == 400) {
@@ -431,7 +465,7 @@ export class CostsComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Se ha eliminado correctamente'
             });
-            this.listCosts();
+            this.listCostsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

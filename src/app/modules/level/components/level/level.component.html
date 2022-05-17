@@ -6,15 +6,21 @@
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Crear un
             nivel</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select>
+        </div>
         <div class="table-responsive">
-            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
                 <thead class="table table-bordered">
                     <tr>
                         <th>
                             <b>Nombre</b>
-                        </th>
-                        <th>
-                            <b>Ciclo</b>
                         </th>
                         <th>
                             <b>Acciones</b>
@@ -25,9 +31,6 @@
                     <tr *ngFor="let level of levels">
                         <td>
                             {{level.nombre}}
-                        </td>
-                        <td>
-                            {{level.ciclo.nombre}}
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
@@ -60,7 +63,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Crear nivel</h4>
+                        <h4 class="card-title">Crear nivel {{cycle.nombre}}</h4>
                         <p class="card-description">
                             Ingrese los campos para la creacion de un nivel.
                         </p>
@@ -69,26 +72,13 @@
                                 <label for="name">Nombre</label>
                                 <input type="text" class="form-control" id="name" placeholder="Nombre del nivel" #name>
                             </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="inputGroupSelect01" #cycle>
-                                        <option selected>Seleccione un Ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success"
-                (click)="levelFormCreate(name.value, cycle.value, modal)">Crear</button>
+            <button type="button" class="btn btn-success" (click)="levelFormCreate(name.value, modal)">Crear</button>
             <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
@@ -117,19 +107,6 @@
                                 <input type="text" class="form-control" id="name" [(ngModel)]="level.nombre" name="name"
                                     #name="ngModel">
                             </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="cycle" [(ngModel)]="level.ciclo_id" name="cycle"
-                                        #cycle>
-                                        <option selected>Seleccione un Ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -147,7 +124,8 @@
 <ng-template class="modal fade" #ModalAddStudentLevel let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -201,7 +179,12 @@
                                                 <td>
                                                     <div class="form-check form-check-success">
                                                         <label class="form-check-label" aria-label="Asignar">
-                                                            <input type="checkbox" class="form-check-input position-static" style="text-align: center;" [value]="student.id" id="studentLevel" (change)="addOrRemoveStudent($event.target.checked, studentLevel.value)" #studentLevel>
+                                                            <input type="checkbox"
+                                                                class="form-check-input position-static"
+                                                                style="text-align: center;" [value]="student.id"
+                                                                id="studentLevel"
+                                                                (change)="addOrRemoveStudent($event.target.checked, studentLevel.value)"
+                                                                #studentLevel>
                                                             <i class="input-helper"></i>
                                                         </label>
                                                     </div>
@@ -217,9 +200,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success"
-                (click)="addLevelStudent(modal)">Asignar</button>
-            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm()">Cancelar</button>
+            <button type="button" class="btn btn-success" (click)="addLevelStudent(modal)">Asignar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
         </div>
     </div>
 </ng-template>

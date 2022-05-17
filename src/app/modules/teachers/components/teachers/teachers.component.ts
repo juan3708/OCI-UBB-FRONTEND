@@ -41,9 +41,7 @@ export class TeachersComponent implements OnInit, OnDestroy {
 
   listTeachers() {
     this.teachersService.getTeachers().subscribe((resp: any) => {
-      console.log("PROFESORES",resp.profesores);
       this.teachers = resp.profesores;
-      console.log("TEACHERS",this.teachers);
       this.dtTrigger.next(void 0);
     });
   }
@@ -57,15 +55,11 @@ export class TeachersComponent implements OnInit, OnDestroy {
       id
     };
     this.teachersService.getTeacherById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
       this.teacher = resp.profesor;
-      console.log(this.teacher);
     });
   }
 
   teacherFormCreate(rut, name, surname, email, faculty, modality, modal) {
-    console.log(rut, name, surname, email, faculty, modality);
     let data = {
       rut,
       nombre: name,
@@ -74,9 +68,7 @@ export class TeachersComponent implements OnInit, OnDestroy {
       facultad: faculty,
       modalidad: modality
     };
-    console.log(data);
     this.teachersService.createTeacher(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -103,7 +95,6 @@ export class TeachersComponent implements OnInit, OnDestroy {
 
   teacherFormEdit(form: NgForm, modal){
     this.teachersService.editTeacher(this.teacher).subscribe((resp: any)=> {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -144,7 +135,6 @@ export class TeachersComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         this.teachersService.deleteTeacher(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',

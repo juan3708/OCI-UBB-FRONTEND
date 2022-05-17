@@ -21,7 +21,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
   establishment = new EstablishmentModel();
   cycle = new CycleModel();
   cycles;
-  currentDate
+  currentDate;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -38,7 +38,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
   constructor(private establishmentsService: EstablishmentsService, private CycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listEstablishments();
+    //this.listEstablishments();
     this.lisCycles();
     this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.getCyclePerFinishtDate();
@@ -116,6 +116,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
+      this.establishments = resp.ciclo.establecimientos;
     })
   }
 
@@ -125,7 +126,9 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
       if(resp.code == 200){
-        this.cycle = resp.ciclo[0];
+        this.cycle = resp.ciclo;
+        this.establishments = resp.ciclo.establecimientos;
+        this.dtTrigger.next(void 0);
       }else{
         this.Toast.fire({
           icon: 'error',

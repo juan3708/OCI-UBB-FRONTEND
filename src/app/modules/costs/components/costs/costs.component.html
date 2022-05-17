@@ -1,70 +1,75 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Gastos</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
-                    gasto</button>
-                <div class="table-responsive">
-                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>Fecha</b>
-                                </th>
-                                <th>
-                                    <b>Valor Total</b>
-                                </th>
-                                <th>
-                                    <b>Ciclo</b>
-                                </th>
-                                <th>
-                                    <b>Actividad/Competencia</b>
-                                </th>
-                                <th>
-                                    <b>Acciones</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let cost of costs">
-                                <td>
-                                    {{cost.fecha | date:"dd/MM/yyyy"}}
-                                </td>
-                                <td>
-                                    {{cost.valor | currency: 'CLP':"$"}}
-                                </td>
-                                <td>
-                                    {{cost.ciclo.nombre}}
-                                </td>
-                                <td *ngIf="cost.actividad == null&&cost.competencia == null">
-                                    No aplica
-                                </td>
-                                <td *ngIf="cost.actividad &&cost.competencia">
-                                    {{cost.actividad.nombre}}/{{cost.competencia.tipo}}
-                                </td>
-                                <td *ngIf="cost.actividad && cost.competencia == null">
-                                    {{cost.actividad.nombre}}
-                                </td>
-                                <td *ngIf="cost.competencia && cost.actividad == null">
-                                    {{cost.competencia.tipo}}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentDetails);getCost(cost.id)"><i class="mdi mdi-eye"></i></button>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getCost(cost.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteCost(cost.id);getCost(cost.id)"><i class="mdi mdi-delete"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Gastos</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Crear
+            gasto</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
             </div>
+            <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select>
         </div>
-    <!-- </div>
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Fecha</b>
+                        </th>
+                        <th>
+                            <b>Valor Total</b>
+                        </th>
+                        <th>
+                            <b>Actividad/Competencia</b>
+                        </th>
+                        <th>
+                            <b>Acciones</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let cost of costs">
+                        <td>
+                            {{cost.fecha | date:"dd/MM/yyyy"}}
+                        </td>
+                        <td>
+                            {{cost.valor | currency: 'CLP':"$"}}
+                        </td>
+                        <td *ngIf="cost.actividad == null&&cost.competencia == null">
+                            No aplica
+                        </td>
+                        <td *ngIf="cost.actividad &&cost.competencia">
+                            {{cost.actividad.nombre}}/{{cost.competencia.tipo}}
+                        </td>
+                        <td *ngIf="cost.actividad && cost.competencia == null">
+                            {{cost.actividad.nombre}}
+                        </td>
+                        <td *ngIf="cost.competencia && cost.actividad == null">
+                            {{cost.competencia.tipo}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                (click)="openModal(ModalContentDetails);getCost(cost.id)"><i
+                                    class="mdi mdi-eye"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);getCost(cost.id)"><i
+                                    class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteCost(cost.id);getCost(cost.id)"><i class="mdi mdi-delete"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div>
 </div> -->
 <!-- Modal Details starts -->
 <ng-template class="modal fade" #ModalContentDetails let-modal>
@@ -127,7 +132,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="costsFormCreate">
-                        <h4 class="card-title">Crear Gasto</h4>
+                        <h4 class="card-title">Crear Gasto {{cycle.nombre}}</h4>
                         <p class="card-description">
                             Ingrese los campos para la creacion del gasto.
                         </p>
@@ -135,19 +140,6 @@
                             <label for="date">Fecha</label>
                             <input style="width: 50%;" type="date" class="form-control" id="date"
                                 placeholder="aaaa-mm-dd" formControlName="date">
-                        </div>
-                        <div class="form-group">
-                            <label for="cycle">Ciclo</label>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                </div>
-                                <select class="custom-select" (change)="chargeForCycle($event.target.value)"
-                                    formControlName="cycle">
-                                    <option [ngValue]="null">Seleccione un ciclo</option>
-                                    <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                    </option>
-                                </select>
-                            </div>
                         </div>
                         <div class="form-group" *ngIf="activities.length >= 1">
                             <label for="activity">Actividad</label>
@@ -232,19 +224,6 @@
                             <label for="date">Fecha</label>
                             <input style="width: 50%;" type="date" class="form-control" id="date"
                                 placeholder="aaaa-mm-dd" formControlName="date">
-                        </div>
-                        <div class="form-group">
-                            <label for="cycle">Ciclo</label>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                </div>
-                                <select class="custom-select" (change)="chargeForCycle($event.target.value)"
-                                    formControlName="cycle">
-                                    <option [ngValue]="null">Seleccione un ciclo</option>
-                                    <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                    </option>
-                                </select>
-                            </div>
                         </div>
                         <div class="form-group" *ngIf="activities.length >= 1">
                             <label for="activity">Actividad</label>

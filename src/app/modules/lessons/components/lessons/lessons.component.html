@@ -6,8 +6,17 @@
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Registrar
             Clase</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select>
+        </div>
         <div class="table-responsive">
-            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
                 <thead class="table table-bordered">
                     <tr>
                         <th>
@@ -67,7 +76,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Registrar clase</h4>
+                        <h4 class="card-title">Registrar clase {{cycle.nombre}}</h4>
                         <p class="card-description">
                             Ingrese los campos para el registro de la clase.
                         </p>
@@ -80,19 +89,6 @@
                                 <label for="lessonDate">Fecha</label>
                                 <input style="width: 50%;" type="date" class="form-control" id="lessonDate"
                                     placeholder="aaaa-mm-dd" #lessonDate>
-                            </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="cycle"
-                                        (change)="chargeForCycle($event.target.value)" #cycle>
-                                        <option selected [ngValue]="null">Seleccione un ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">
-                                            {{cycle.nombre}}</option>
-                                    </select>
-                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="level">Nivel</label>
@@ -157,7 +153,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="lessonFormCreate(content.value, lessonDate.value, cycle.value, level.value, modal)">Crear</button>
+                (click)="lessonFormCreate(content.value, lessonDate.value, level.value, modal)">Crear</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();clearForm()">Cancelar</button>
         </div>
@@ -312,8 +308,7 @@
                                                             <input class="checkbox" type="checkbox"
                                                                 id="studentAssistance" name="studentAssistance"
                                                                 (change)="changeStatusAssistance($event.target.checked ? 1: 0, student.id)"
-                                                                [checked]="student.pivot.asistencia == 1"
-                                                                 />
+                                                                [checked]="student.pivot.asistencia == 1" />
                                                             <div class="check-bg"></div>
                                                             <div class="checkmark">
                                                                 <svg viewBox="0 0 100 100">

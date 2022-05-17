@@ -2,10 +2,7 @@
     <div class="col-lg-10 grid-margin stretch-card"> -->
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title"><b>Ayudantes</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Registrar
-                    Ayudante</button>
+                <h4 class="card-title"><b>Ayudantes por ciclo</b></h4>
                 <div class="table-responsive">
                     <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
                         <thead class="table table-bordered">
@@ -57,52 +54,6 @@
     <!-- </div>
 </div> -->
 
-<!-- Modal Create starts  -->
-<ng-template class="modal fade" #ModalContent let-modal>
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="col-12 stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Registrar ayudante</h4>
-                        <p class="card-description">
-                            Ingrese los campos para el registro del ayudante.
-                        </p>
-                        <form class="forms-sample">
-                            <div class="form-group">
-                                <label for="rut">RUT</label>
-                                <input type="text" class="form-control" id="rut" placeholder="12345678-9" #rut>
-                            </div>
-                            <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name" placeholder="Nombre" #name>
-                            </div>
-                            <div class="form-group">
-                                <label for="surname">Apellidos</label>
-                                <input type="text" class="form-control" id="surname" placeholder="Apellidos" #surname>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Correo</label>
-                                <input type="email" class="form-control" id="email" placeholder="Email" #email>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-success"
-                (click)="assistantFormCreate(rut.value, name.value, surname.value, email.value, modal)">Crear</button>
-            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
-        </div>
-    </div>
-</ng-template>
-<!-- Modal Create ends  -->
 
 <!-- Modal Edit starts-->
 <ng-template class="modal fade" #ModalContentEdit let-modal>

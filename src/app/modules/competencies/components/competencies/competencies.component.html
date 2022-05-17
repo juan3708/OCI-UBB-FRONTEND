@@ -1,160 +1,148 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title"><b>Competencias</b></h4>
-          <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear Competencia</button>
-          <div class="table-responsive">
-            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
-              <thead class="table table-bordered">
-                <tr>
-                  <th >
-                    <b>Tipo</b>
-                  </th>
-                  <th>
-                    <b>Lugar</b>
-                  </th>
-                  <th>
-                    <b>Fecha</b>
-                  </th>
-                  <th>
-                    <b>Ciclo</b>
-                  </th>
-                  <th>
-                    <b>Acción</b>
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="table table-bordered">
-                <tr *ngFor="let competition of competencies">
-                  <td>
-                    {{competition.tipo}}
-                  </td>
-                  <td>
-                    {{competition.lugar}}
-                  </td>
-                  <td>
-                    {{competition.fecha | date:"dd/MM/yyyy"}}
-                  </td>
-                  <td>
-                    {{competition.ciclo.nombre}}
-                  </td>
-                  <td>
-                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteCompetition(competition.id)" ><i class="mdi mdi-delete"></i></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title"><b>Competencias</b></h4>
+    <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+      (click)="openModal(ModalContent)">Crear Competencia</button>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
       </div>
-    <!-- </div>
+      <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+        <option *ngFor="let cycle of cycles" [value]="cycle.id">
+          {{cycle.nombre}}</option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+        style="text-align: center;">
+        <thead class="table table-bordered">
+          <tr>
+            <th>
+              <b>Tipo</b>
+            </th>
+            <th>
+              <b>Lugar</b>
+            </th>
+            <th>
+              <b>Fecha</b>
+            </th>
+            <th>
+              <b>Acción</b>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table table-bordered">
+          <tr *ngFor="let competition of competencies">
+            <td>
+              {{competition.tipo}}
+            </td>
+            <td>
+              {{competition.lugar}}
+            </td>
+            <td>
+              {{competition.fecha | date:"dd/MM/yyyy"}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i
+                  class="mdi mdi-grease-pencil"></i></button>
+              <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                (click)="deleteCompetition(competition.id)"><i class="mdi mdi-delete"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- </div>
   </div> -->
-  
-  <!-- Modal Create starts -->
-  <ng-template class="modal fade" #ModalContent let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-12 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Crear Competencias</h4>
-              <p class="card-description">
-                Ingrese los campos para la creacion de la competencia.
-              </p>
-              <form class="forms-sample">
-                <div class="form-group">
-                  <label for="type">Tipo</label>
-                  <input type="text" class="form-control" id="type" placeholder="Tipo" #type>
-                </div>
-                <div class="form-group">
-                  <label for="location">Lugar</label>
-                  <input type="text" class="form-control" id="location" placeholder="Lugar" #location>
-                </div>
-                <div class="form-group">
-                  <label for="date">Fecha</label>
-                  <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" #date>
-                </div>
-                <div class="form-group">
-                  <label for="cycle">Ciclo</label>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                    </div>
-                    <select class="custom-select" id="inputGroupSelect01" #cycle>
-                      <option selected>Seleccione un ciclo</option>
-                      <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}</option>
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalContent let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Crear Competencias {{cycle.nombre}}</h4>
+            <p class="card-description">
+              Ingrese los campos para la creacion de la competencia.
+            </p>
+            <form class="forms-sample">
+              <div class="form-group">
+                <label for="type">Tipo</label>
+                <input type="text" class="form-control" id="type" placeholder="Tipo" #type>
+              </div>
+              <div class="form-group">
+                <label for="location">Lugar</label>
+                <input type="text" class="form-control" id="location" placeholder="Lugar" #location>
+              </div>
+              <div class="form-group">
+                <label for="date">Fecha</label>
+                <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" #date>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="competitionFormCreate(type.value, location.value, date.value, cycle.value, modal)">Crear</button>
-        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
       </div>
     </div>
-  </ng-template>
-  <!-- Modal Create Ends -->
-  
-  <!-- Modal Edit starts -->
-  <ng-template class="modal fade" #ModalContentEdit let-modal>
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="col-12 stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Editar competencia</h4>
-                <p class="card-description">
-                  Ingrese los campos para la edicion de la competencia.
-                </p>
-                <form class="forms-sample" #f="ngForm">
-                  <div class="form-group">
-                    <label for="type">Tipo</label>
-                    <input type="text" class="form-control" id="type" [(ngModel)]="competition.tipo" name="type" #type="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="location">Lugar</label>
-                    <input type="text" class="form-control" id="location" [(ngModel)]="competition.lugar" name="location" #location="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="date">Fecha</label>
-                    <input style="width: 50%;" type="date" class="form-control" id="date" [(ngModel)]="competition.fecha" name="date" #date="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="cycle">Ciclo</label>
-                    <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                      </div>
-                      <select class="custom-select" id="cycle" [(ngModel)]="competition.ciclo_id" name="cycle" #cycle="ngModel">
-                        <option selected>Seleccione un ciclo</option>
-                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}</option>
-                      </select>
-                    </div>
-                  </div>
-                </form>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success"
+        (click)="competitionFormCreate(type.value, location.value, date.value, modal)">Crear</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Create Ends -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Editar competencia</h4>
+            <p class="card-description">
+              Ingrese los campos para la edicion de la competencia.
+            </p>
+            <form class="forms-sample" #f="ngForm">
+              <div class="form-group">
+                <label for="type">Tipo</label>
+                <input type="text" class="form-control" id="type" [(ngModel)]="competition.tipo" name="type"
+                  #type="ngModel">
               </div>
-            </div>
+              <div class="form-group">
+                <label for="location">Lugar</label>
+                <input type="text" class="form-control" id="location" [(ngModel)]="competition.lugar" name="location"
+                  #location="ngModel">
+              </div>
+              <div class="form-group">
+                <label for="date">Fecha</label>
+                <input style="width: 50%;" type="date" class="form-control" id="date" [(ngModel)]="competition.fecha"
+                  name="date" #date="ngModel">
+              </div>
+            </form>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="competitionFormEdit(f, modal)">Editar</button>
-          <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
-        </div>
       </div>
-    </ng-template>
-    <!-- Modal Edit ends -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="competitionFormEdit(f, modal)">Editar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Edit ends -->

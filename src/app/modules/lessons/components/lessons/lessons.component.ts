@@ -11,6 +11,7 @@ import { LevelService } from '../../../level/services/level.service';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-lessons',
@@ -23,6 +24,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
   cycles;
   establishments;
   bool;
+  currentDate;
   lesson = new LessonModel();
   cycle = new CycleModel();
   level = new LevelModel();
@@ -50,8 +52,10 @@ export class LessonsComponent implements OnInit, OnDestroy {
   constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listLessons();
+    //this.listLessons();
     this.listCycles();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -64,6 +68,18 @@ export class LessonsComponent implements OnInit, OnDestroy {
       this.dtTrigger.next(void 0);
     });
   }
+
+  listLessonsPerCycle(){
+    let data = {
+      id: this.cycle.id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.lessons = resp.ciclo.clases;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
 
   listCycles() {
     this.lessonsService.getCycles().subscribe((resp: any) => {
@@ -91,6 +107,36 @@ export class LessonsComponent implements OnInit, OnDestroy {
     });
   }
 
+  getCyclePerFinishtDate(){
+    let data = {
+      fecha_termino : this.currentDate
+    };
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+      if(resp.code == 200){
+        this.cycle = resp.ciclo;
+        this.lessons = resp.ciclo.clases;
+        this.dtTrigger.next(void 0);
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.lessons = resp.ciclo.clases;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
   getStudentsForEstableshments(id) {
     let data = {
       id
@@ -102,11 +148,11 @@ export class LessonsComponent implements OnInit, OnDestroy {
     })
   }
 
-  lessonFormCreate(content, lessonDate, cycle, level, modal) {
+  lessonFormCreate(content, lessonDate, level, modal) {
     let data = {
       contenido: content,
       fecha: lessonDate,
-      ciclo_id: cycle,
+      ciclo_id: this.cycle.id,
       nivel_id: level
     };
     if (this.studentsPerLevel.length >= 1) {
@@ -119,7 +165,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
             icon: 'success',
             title: 'Clase creada correctamente'
           });
-          this.listLessons();
+          this.listLessonsPerCycle();
 
         } else {
           if (resp.code == 400) {
@@ -153,7 +199,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Clase editada correctamente'
         });
-        this.listLessons();
+        this.listLessonsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -201,7 +247,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Clase eliminada correctamente'
             });
-            this.listLessons();
+            this.listLessonsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -285,7 +331,6 @@ export class LessonsComponent implements OnInit, OnDestroy {
       };
       return assistance;
     });
-    console.log(this.studentsAssistance);
     this.studentsId = this.studentsAssistance.map((s: any )=>{
       return s.alumno_id;
     });
@@ -293,7 +338,6 @@ export class LessonsComponent implements OnInit, OnDestroy {
 
   changeStatusAssistance(event, student){
     this.studentsAssistance[this.studentsId.indexOf(student)].asistencia = event;
-    console.log(this.studentsAssistance);
   }
 
   editAssistancePerStudent(modal) {
@@ -305,9 +349,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
       alumnos_id: this.studentsId,
       asistencias: Assistance
     };
-    console.log(data);
     this.lessonsService.UpdateListLesson(data).subscribe((resp: any )=>{
-      console.log(resp);
       if(resp.code == 200){
         modal.dismiss();
         this.Toast.fire({
@@ -353,7 +395,6 @@ export class LessonsComponent implements OnInit, OnDestroy {
       alumnos_id: this.studentsId
     };
     this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
-      console.log(resp.code);
       if (resp.code != 200) {
         this.Toast.fire({
           icon: 'error',

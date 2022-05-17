@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-activities',
@@ -17,6 +19,8 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
 
   activities;
   cycles;
+  cycle = new CycleModel();
+  currentDate;
   activity = new ActivitiesModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -34,8 +38,10 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
   constructor(private activitiesService: ActivitiesService, private CycleService: CycleService, private modalService : NgbModal) { }
 
   ngOnInit(): void {
-    this.listActivities();
+    //this.listActivities();
     this.listCycles();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -49,9 +55,50 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     })
   }
 
+  listActivitiesPerCycle(){
+    let data = {
+      id: this.cycle.id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.activities = resp.ciclo.actividades;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
   listCycles(){
     this.CycleService.getCycles().subscribe((resp: any)=>{
       this.cycles = resp.ciclos;
+    })
+  }
+
+  getCyclePerFinishtDate(){
+    let data = {
+      fecha_termino : this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+      if(resp.code == 200){
+        this.cycle = resp.ciclo;
+        this.activities = resp.ciclo.actividades;
+        this.dtTrigger.next(void 0);
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+    getCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.activities = resp.ciclo.actividades;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
     })
   }
 
@@ -59,12 +106,12 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
 
-  activityFormCreate(name, description, date, cycle, modal){
+  activityFormCreate(name, description, date, modal){
     let data = {
       nombre: name,
       descripcion: description,
       fecha: date,
-      ciclo_id: cycle
+      ciclo_id: this.cycle.id
     };
     this.activitiesService.createActivity(data).subscribe((resp:any)=>{
       if(resp.code===200){        
@@ -73,7 +120,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
-        this.listActivities();
+        this.listActivitiesPerCycle();
       }else{
         if (resp.code == 400) {
           this.Toast.fire({
@@ -108,7 +155,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Actividad editada correctamente',
         });
-        this.listActivities();
+        this.listActivitiesPerCycle();
       }else{
         if (resp.code == 400) {
           this.Toast.fire({
@@ -147,7 +194,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Actividad eliminada correctamente',
             });
-            this.listActivities();
+            this.listActivitiesPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

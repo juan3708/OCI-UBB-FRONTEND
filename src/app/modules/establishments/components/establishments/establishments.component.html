@@ -2,9 +2,7 @@
   <div class="col-lg-10 grid-margin stretch-card"> -->
 <div class="card">
   <div class="card-body">
-    <h4 class="card-title"><b>Establecimientos</b></h4>
-    <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-      (click)="openModal(ModalContent)">Registrar establecimiento</button>
+    <h4 class="card-title"><b>Establecimientos por Ciclo</b></h4>
     <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
       (click)="openModal(EmailModal)"><i class="mdi mdi-email"></i></button>
     <div class="input-group mb-3">
@@ -60,76 +58,6 @@
 </div>
 <!-- </div>
 </div> -->
-
-<!-- Modal Create starts -->
-<ng-template class="modal fade" #ModalContent let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="col-12 stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Registrar establecimiento</h4>
-            <p class="card-description">
-              Ingrese los campos para el registro del establecimiento.
-            </p>
-            <form class="forms-sample">
-              <div class="form-group">
-                <label for="establishmentName">Nombre del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentName" placeholder="Nombre del establecimiento"
-                  #establishmentName>
-              </div>
-              <div class="form-group">
-                <label for="director">Director del establecimiento</label>
-                <input type="text" class="form-control" id="director" placeholder="Nombre del director" #director>
-              </div>
-              <div class="form-group">
-                <label for="establishmentAddress">Dirección del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentAddress" placeholder="Dirección"
-                  #establishmentAddress>
-              </div>
-              <div class="form-group">
-                <label for="establishmentEmail">Correo del establecimiento</label>
-                <input type="email" class="form-control" id="establishmentEmail" placeholder="Ejemplo: email@correo.com"
-                  #establishmentEmail>
-              </div>
-              <div class="form-group">
-                <label for="establishmentPhoneNumber">Teléfono del establecimiento</label>
-                <input type="number" class="form-control" id="establishmentPhoneNumber" placeholder="+569"
-                  #establishmentPhoneNumber>
-              </div>
-              <div class="form-group">
-                <label for="teacherName">Profesor encargado</label>
-                <input type="text" class="form-control" id="teacherName" placeholder="Nombre del profesor encargado"
-                  #teacherName>
-              </div>
-              <div class="form-group">
-                <label for="teacherEmail">Correo del profesor encargado</label>
-                <input type="email" class="form-control" id="teacherEmail" placeholder="Ejemplo: email@correo.com"
-                  #teacherEmail>
-              </div>
-              <div class="form-group">
-                <label for="teacherPhoneNumber">Teléfono del profesor encargado</label>
-                <input type="number" class="form-control" id="teacherPhoneNumber" placeholder="+569"
-                  #teacherPhoneNumber>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success"
-        (click)="establishmentFormCreate(establishmentName.value, director.value, establishmentAddress.value, teacherPhoneNumber.value, teacherEmail.value, teacherName.value, establishmentEmail.value, establishmentPhoneNumber.value, modal)">Crear</button>
-      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
-    </div>
-  </div>
-</ng-template>
-<!-- Modal Create Ends -->
 
 <!-- Modal Edit starts -->
 <ng-template class="modal fade" #ModalContentEdit let-modal>

@@ -30,6 +30,11 @@ import { TeachersModule } from './modules/teachers/teachers.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { AssistantsModule } from './modules/assistants/assistants.module';
 import { DataTablesModule } from 'angular-datatables';
+import { AllAssistantsModule } from './modules/all-assistants/all-assistants.module';
+import { AllEstablishmentsModule } from './modules/all-establishments/all-establishments.module';
+import { AllTeachersModule } from './modules/all-teachers/all-teachers.module';
+import { AllStudentsRoutingModule } from './modules/all-students/all-students-routing.module';
+import { StudentsCandidatesModule } from './modules/students-candidates/students-candidates.module';
 
 
 
@@ -69,7 +74,13 @@ import { DataTablesModule } from 'angular-datatables';
     TeachersModule,
     LessonsModule,
     AssistantsModule,
-    DataTablesModule
+    AllAssistantsModule,
+    AllEstablishmentsModule,
+    AllTeachersModule,
+    AllStudentsRoutingModule,
+    StudentsCandidatesModule,
+    DataTablesModule,
+
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

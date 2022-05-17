@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-competencies',
@@ -17,6 +19,8 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
 
   competition = new CompetenciesModel();
   cycles;
+  cycle = new CycleModel();
+  currentDate;
   competencies;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -36,7 +40,9 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listcycles();
-    this.listCompetencies();
+    //this.listCompetencies();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -46,7 +52,49 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
   listcycles() {
     this.CycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
+      
     });
+  }
+
+  listCompetenciesPerCycle(){
+    let data = {
+      id: this.cycle.id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.competencies = resp.ciclo.competencias;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
+  getCyclePerFinishtDate(){
+    let data = {
+      fecha_termino : this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+      if(resp.code == 200){
+        this.cycle = resp.ciclo;
+        this.competencies = resp.ciclo.competencias;
+        this.dtTrigger.next(void 0);
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+    getCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.competencies = resp.ciclo.competencias;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
   }
 
   listCompetencies() {
@@ -60,12 +108,12 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
 
-  competitionFormCreate(type, location,date, cycle, modal) {
+  competitionFormCreate(type, location,date, modal) {
     let data = {
       tipo: type,
       fecha: date,
       lugar: location,
-      ciclo_id: cycle
+      ciclo_id: this.cycle.id
     };
     this.CompetenciesService.createCompetencies(data).subscribe((resp: any) => {
       if (resp.code == 200) {
@@ -74,7 +122,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
-        this.listCompetencies();
+        this.listCompetenciesPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -109,7 +157,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Se ha editado correctamente'
         });
-        this.listCompetencies();
+        this.listCompetenciesPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -148,7 +196,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Se ha eliminado correctamente'
             });
-            this.listCompetencies();
+            this.listCompetenciesPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

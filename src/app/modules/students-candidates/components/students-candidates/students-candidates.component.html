@@ -1,0 +1,375 @@
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+  <div class="col-lg-10 grid-margin stretch-card"> -->
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Alumnos postulantes</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContentEnrolled)">Inscribir alumnos</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select>
+        </div>
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Apellidos</b>
+                        </th>
+                        <th>
+                            <b>RUT</b>
+                        </th>
+                        <th>
+                            <b>Establecimiento</b>
+                        </th>
+                        <th>
+                            <b>Acción</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let student of studentsPerCycle">
+                        <td>
+                            {{student.nombre}}
+                        </td>
+                        <td>
+                            {{student.apellidos}}
+                        </td>
+                        <td>
+                            {{student.rut}}
+                        </td>
+                        <td>
+                            {{student.establecimiento.nombre}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-see"
+                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                    class="mdi mdi-eye"></i></button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div>
+  </div> -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentStatistics let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
+                            aria-controls="student" aria-selected="true"><i class="mdi mdi-account-box"></i> Información</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                            aria-controls="profile" aria-selected="false" style="box-sizing: border-box;">Asistencia</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
+                            aria-controls="contact" aria-selected="false" style="box-sizing: border-box;">Puntajes</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">RUT:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Fecha de nacimiento:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
+                                                        date:'dd-M-y'}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Curso:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.curso}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Correo electronico:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.email}}</label>
+                                                </div>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del apoderado:
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Telefono del apoderado: </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
+                                                <div class="col-sm-8">
+                                                    <label class="col-sm-8 col-form-label ">{{establishmentName}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Edit ends -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentEnrolled let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Horizontal Two column</h4>
+                    <form class="form-sample">
+                        <p class="card-description">
+                            Personal info
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">First Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Last Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Gender</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control">
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Date of Birth</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" placeholder="dd/mm/yyyy" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Category</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control">
+                                            <option>Category1</option>
+                                            <option>Category2</option>
+                                            <option>Category3</option>
+                                            <option>Category4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Membership</label>
+                                    <div class="col-sm-4">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input type="radio" class="form-check-input" name="membershipRadios"
+                                                    id="membershipRadios1" value="" checked>
+                                                Free
+                                                <i class="input-helper"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input type="radio" class="form-check-input" name="membershipRadios"
+                                                    id="membershipRadios2" value="option2">
+                                                Professional
+                                                <i class="input-helper"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-description">
+                            Address
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Address 1</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">State</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Address 2</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Postcode</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">City</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Country</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control">
+                                            <option>America</option>
+                                            <option>Italy</option>
+                                            <option>Russia</option>
+                                            <option>Britain</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Edit starts -->

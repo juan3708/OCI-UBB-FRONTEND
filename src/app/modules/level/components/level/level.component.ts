@@ -8,6 +8,8 @@ import { NgForm } from '@angular/forms';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from 'src/models/cycle.model';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-level',
@@ -19,7 +21,9 @@ export class LevelComponent implements OnInit, OnDestroy {
   level = new LevelModel();
   levels;
   cycles;
-  students = []
+  cycle = new CycleModel();
+  currentDate;
+  students = [];
   establishments;
   studentsIdAddLevel = [];
   dtOptions: DataTables.Settings = {};
@@ -38,9 +42,11 @@ export class LevelComponent implements OnInit, OnDestroy {
   constructor(private LevelService: LevelService, private CycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listLevels();
+    //this.listLevels();
     this.listCycles();
-    this.listEstablishments();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
+    //this.listEstablishments();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -49,6 +55,18 @@ export class LevelComponent implements OnInit, OnDestroy {
   listLevels() {
     this.LevelService.getLevels().subscribe((resp: any) => {
       this.levels = resp.niveles;
+      this.dtTrigger.next(void 0);
+    })
+  }
+
+  
+  listLevelsPerCycle(){
+    let data = {
+      id: this.cycle.id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.levels = resp.ciclo.niveles;
+      this.dtTrigger.unsubscribe();
       this.dtTrigger.next(void 0);
     })
   }
@@ -65,6 +83,38 @@ export class LevelComponent implements OnInit, OnDestroy {
     })
   }
 
+  getCyclePerFinishtDate(){
+    let data = {
+      fecha_termino : this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+      if(resp.code == 200){
+        this.cycle = resp.ciclo;
+        this.levels = resp.ciclo.niveles;
+        this.establishments = resp.ciclo.establecimientos;
+        this.dtTrigger.next(void 0);
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.levels = resp.ciclo.niveles;
+      this.establishments = resp.ciclo.establecimientos;
+      this.dtTrigger.unsubscribe();
+      this.dtTrigger.next(void 0);
+    })
+  }
+
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
@@ -75,7 +125,6 @@ export class LevelComponent implements OnInit, OnDestroy {
     }else{
       this.studentsIdAddLevel.splice(this.studentsIdAddLevel.indexOf(student),1);
     }
-    console.log(this.studentsIdAddLevel);
   }
 
 
@@ -83,9 +132,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     let data = {
       id
     };
-    console.log(data);
     this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         this.students = resp.establecimiento.alumnos;
       }
@@ -101,10 +148,10 @@ export class LevelComponent implements OnInit, OnDestroy {
     })
   }
 
-  levelFormCreate(name, cycle, modal) {
+  levelFormCreate(name, modal) {
     let data = {
       nombre: name,
-      ciclo_id: cycle
+      ciclo_id: this.cycle.id
     };
     this.LevelService.createLevel(data).subscribe((resp: any) => {
       if (resp.code === 200) {
@@ -113,7 +160,7 @@ export class LevelComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
-        this.listLevels();
+        this.listLevelsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -139,7 +186,7 @@ export class LevelComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Nivel editado correctamente',
         });
-        this.listLevels();
+        this.listLevelsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -178,7 +225,7 @@ export class LevelComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Nivel eliminado correctamente',
             });
-            this.listLevels();
+            this.listLevelsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -204,7 +251,6 @@ export class LevelComponent implements OnInit, OnDestroy {
         alumnos_id: this.studentsIdAddLevel
       };
       this.LevelService.levelassociate(data).subscribe((resp:any)=>{
-        console.log(resp);
         if(resp.code == 200){
           modal.dismiss();
           this.Toast.fire({

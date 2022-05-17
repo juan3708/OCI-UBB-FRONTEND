@@ -2,10 +2,10 @@ export class LanguageDataTable {
     public static spanish_datatables = {
       processing: "Procesando...",
       search: "Buscar:",
-      lengthMenu: "Mostrar MENU &elementos",
-      info: "Mostrando desde START al END de TOTAL elementos",
+      lengthMenu: "Mostrar _MENU_ elementos",
+      info: "Mostrando desde _START_ al _END_ de _TOTAL_ elementos",
       infoEmpty: "Mostrando ningún elemento.",
-      infoFiltered: "(filtrado MAX elementos total)",
+      infoFiltered: "(filtrado _MAX_ elementos total)",
       infoPostFix: "",
       loadingRecords: "Cargando registros...",
       zeroRecords: "No se encontraron registros",

@@ -41,9 +41,7 @@ export class AssistantsComponent implements OnInit, OnDestroy {
 
   listAssistants() {
     this.assistantsService.getAssistants().subscribe((resp: any) => {
-      console.log(resp.ayudantes);
       this.assistants = resp.ayudantes;
-      console.log(this.assistants);
       this.dtTrigger.next(void 0);
     });
   }
@@ -57,15 +55,11 @@ export class AssistantsComponent implements OnInit, OnDestroy {
       id
     };
     this.assistantsService.getAssistantById(data).subscribe((resp: any) => {
-      console.log(id);
-      console.log(resp);
       this.assistant = resp.ayudante;
-      console.log(this.assistant);
     });
   }
 
   assistantFormCreate(rut, name, surname, email, modal) {
-    console.log(rut, name, surname, email);
     let data = {
       rut,
       nombre: name,
@@ -73,7 +67,6 @@ export class AssistantsComponent implements OnInit, OnDestroy {
       email
     };
     this.assistantsService.createAssistant(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -100,7 +93,6 @@ export class AssistantsComponent implements OnInit, OnDestroy {
 
   assistantFormEdit(form: NgForm, modal){
     this.assistantsService.editAssistant(this.assistant).subscribe((resp: any)=> {
-      console.log(resp);
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -141,7 +133,6 @@ export class AssistantsComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         this.assistantsService.deleteAssistant(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
