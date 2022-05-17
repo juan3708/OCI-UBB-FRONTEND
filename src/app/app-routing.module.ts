@@ -25,7 +25,10 @@ const routes: Routes = [
   { path: 'level', loadChildren: () => import('./modules/level/level-routing.module').then(m => m.LevelRoutingModule) },
   { path: 'lessons', loadChildren: () => import('./modules/lessons/lessons-routing.module').then(m => m.LessonsRoutingModule) },
   { path: 'teachers', loadChildren: () => import('./modules/teachers/teachers-routing.module').then(m => m.TeachersRoutingModule) },
-  { path: 'assistants', loadChildren: () => import('./modules/assistants/assistants-routing.module').then(m => m.AssistantsRoutingModule) }
+  { path: 'assistants', loadChildren: () => import('./modules/assistants/assistants-routing.module').then(m => m.AssistantsRoutingModule) },
+  { path: 'homepage', loadChildren: () => import('./modules/home/home-routing.module').then(m => m.HomeRoutingModule) },
+  { path: 'news', loadChildren: () => import('./modules/news/news-routing.module').then(m => m.NewsRoutingModule) },
+  { path: 'about', loadChildren: () => import('./modules/about/about-routing.module').then(m => m.AboutRoutingModule) }
 
 ];
 
