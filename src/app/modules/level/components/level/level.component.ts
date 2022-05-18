@@ -21,6 +21,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   level = new LevelModel();
   levels;
   cycles;
+  studentsPerLevel= [];
   cycle = new CycleModel();
   currentDate;
   students = [];
@@ -145,6 +146,8 @@ export class LevelComponent implements OnInit, OnDestroy {
     };
     this.LevelService.getLevelById(data).subscribe((resp: any) => {
       this.level = resp.nivel;
+      this.studentsPerLevel = resp.nivel.alumnos;
+      console.log(this.studentsPerLevel);
     })
   }
 

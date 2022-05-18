@@ -33,8 +33,8 @@ import { DataTablesModule } from 'angular-datatables';
 import { AllAssistantsModule } from './modules/all-assistants/all-assistants.module';
 import { AllEstablishmentsModule } from './modules/all-establishments/all-establishments.module';
 import { AllTeachersModule } from './modules/all-teachers/all-teachers.module';
-import { AllStudentsRoutingModule } from './modules/all-students/all-students-routing.module';
 import { StudentsCandidatesModule } from './modules/students-candidates/students-candidates.module';
+import { AllStudentsModule } from './modules/all-students/all-students.module';
 
 
 
@@ -77,7 +77,7 @@ import { StudentsCandidatesModule } from './modules/students-candidates/students
     AllAssistantsModule,
     AllEstablishmentsModule,
     AllTeachersModule,
-    AllStudentsRoutingModule,
+    AllStudentsModule,
     StudentsCandidatesModule,
     DataTablesModule,
 

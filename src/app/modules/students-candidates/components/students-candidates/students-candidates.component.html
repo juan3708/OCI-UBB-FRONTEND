@@ -4,7 +4,10 @@
     <div class="card-body">
         <h4 class="card-title"><b>Alumnos postulantes</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContentEnrolled)">Inscribir alumnos</button>
+            (click)="openModal(ModalContentEnrolled)" *ngIf="studentsPerCycle.length >=1"><i
+                class="fa-solid fa-clipboard-list"></i> Inscribir alumnos</button>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalChargeStudent)"><i class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -64,7 +67,7 @@
 <!-- </div>
   </div> -->
 
-<!-- Modal Edit starts -->
+<!-- Modal Statistics starts -->
 <ng-template class="modal fade" #ModalContentStatistics let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -77,15 +80,18 @@
                 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
-                            aria-controls="student" aria-selected="true"><i class="mdi mdi-account-box"></i> Información</a>
+                            aria-controls="student" aria-selected="true"><i class="fa-solid fa-id-card-clip"></i>
+                            Información</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                            aria-controls="profile" aria-selected="false" style="box-sizing: border-box;">Asistencia</a>
+                            aria-controls="profile" aria-selected="false" style="box-sizing: border-box;"><i
+                                class="fa-solid fa-rectangle-list"></i> Asistencia</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                            aria-controls="contact" aria-selected="false" style="box-sizing: border-box;">Puntajes</a>
+                            aria-controls="contact" aria-selected="false" style="box-sizing: border-box;"><i
+                                class="fa-solid fa-square-poll-vertical"></i> Puntajes</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
@@ -122,7 +128,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Fecha de nacimiento:</label>
+                                                <label class="col-sm-3 col-form-label label-ident">Fecha de
+                                                    nacimiento:</label>
                                                 <div class="col-sm-9">
                                                     <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
                                                         date:'dd-M-y'}}</label>
@@ -141,11 +148,12 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Correo electronico:</label>
+                                                <label class="col-sm-3 col-form-label label-ident">Correo
+                                                    electronico:</label>
                                                 <div class="col-sm-9">
                                                     <label class="col-sm-9 col-form-label">{{student.email}}</label>
                                                 </div>
-                
+
                                             </div>
                                         </div>
                                     </div>
@@ -170,18 +178,22 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del apoderado:
+                                                <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
+                                                    apoderado:
                                                 </label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                                                    <label
+                                                        class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Telefono del apoderado: </label>
+                                                <label class="col-sm-3 col-form-label label-ident">Telefono del
+                                                    apoderado: </label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                                                    <label
+                                                        class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -189,9 +201,11 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
+                                                <label
+                                                    class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
                                                 <div class="col-sm-8">
-                                                    <label class="col-sm-8 col-form-label ">{{establishmentName}}</label>
+                                                    <label
+                                                        class="col-sm-8 col-form-label ">{{establishmentName}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -207,9 +221,9 @@
         </div>
     </div>
 </ng-template>
-<!-- Modal Edit ends -->
+<!-- Modal Statistics ends -->
 
-<!-- Modal Edit starts -->
+<!-- Modal Enrolled starts -->
 <ng-template class="modal fade" #ModalContentEnrolled let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -217,159 +231,67 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="col-12 grid-margin">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Horizontal Two column</h4>
-                    <form class="form-sample">
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Inscribir alumnos a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Personal info
+                            Ingrese los alumnos que participaran de las OCI.
                         </p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">First Name</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="col-lg-6 grid-margin stretch-card">
+                                    <div class="mt-4">
+                                      <ngb-accordion [closeOthers]="true" activeIds="collapse-12" class="accordion-solid-header">
+                                        <ngb-panel  id="collapse-{{index}}" *ngFor="let establishment; of  establishments;let index = index" title="{{establishment.nombre}}" >
+                                          <ng-template ngbPanelContent>
+                                          </ng-template>
+                                        </ngb-panel>
+                                      </ngb-accordion>          
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Last Name</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Gender</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control">
-                                            <option>Male</option>
-                                            <option>Female</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Date of Birth</label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control" placeholder="dd/mm/yyyy" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Category</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control">
-                                            <option>Category1</option>
-                                            <option>Category2</option>
-                                            <option>Category3</option>
-                                            <option>Category4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Membership</label>
-                                    <div class="col-sm-4">
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input type="radio" class="form-check-input" name="membershipRadios"
-                                                    id="membershipRadios1" value="" checked>
-                                                Free
-                                                <i class="input-helper"></i>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input type="radio" class="form-check-input" name="membershipRadios"
-                                                    id="membershipRadios2" value="option2">
-                                                Professional
-                                                <i class="input-helper"></i>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="card-description">
-                            Address
-                        </p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Address 1</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">State</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Address 2</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Postcode</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">City</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Country</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control">
-                                            <option>America</option>
-                                            <option>Italy</option>
-                                            <option>Russia</option>
-                                            <option>Britain</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                              </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </ng-template>
-<!-- Modal Edit starts -->
+<!-- Modal Enrolled starts -->
+
+<!-- Modal Charge starts -->
+<ng-template class="modal fade" #ModalChargeStudent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();resetFile()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Cargar alumnos a {{cycle.nombre}}</h4>
+                        <p class="card-description">
+                            Cargue el archivo con los datos de los alumnos.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="myfile"
+                                    (change)="onFileSelected($event)" accept=".xlsx">
+                                <label class="custom-file-label" for="customFile">{{fileName || 'Seleccione un
+                                    archivo'}}</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="chargeStudentPerForm(modal)">Cargar</button>
+            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();resetFile()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Charge starts -->

@@ -74,7 +74,8 @@ export class LessonsComponent implements OnInit, OnDestroy {
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.lessons = resp.ciclo.clases;
+      console.log(resp);
+      this.lessons = resp.clases;
       this.dtTrigger.unsubscribe();
       this.dtTrigger.next(void 0);
     })
@@ -114,7 +115,8 @@ export class LessonsComponent implements OnInit, OnDestroy {
     this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
       if(resp.code == 200){
         this.cycle = resp.ciclo;
-        this.lessons = resp.ciclo.clases;
+        this.lessons = resp.clases;
+        this.levels = resp.ciclo.niveles;
         this.dtTrigger.next(void 0);
       }else{
         this.Toast.fire({
@@ -131,7 +133,8 @@ export class LessonsComponent implements OnInit, OnDestroy {
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.lessons = resp.ciclo.clases;
+      this.levels = resp.ciclo.niveles;
+      this.lessons = resp.clases;
       this.dtTrigger.unsubscribe();
       this.dtTrigger.next(void 0);
     })

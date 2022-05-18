@@ -45,14 +45,23 @@
                             {{lesson.fecha}}
                         </td>
                         <td>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                (click)="openModal(ModalSeeLesson);getLesson(lesson.id)"><i
+                                    class="mdi mdi-eye"></i></button>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"><i
+                                    class="fa-solid fa-users"></i></button>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                                (click)="openModal(ModalAssignTeacherAndAssistants);getLesson(lesson.id)"> <i
+                                    class="fa-solid fa-person-chalkboard"></i></button>
+
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                                 (click)="openModal(ModalContentEdit);getLesson(lesson.id)"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteLesson(lesson.id);"><i class="mdi mdi-delete"></i></button>
-                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"><i
-                                    class="mdi mdi-eye"></i></button>
+
+
                         </td>
                     </tr>
                 </tbody>
@@ -405,3 +414,70 @@
     </div>
 </ng-template>
 <!-- Modal Edit ends-->
+
+<!-- Modal SeeLesson starts-->
+<ng-template class="modal fade" #ModalSeeLesson let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Informacion de la clase con fecha {{lesson.fecha}}</h4>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal SeeLesson ends-->
+
+<!-- Modal AssignTeacherAndAssistants starts-->
+<ng-template class="modal fade" #ModalAssignTeacherAndAssistants let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Asignar profesor(es) y ayudante(s) a la clase con fecha {{lesson.fecha}}</h4>
+                        <form action="">
+                            <div class="col-12 grid-margin">
+                                <div class="card">
+                                    <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active " id="teacher-tab" data-toggle="tab" href="#teacher" role="tab"
+                                                aria-controls="teacher" aria-selected="true"><i class="fa-solid fa-graduation-cap"></i>
+                                                Profesores</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="assistant-tab" data-toggle="tab" href="#assistant" role="tab"
+                                                aria-controls="assistant" aria-selected="false" style="box-sizing: border-box;"><i
+                                                    class="fa-solid fa-rectangle-list"></i> Ayudantes</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade show active" id="teacher" role="tabpanel" aria-labelledby="teacher-tab">
+                                        </div>
+                                        <div class="tab-pane fade" id="assistant" role="tabpanel" aria-labelledby="assistant-tab">...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal AssignTeacherAndAssistants ends-->
+
