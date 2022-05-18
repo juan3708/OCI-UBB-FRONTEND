@@ -30,9 +30,7 @@ import { TeachersModule } from './modules/teachers/teachers.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { AssistantsModule } from './modules/assistants/assistants.module';
 import { DataTablesModule } from 'angular-datatables';
-import { HomeModule } from './modules/home/home.module';
-import { AboutModule } from './modules/about/about.module';
-import { NewsModule } from './modules/news/news.module';
+import { HomepageModule } from './modules/homepage/homepage.module';
 
 
 
@@ -73,9 +71,7 @@ import { NewsModule } from './modules/news/news.module';
     LessonsModule,
     AssistantsModule,
     DataTablesModule,
-    HomeModule,
-    AboutModule,
-    NewsModule
+    HomepageModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

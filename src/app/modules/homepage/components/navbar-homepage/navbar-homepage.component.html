@@ -1,0 +1,28 @@
+<!-- ======= Header ======= -->
+<section id="header">
+    <header id="header" class="fixed-top d-flex align-items-center">
+        <div class="container-fluid">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-xl-11 d-flex align-items-center justify-content-between">
+                    <a [routerLink]="['/']" class="logo"><img src="assets/images/logo_web.png" alt=""
+                            class="img-fluid"></a>
+                    <!-- <a [routerLink]="['/']" class="logo" style="width: 7%;"><img src="assets/images/logo_ubb.svg" alt=""
+                            class="img-fluid"></a> -->
+                    <!-- Navbar -->
+                    <nav id="navbar" class="navbar">
+                        <ul>
+                            <li><a class="nav-link" [routerLink]="['/']">Inicio</a></li>
+                            <li><a class="nav-link" href="#featured">Destacados</a></li>
+                            <li><a class="nav-link" [routerLink]="['/about']">Acerca de</a></li>
+                            <li><a class="nav-link" [routerLink]="['/news']">Noticias</a></li>
+                            <li><a class="nav-link" href="#contact">Contáctanos</a></li>
+                            <li><a routerLink="/user-pages/login" class="btn-get-started">Login</a></li>
+                        </ul>
+                    </nav>
+                    <!-- End navbar -->
+                </div>
+            </div>
+        </div>
+    </header>
+</section>
+<!-- End Header -->

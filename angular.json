@@ -29,7 +29,11 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+              "node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css",
+              "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/regular.scss"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

@@ -4,7 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  // { path: '**', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'basic-ui', loadChildren: () => import('./basic-ui/basic-ui.module').then(m => m.BasicUiModule) },
   { path: 'charts', loadChildren: () => import('./charts/charts.module').then(m => m.ChartsDemoModule) },
@@ -26,9 +26,7 @@ const routes: Routes = [
   { path: 'lessons', loadChildren: () => import('./modules/lessons/lessons-routing.module').then(m => m.LessonsRoutingModule) },
   { path: 'teachers', loadChildren: () => import('./modules/teachers/teachers-routing.module').then(m => m.TeachersRoutingModule) },
   { path: 'assistants', loadChildren: () => import('./modules/assistants/assistants-routing.module').then(m => m.AssistantsRoutingModule) },
-  { path: 'homepage', loadChildren: () => import('./modules/home/home-routing.module').then(m => m.HomeRoutingModule) },
-  { path: 'news', loadChildren: () => import('./modules/news/news-routing.module').then(m => m.NewsRoutingModule) },
-  { path: 'about', loadChildren: () => import('./modules/about/about-routing.module').then(m => m.AboutRoutingModule) }
+  { path: '', loadChildren: () => import('./modules/homepage/homepage-routing.module').then(m => m.HomepageRoutingModule), },
 
 ];
 
