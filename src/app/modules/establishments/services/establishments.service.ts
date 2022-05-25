@@ -35,4 +35,9 @@ export class EstablishmentsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/establecimiento/delete', id, option);
   }
+
+  deleteEstablishmentPerCycle(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/ciclo/deleteestablishments', data, option);
+  }
 }

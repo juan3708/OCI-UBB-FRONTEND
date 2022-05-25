@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -8,14 +8,18 @@ import Swal from 'sweetalert2';
 import { EstablishmentsService } from '../../services/establishments.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
-import {  formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-establishments',
   templateUrl: './establishments.component.html',
   styleUrls: ['./establishments.component.scss']
 })
-export class EstablishmentsComponent implements OnInit, OnDestroy {
+export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
+
 
   establishments;
   establishment = new EstablishmentModel();
@@ -38,7 +42,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
   constructor(private establishmentsService: EstablishmentsService, private CycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    //this.listEstablishments();
+    //this.listEstablishmentsPerCycle();
     this.lisCycles();
     this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.getCyclePerFinishtDate();
@@ -48,10 +52,27 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
     };
   }
 
-  listEstablishments() {
-    this.establishmentsService.getEstablishments().subscribe((resp: any) => {
-      this.establishments = resp.establecimientos;
-      this.dtTrigger.next(void 0);
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
+
+  listEstablishmentsPerCycle() {
+    this.CycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
+      this.establishments = resp.ciclo.establecimientos;
+      this.rerender();
     })
   }
 
@@ -77,7 +98,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Establecimiento creado correctamente'
         });
-        this.listEstablishments();
+        this.listEstablishmentsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -117,19 +138,20 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.establishments = resp.ciclo.establecimientos;
+      this.rerender();
     })
   }
 
-  getCyclePerFinishtDate(){
+  getCyclePerFinishtDate() {
     let data = {
-      fecha_termino : this.currentDate
+      fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.establishments = resp.ciclo.establecimientos;
-        this.dtTrigger.next(void 0);
-      }else{
+        this.rerender();
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
@@ -146,7 +168,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Establecimiento editado correctamente'
         });
-        this.listEstablishments();
+        this.listEstablishmentsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -166,10 +188,12 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
 
   deleteEstablishment(id) {
     let data = {
-      id
+      establecimientos_id: id,
+      ciclo_id: this.cycle.id
+
     };
     Swal.fire({
-      title: '¿Está seguro que desea eliminar este establecimiento?',
+      title: '¿Está seguro que desea eliminar este establecimiento del ciclo?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -179,7 +203,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.establishmentsService.deleteEstablecimiento(data).subscribe((resp: any) => {
+        this.establishmentsService.deleteEstablishmentPerCycle(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
@@ -187,7 +211,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy {
               showConfirmButton: false,
               timer: 2000
             });
-            this.listEstablishments();
+            this.listEstablishmentsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

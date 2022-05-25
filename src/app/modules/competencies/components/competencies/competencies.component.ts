@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CompetenciesModel } from '../../../../../models/competencies.model';
 import { CompetenciesService } from '../../services/competencies.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -9,13 +9,16 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-competencies',
   templateUrl: './competencies.component.html',
   styleUrls: ['./competencies.component.scss']
 })
-export class CompetenciesComponent implements OnInit, OnDestroy {
+export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
 
   competition = new CompetenciesModel();
   cycles;
@@ -49,6 +52,22 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
     };
   }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
+  }
+
   listcycles() {
     this.CycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
@@ -62,8 +81,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.competencies = resp.ciclo.competencias;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -75,7 +93,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
       if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.competencies = resp.ciclo.competencias;
-        this.dtTrigger.next(void 0);
+        this.rerender();
       }else{
         this.Toast.fire({
           icon: 'error',
@@ -92,15 +110,14 @@ export class CompetenciesComponent implements OnInit, OnDestroy {
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.competencies = resp.ciclo.competencias;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
   listCompetencies() {
     this.CompetenciesService.getCompetencies().subscribe((resp: any) => {
       this.competencies = resp.competencias;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 

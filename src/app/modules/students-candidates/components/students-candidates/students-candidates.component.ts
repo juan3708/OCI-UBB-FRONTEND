@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { StudentModel } from 'src/models/student.model';
@@ -9,7 +10,6 @@ import { CycleModel } from 'src/models/cycle.model';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { formatDate } from '@angular/common';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
-import { NgForm } from '@angular/forms';
 import { StudentsCandidatesService } from '../../services/students-candidates.service';
 
 @Component({
@@ -17,7 +17,10 @@ import { StudentsCandidatesService } from '../../services/students-candidates.se
   templateUrl: './students-candidates.component.html',
   styleUrls: ['./students-candidates.component.scss']
 })
-export class StudentsCandidatesComponent implements OnInit, OnDestroy {
+export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
+
 
   studentsPerCycle = [];
   establishments;
@@ -54,6 +57,21 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy {
     };
   }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
 
 
   listCycles() {
@@ -77,14 +95,14 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy {
         console.log(resp.ciclo);
         this.cycle = resp.ciclo;
         this.studentsPerCycle = resp.alumnos;
-        this.dtTrigger.next(void 0);
+        this.rerender();
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
         });
         this.studentsPerCycle = [];
-        this.dtTrigger.next(void 0);
+        this.rerender();
 
       }
     })
@@ -102,8 +120,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy {
       } else {
         this.studentsPerCycle = resp.alumnos;
       }
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -129,8 +146,8 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy {
   chargeStudentPerForm(modal) {
     if (this.selectedFile) {
       const formData = new FormData();
-      formData.append('file', this.selectedFile,this.fileName);
-      formData.append('ciclo_id',this.cycle.id.toString());
+      formData.append('file', this.selectedFile, this.fileName);
+      formData.append('ciclo_id', this.cycle.id.toString());
       this.StudentsCandidatesService.chargeStudentsPerCycle(formData).subscribe((resp: any) => {
         console.log(resp);
         if (resp.code == 200) {
@@ -154,8 +171,8 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
-  resetFile(){
+
+  resetFile() {
     this.fileName = "";
     this.selectedFile = null;
   }

@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../../services/students.service';
 import Swal from 'sweetalert2';
@@ -12,7 +13,9 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.scss']
 })
-export class StudentsComponent implements OnInit, OnDestroy {
+export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
   students;
   establishments;
@@ -41,46 +44,62 @@ export class StudentsComponent implements OnInit, OnDestroy {
     };
   }
 
-  listStudents(){
-    this.studentsService.getStudents().subscribe((resp:any)=>{
-      this.students=resp.alumnos;
-      this.dtTrigger.next(void 0);
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
+  listStudents() {
+    this.studentsService.getStudents().subscribe((resp: any) => {
+      this.students = resp.alumnos;
+      this.rerender();
     });
   }
 
-  listEstablishments(){
-    this.studentsService.getEstablishments().subscribe((resp:any)=>{
-      this.establishments=resp.establecimientos;
+  listEstablishments() {
+    this.studentsService.getEstablishments().subscribe((resp: any) => {
+      this.establishments = resp.establecimientos;
     });
   }
 
-  openModal( ModalContent ) {
-    this.modalService.open( ModalContent, { size : 'lg'} );
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'lg' });
   }
 
-  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal){
+  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal) {
     let data = {
       rut,
       nombre: name,
       apellidos: surname,
-      telefono: phoneNumber, 
+      telefono: phoneNumber,
       email,
       fecha_nacimiento: dateOfBirth,
       curso: grade,
-      direccion: address, 
+      direccion: address,
       telefono_apoderado: parentNumber,
       nombre_apoderado: parent,
       establecimiento_id: establishment
     };
-    this.studentsService.createStudent(data).subscribe((resp: any) =>{
-      if(resp.code==200){        
+    this.studentsService.createStudent(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno creado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -106,17 +125,17 @@ export class StudentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  studentFormEdit(form: NgForm, modal){
-    this.studentsService.editStudent(this.student).subscribe((resp: any)=> {
+  studentFormEdit(form: NgForm, modal) {
+    this.studentsService.editStudent(this.student).subscribe((resp: any) => {
 
-      if(resp.code == 200){
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno editado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -159,7 +178,7 @@ export class StudentsComponent implements OnInit, OnDestroy {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el alumno',
-              text: resp.id 
+              text: resp.id
             });
           }
         });

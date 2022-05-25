@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LevelModel } from '../../../../../models/level.model';
 import { LevelService } from '../../services/level.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -16,7 +17,10 @@ import { formatDate } from '@angular/common';
   templateUrl: './level.component.html',
   styleUrls: ['./level.component.scss']
 })
-export class LevelComponent implements OnInit, OnDestroy {
+export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
+
 
   level = new LevelModel();
   levels;
@@ -53,10 +57,29 @@ export class LevelComponent implements OnInit, OnDestroy {
       responsive: true
     };
   }
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
+  }
+
+
+
   listLevels() {
     this.LevelService.getLevels().subscribe((resp: any) => {
       this.levels = resp.niveles;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -67,8 +90,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.levels = resp.ciclo.niveles;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -93,7 +115,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.cycle = resp.ciclo;
         this.levels = resp.ciclo.niveles;
         this.establishments = resp.ciclo.establecimientos;
-        this.dtTrigger.next(void 0);
+        this.rerender();
       }else{
         this.Toast.fire({
           icon: 'error',
@@ -111,8 +133,7 @@ export class LevelComponent implements OnInit, OnDestroy {
       this.cycle = resp.ciclo;
       this.levels = resp.ciclo.niveles;
       this.establishments = resp.ciclo.establecimientos;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -147,7 +168,6 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.LevelService.getLevelById(data).subscribe((resp: any) => {
       this.level = resp.nivel;
       this.studentsPerLevel = resp.nivel.alumnos;
-      console.log(this.studentsPerLevel);
     })
   }
 
@@ -280,3 +300,5 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.dtTrigger.unsubscribe();
   }
 }
+
+

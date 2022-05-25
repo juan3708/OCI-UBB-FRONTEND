@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CycleService } from '../../services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -8,24 +8,29 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { EstablishmentModel } from '../../../../../models/establishment.model';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-cycle',
   templateUrl: './cycle.component.html',
   styleUrls: ['./cycle.component.scss']
 })
-export class CycleComponent implements OnInit, OnDestroy {
+export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
   cycles;
   coordinators;
   cyclesEdit: FormGroup;
   cycle = new CycleModel;
-  establishmentsCycle:EstablishmentModel[] = [];
+  establishmentsCycle: EstablishmentModel[] = [];
   establishmentsPerCycle;
   establishmentsPerCycleId = [];
   establishments;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
+
+
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -42,7 +47,7 @@ export class CycleComponent implements OnInit, OnDestroy {
     establishmentsFee: this.fb.array([])
   });
 
-  constructor(private CycleService: CycleService, private establishmentsService: EstablishmentsService, private fb: FormBuilder,private modalService: NgbModal) { }
+  constructor(private CycleService: CycleService, private establishmentsService: EstablishmentsService, private fb: FormBuilder, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
@@ -55,6 +60,23 @@ export class CycleComponent implements OnInit, OnDestroy {
     };
   }
 
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
   get establishmentsFee() {
     return this.editFeeEstablishment.controls["establishmentsFee"] as FormArray;
   }
@@ -63,15 +85,14 @@ export class CycleComponent implements OnInit, OnDestroy {
   listCycles() {
     this.CycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
   listEstablishments() {
     this.establishmentsService.getEstablishments().subscribe((resp: any) => {
       this.establishments = resp.establecimientos;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -135,8 +156,8 @@ export class CycleComponent implements OnInit, OnDestroy {
   setEditFeeForm() {
     this.establishmentsPerCycle.map((e: any) => {
       const establishmentsFeeForm = this.fb.group({
-        id:  e.id,
-        nombre: new FormControl({value:e.nombre,disabled:true }),
+        id: e.id,
+        nombre: new FormControl({ value: e.nombre, disabled: true }),
         cupos: e.pivot.cupos
       });
       this.establishmentsFee.push(establishmentsFeeForm);
@@ -173,7 +194,8 @@ export class CycleComponent implements OnInit, OnDestroy {
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el ciclo',
+              title
+              : 'Error al eliminar el ciclo',
               text: resp.id
             });
           }
@@ -259,15 +281,15 @@ export class CycleComponent implements OnInit, OnDestroy {
       cupos: cupos
     };
 
-    this.CycleService.updateEstablishments(data).subscribe((resp: any)=>{
-      if(resp.code == 200){
+    this.CycleService.updateEstablishments(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Se asignaron correctamente los cupos'
         });
         this.clearForm();
-      }else{
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al asignar los cupos'

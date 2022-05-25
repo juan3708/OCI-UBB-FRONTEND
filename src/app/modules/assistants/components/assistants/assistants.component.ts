@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { AssistantModel } from 'src/models/assistant.model';
@@ -12,7 +13,10 @@ import { AssistantsService } from '../../services/assistants.service';
   templateUrl: './assistants.component.html',
   styleUrls: ['./assistants.component.scss']
 })
-export class AssistantsComponent implements OnInit, OnDestroy {
+export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
+
 
   assistants;
   assistant = new AssistantModel();
@@ -39,10 +43,27 @@ export class AssistantsComponent implements OnInit, OnDestroy {
     };
   }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
+
   listAssistants() {
     this.assistantsService.getAssistants().subscribe((resp: any) => {
       this.assistants = resp.ayudantes;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
@@ -91,8 +112,8 @@ export class AssistantsComponent implements OnInit, OnDestroy {
     })
   }
 
-  assistantFormEdit(form: NgForm, modal){
-    this.assistantsService.editAssistant(this.assistant).subscribe((resp: any)=> {
+  assistantFormEdit(form: NgForm, modal) {
+    this.assistantsService.editAssistant(this.assistant).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -143,7 +164,7 @@ export class AssistantsComponent implements OnInit, OnDestroy {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar al ayudante',
-              text: resp.id 
+              text: resp.id
             });
           }
         })

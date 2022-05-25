@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { StudentModel } from 'src/models/student.model';
@@ -6,13 +6,17 @@ import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { StudentsService } from 'src/app/modules/students/services/students.service';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-all-students',
   templateUrl: './all-students.component.html',
   styleUrls: ['./all-students.component.scss']
 })
-export class AllStudentsComponent implements OnInit,OnDestroy {
+export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
+
   students;
   establishments;
   student = new StudentModel();
@@ -31,6 +35,23 @@ export class AllStudentsComponent implements OnInit,OnDestroy {
   });
   constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
+  }
+
+
   ngOnInit(): void {
     this.listStudents();
     this.listEstablishments();
@@ -43,7 +64,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy {
   listStudents(){
     this.studentsService.getStudents().subscribe((resp:any)=>{
       this.students=resp.alumnos;
-      this.dtTrigger.next(void 0);
+      this.rerender()
     });
   }
 

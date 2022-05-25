@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -12,7 +13,10 @@ import Swal from 'sweetalert2';
   templateUrl: './all-teachers.component.html',
   styleUrls: ['./all-teachers.component.scss']
 })
-export class AllTeachersComponent implements OnInit, OnDestroy {
+export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
+
 
   teachers;
   teacher = new TeacherModel();
@@ -38,11 +42,25 @@ export class AllTeachersComponent implements OnInit, OnDestroy {
       responsive: true
     };
   }
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
 
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
   listTeachers() {
     this.teachersService.getTeachers().subscribe((resp: any) => {
       this.teachers = resp.profesores;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
@@ -93,8 +111,8 @@ export class AllTeachersComponent implements OnInit, OnDestroy {
     })
   }
 
-  teacherFormEdit(form: NgForm, modal){
-    this.teachersService.editTeacher(this.teacher).subscribe((resp: any)=> {
+  teacherFormEdit(form: NgForm, modal) {
+    this.teachersService.editTeacher(this.teacher).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -145,7 +163,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar al profesor',
-              text: resp.id 
+              text: resp.id
             });
           }
         })

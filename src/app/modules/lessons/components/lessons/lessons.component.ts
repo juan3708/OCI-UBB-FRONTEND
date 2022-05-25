@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
@@ -12,13 +12,16 @@ import { EstablishmentsService } from '../../../establishments/services/establis
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-lessons',
   templateUrl: './lessons.component.html',
   styleUrls: ['./lessons.component.scss']
 })
-export class LessonsComponent implements OnInit, OnDestroy {
+export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
   lessons;
   cycles;
@@ -36,6 +39,14 @@ export class LessonsComponent implements OnInit, OnDestroy {
   studentsManualAdd = [];
   studentsLesson = [];
   studentList;
+  teachers;
+  assistants;
+  lessonTeachers = [];
+  lessonAssistants = [];
+  addTeachers = [];
+  addAssistants = [];
+  removeTeachers = [];
+  removeAssistants = [];
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -62,22 +73,37 @@ export class LessonsComponent implements OnInit, OnDestroy {
     };
   }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
   listLessons() {
     this.lessonsService.getLessons().subscribe((resp: any) => {
       this.lessons = resp.clases;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
-  listLessonsPerCycle(){
+  listLessonsPerCycle() {
     let data = {
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      console.log(resp);
       this.lessons = resp.clases;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
+
     })
   }
 
@@ -108,17 +134,18 @@ export class LessonsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCyclePerFinishtDate(){
+  getCyclePerFinishtDate() {
     let data = {
-      fecha_termino : this.currentDate
+      fecha_termino: this.currentDate
     };
-    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.lessons = resp.clases;
         this.levels = resp.ciclo.niveles;
-        this.dtTrigger.next(void 0);
-      }else{
+        this.rerender();
+
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
@@ -135,8 +162,8 @@ export class LessonsComponent implements OnInit, OnDestroy {
       this.cycle = resp.ciclo;
       this.levels = resp.ciclo.niveles;
       this.lessons = resp.clases;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
+
     })
   }
 
@@ -147,6 +174,38 @@ export class LessonsComponent implements OnInit, OnDestroy {
     this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.students = resp.establecimiento.alumnos;
+      }
+    })
+  }
+
+  getLesson(id) {
+    let data = {
+      id
+    };
+    this.lessonsService.getLessonById(data).subscribe((resp: any) => {
+      this.lesson = resp.clase;
+      this.studentsLesson = resp.clase.alumnos;
+      this.lessonAssistants = resp.clase.ayudantes;
+      this.lessonTeachers = resp.clase.profesores;
+      this.chargeForCycle(this.lesson.ciclo_id);
+      this.getLevelById(this.lesson.nivel_id);
+    });
+
+  }
+
+  getTeachersAndAssistants(id) {
+    let data = {
+      clase_id: id
+    };
+    this.lessonsService.getTeachersAndAssistants(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.assistants = resp.ayudantes;
+        this.teachers = resp.profesores;
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al realizar la consulta'
+        });
       }
     })
   }
@@ -263,19 +322,6 @@ export class LessonsComponent implements OnInit, OnDestroy {
     })
   }
 
-  getLesson(id) {
-    let data = {
-      id
-    };
-    this.lessonsService.getLessonById(data).subscribe((resp: any) => {
-      this.lesson = resp.clase;
-      this.chargeForCycle(this.lesson.ciclo_id);
-      this.getLevelById(this.lesson.nivel_id);
-      this.studentsLesson = resp.clase.alumnos;
-    });
-
-  }
-
   chargeForCycle(id) {
     let data = {
       id
@@ -316,63 +362,48 @@ export class LessonsComponent implements OnInit, OnDestroy {
   }
 
   addOrRemoveStudent(event, student) {
-    if (event == true) {
+    if (event) {
       this.studentsManualAdd.push(student);
     } else {
       this.studentsManualAdd.splice(this.studentsManualAdd.indexOf(student), 1);
     }
   }
 
-
-  async chargeAssistance(lesson){
-    this.getLesson(lesson);
-    await new Promise(f => setTimeout(f, 800));
-    this.studentsAssistance = this.studentsLesson.map((s: any) => {
-      let assistance = {
-        alumno_id : s.id,
-        asistencia: s.pivot.asistencia
-      };
-      return assistance;
-    });
-    this.studentsId = this.studentsAssistance.map((s: any )=>{
-      return s.alumno_id;
-    });
+  addOrRemoveTeacher(event, teacher) {
+    if (event) {
+      this.addTeachers.push(teacher);
+    } else {
+      this.addTeachers.splice(this.addTeachers.indexOf(teacher), 1);
+    }
   }
 
-  changeStatusAssistance(event, student){
+  addOrRemoveAssistant(event, assistant) {
+    if (event) {
+      this.addAssistants.push(assistant);
+    } else {
+      this.addAssistants.splice(this.addAssistants.indexOf(assistant), 1);
+    }
+  }
+
+  removeStudentsArray(student) {
+    this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
+  }
+
+  removeTeacherArray(teacher) {
+    this.lessonTeachers.splice(this.lessonTeachers.indexOf(teacher), 1);
+    this.removeTeachers.push(teacher);
+  }
+
+  removeAssistantArray(assistant) {
+    this.lessonAssistants.splice(this.lessonAssistants.indexOf(assistant), 1);
+    this.removeAssistants.push(assistant);
+  }
+
+  changeStatusAssistance(event, student) {
     this.studentsAssistance[this.studentsId.indexOf(student)].asistencia = event;
   }
 
-  editAssistancePerStudent(modal) {
-    let Assistance = this.studentsAssistance.map((s: any) =>{
-      return s.asistencia
-    });
-    let data = {
-      clase_id : this.lesson.id,
-      alumnos_id: this.studentsId,
-      asistencias: Assistance
-    };
-    this.lessonsService.UpdateListLesson(data).subscribe((resp: any )=>{
-      if(resp.code == 200){
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Asistencia registrada correctamente'
-        });
-        this.listLessons();
-        this.studentsAssistance = [];
-      }else{
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'error',
-          title: 'Error al registrar la asistencia'
-        });
-      }
-    })
-  }
-
-
-  addStudents(modal) {
+  concatStudentsArrays(modal) {
     if (this.studentsManualAdd.length >= 1) {
       this.studentsPerLevel = this.studentsPerLevel.concat(this.studentsManualAdd);
       this.studentsManualAdd = [];
@@ -383,10 +414,6 @@ export class LessonsComponent implements OnInit, OnDestroy {
         title: 'Porfavor seleccione un alumno',
       });
     }
-  }
-
-  removeStudents(student) {
-    this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
   }
 
   AssignStudentToLesson(lesson_id) {
@@ -407,12 +434,309 @@ export class LessonsComponent implements OnInit, OnDestroy {
     })
   }
 
+  async chargeAssistance(lesson) {
+    this.getLesson(lesson);
+    await new Promise(f => setTimeout(f, 800));
+    this.studentsAssistance = this.studentsLesson.map((s: any) => {
+      let assistance = {
+        alumno_id: s.id,
+        asistencia: s.pivot.asistencia
+      };
+      return assistance;
+    });
+    this.studentsId = this.studentsAssistance.map((s: any) => {
+      return s.alumno_id;
+    });
+  }
+
+  editAssistancePerStudent(modal) {
+    let Assistance = this.studentsAssistance.map((s: any) => {
+      return s.asistencia
+    });
+    let data = {
+      clase_id: this.lesson.id,
+      alumnos_id: this.studentsId,
+      asistencias: Assistance
+    };
+    this.lessonsService.UpdateListLesson(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Asistencia registrada correctamente'
+        });
+        this.listLessons();
+        this.studentsAssistance = [];
+      } else {
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al registrar la asistencia'
+        });
+      }
+    })
+  }
+
+  assignOrDesassignTeachersAndAssistants(modal) {
+    var addAssistants = this.addAssistants;
+    var removeAssistants = this.removeAssistants;
+    var removeTeachers = this.removeTeachers;
+    if (this.addTeachers.length == 0 && this.lessonTeachers.length == 0 && this.removeTeachers.length == 0 && this.removeAssistants.length == 0) {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Error debe seleccionar un profesor'
+      });
+    } else {
+      if (this.addTeachers.length >= 1) {
+        let data = {
+          clase_id: this.lesson.id,
+          profesores_id: this.addTeachers
+        };
+        this.lessonsService.ChargeTeachers(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            if (removeTeachers.length >= 1) {
+              let data = {
+                clase_id: this.lesson.id,
+                profesores_id: removeTeachers
+              }
+              this.lessonsService.DeleteTeachers(data).subscribe;
+            }
+            let data = {
+              clase_id: this.lesson.id,
+              ayudantes_id: addAssistants
+            };
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Profesor(es) asignados correctamente'
+            });
+            if (addAssistants.length >= 1) {
+              this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
+                if (resp.code == 200) {
+                  if (removeAssistants.length >= 1) {
+                    let data = {
+                      clase_id: this.lesson.id,
+                      ayudantes_id: removeAssistants
+                    }
+                    this.lessonsService.DeleteAssistants(data).subscribe;
+                  }
+                  this.Toast.fire({
+                    icon: 'success',
+                    title: 'Ayudante(s) asignados correctamente'
+                  });
+                  this.clearForm();
+                  modal.dismiss();
+                  return;
+                } else {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al asignar el ayudante'
+                  });
+                  modal.dismiss();
+                }
+              })
+            } else if (this.removeAssistants.length >= 1) {
+              let data = {
+                ayudantes_id: this.removeAssistants,
+                clase_id: this.lesson.id
+              };
+              this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
+                if (resp.code == 200) {
+                  this.Toast.fire({
+                    icon: 'success',
+                    title: 'Ayudante desasignado correctamente'
+                  });
+
+                } else {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al deasignar el ayudante'
+                  });
+                }
+              })
+
+            }
+            modal.dismiss();
+            this.clearForm();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al asignar el profesor'
+            });
+          }
+        })
+      } else if (this.removeTeachers.length >= 1 && this.teachers.length >= 1) {
+        if (this.addTeachers.length >= 1) {
+          let data = {
+            clase_id: this.lesson.id,
+            profesores_id: this.addTeachers
+          };
+          this.lessonsService.ChargeTeachers(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
+              if (removeTeachers.length >= 1) {
+                let data = {
+                  clase_id: this.lesson.id,
+                  profesores_id: removeTeachers
+                }
+                this.lessonsService.DeleteTeachers(data).subscribe;
+              }
+              let data = {
+                clase_id: this.lesson.id,
+                ayudantes_id: addAssistants
+              };
+              this.Toast.fire({
+                icon: 'success',
+                title: 'Profesor(es) asignados correctamente'
+              });
+              if (addAssistants.length >= 1) {
+                this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
+                  if (resp.code == 200) {
+                    if (removeAssistants.length >= 1) {
+                      let data = {
+                        clase_id: this.lesson.id,
+                        ayudantes_id: removeAssistants
+                      }
+                      this.lessonsService.DeleteAssistants(data).subscribe;
+                    }
+                    this.Toast.fire({
+                      icon: 'success',
+                      title: 'Ayudante(s) asignados correctamente'
+                    });
+                    this.clearForm();
+                    modal.dismiss();
+                    return;
+                  } else {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al asignar el ayudante'
+                    });
+                    modal.dismiss();
+                  }
+                })
+              } else if (this.removeAssistants.length >= 1) {
+                let data = {
+                  ayudantes_id: this.removeAssistants,
+                  clase_id: this.lesson.id
+                };
+                this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
+                  if (resp.code == 200) {
+                    this.Toast.fire({
+                      icon: 'success',
+                      title: 'Ayudante desasignado correctamente'
+                    });
+
+                  } else {
+                    this.Toast.fire({
+                      icon: 'error',
+                      title: 'Error al deasignar el ayudante'
+                    });
+                  }
+                })
+
+              }
+              modal.dismiss();
+              this.clearForm();
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al asignar el profesor'
+              });
+            }
+          })
+        } else {
+          let data = {
+            profesores_id: this.removeTeachers,
+            clase_id: this.lesson.id
+          };
+          this.lessonsService.DeleteTeachers(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
+              this.Toast.fire({
+                icon: 'success',
+                title: 'Profesor desaignado correctamente'
+              });
+              modal.dismiss();
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al deasignar el profesor'
+              });
+            }
+          });
+          if (this.removeAssistants.length >= 1) {
+            let data2 = {
+              ayudantes_id: this.removeAssistants,
+              clase_id: this.lesson.id
+            };
+            this.lessonsService.DeleteAssistants(data2).subscribe((resp: any) => {
+              if (resp.code == 200) {
+                this.Toast.fire({
+                  icon: 'success',
+                  title: 'Ayudante desasignado correctamente'
+                });
+                modal.dismiss();
+              } else {
+                this.Toast.fire({
+                  icon: 'error',
+                  title: 'Error al deasignar el ayudante'
+                });
+              }
+            })
+          }
+        }
+      } else if (this.addAssistants.length >= 1) {
+        let data = {
+          ayudantes_id: this.addAssistants,
+          clase_id: this.lesson.id
+        }
+        this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Ayudante asignado correctamente'
+            });
+            modal.dismiss();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al asignar ayudante'
+            });
+          }
+        })
+
+      } else if (this.removeAssistants.length >= 1) {
+        let data = {
+          ayudantes_id: this.removeAssistants,
+          clase_id: this.lesson.id
+        };
+        this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Ayudante desasignado correctamente'
+            });
+            modal.dismiss();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al deasignar el ayudante'
+            });
+          }
+        })
+      }
+    }
+    this.clearForm();
+  }
+
+
   clearForm() {
     this.levels = [];
     this.studentsPerLevel = [];
     this.studentsId = [];
     this.students = [];
     this.studentsManualAdd = [];
+    this.addAssistants = [];
+    this.addTeachers = [];
+    this.removeAssistants = [];
+    this.removeTeachers = [];
   }
 
   ngOnDestroy(): void {

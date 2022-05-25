@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
-import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { AssistantsService } from 'src/app/modules/assistants/services/assistants.service';
 import { AssistantModel } from 'src/models/assistant.model';
 import Swal from 'sweetalert2';
@@ -12,8 +13,10 @@ import Swal from 'sweetalert2';
   templateUrl: './all-assistants.component.html',
   styleUrls: ['./all-assistants.component.scss']
 })
-export class AllAssistantsComponent implements OnInit,OnDestroy {
-
+export class AllAssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
+  
   assistants;
   assistant = new AssistantModel();
   dtOptions: DataTables.Settings = {};
@@ -35,14 +38,30 @@ export class AllAssistantsComponent implements OnInit,OnDestroy {
     this.listAssistants();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
-      responsive: true
-    };
+      responsive: true,
+    }
+  };
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
   }
 
   listAssistants() {
     this.assistantsService.getAssistants().subscribe((resp: any) => {
       this.assistants = resp.ayudantes;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
@@ -91,8 +110,8 @@ export class AllAssistantsComponent implements OnInit,OnDestroy {
     })
   }
 
-  assistantFormEdit(form: NgForm, modal){
-    this.assistantsService.editAssistant(this.assistant).subscribe((resp: any)=> {
+  assistantFormEdit(form: NgForm, modal) {
+    this.assistantsService.editAssistant(this.assistant).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -143,7 +162,7 @@ export class AllAssistantsComponent implements OnInit,OnDestroy {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar al ayudante',
-              text: resp.id 
+              text: resp.id
             });
           }
         })

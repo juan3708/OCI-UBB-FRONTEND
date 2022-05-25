@@ -1,21 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivitiesModel } from '../../../../../models/activities.model';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';import { ActivitiesModel } from '../../../../../models/activities.model';
 import { ActivitiesService } from '../../services/activities.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-activities',
   templateUrl: './activities.component.html',
   styleUrls: ['./activities.component.scss']
 })
-export class ActivitiesComponent implements OnInit, OnDestroy {
+export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
 
   activities;
   cycles;
@@ -37,6 +39,22 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
   });
   constructor(private activitiesService: ActivitiesService, private CycleService: CycleService, private modalService : NgbModal) { }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
+  }
+
   ngOnInit(): void {
     //this.listActivities();
     this.listCycles();
@@ -51,7 +69,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
   listActivities(){
     this.activitiesService.getActivities().subscribe((resp: any) =>{
       this.activities = resp.actividades;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -61,8 +79,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.activities = resp.ciclo.actividades;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -80,7 +97,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
       if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.activities = resp.ciclo.actividades;
-        this.dtTrigger.next(void 0);
+        this.rerender();
       }else{
         this.Toast.fire({
           icon: 'error',
@@ -97,8 +114,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy {
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.activities = resp.ciclo.actividades;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 

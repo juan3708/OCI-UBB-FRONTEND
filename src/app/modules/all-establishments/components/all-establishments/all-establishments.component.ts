@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -7,13 +7,17 @@ import { EstablishmentModel } from 'src/models/establishment.model';
 import Swal from 'sweetalert2';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { EstablishmentsService } from 'src/app/modules/establishments/services/establishments.service';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-all-establishments',
   templateUrl: './all-establishments.component.html',
   styleUrls: ['./all-establishments.component.scss']
 })
-export class AllEstablishmentsComponent implements OnInit, OnDestroy {
+export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, {static: false})
+  dtElement: DataTableDirective;
+
 
   establishments;
   establishment = new EstablishmentModel();
@@ -32,6 +36,22 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy {
   });
   constructor(private establishmentsService: EstablishmentsService, private CycleService: CycleService, private modalService: NgbModal) { }
 
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if("dtInstance" in this.dtElement){
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else{
+      this.dtTrigger.next();
+    }
+  }
+  
   ngOnInit(): void {
     this.listEstablishments();
     this.dtOptions = {
@@ -43,7 +63,7 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy {
   listEstablishments() {
     this.establishmentsService.getEstablishments().subscribe((resp: any) => {
       this.establishments = resp.establecimientos;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 

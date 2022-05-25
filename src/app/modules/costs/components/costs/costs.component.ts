@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DetailsModel } from '../../../../../models/details.model';
 import { CostsModel } from '../../../../../models/costs.model';
 import { CostsService } from '../../services/costs.service';
@@ -10,13 +10,16 @@ import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-costs',
   templateUrl: './costs.component.html',
   styleUrls: ['./costs.component.scss']
 })
-export class CostsComponent implements OnInit, OnDestroy {
+export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
   detail = new DetailsModel();
   detailsList;
@@ -54,6 +57,24 @@ export class CostsComponent implements OnInit, OnDestroy {
 
 
   constructor(private CostsService: CostsService, private modalService: NgbModal, private CycleService: CycleService, private fb: FormBuilder) { }
+
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
 
   get details() {
     return this.costsFormCreate.controls["details"] as FormArray;
@@ -167,7 +188,7 @@ export class CostsComponent implements OnInit, OnDestroy {
   listCosts() {
     this.CostsService.getCosts().subscribe((resp: any) => {
       this.costs = resp.gastos;
-      this.dtTrigger.next(void 0);
+      this.rerender();
     });
   }
 
@@ -185,8 +206,7 @@ export class CostsComponent implements OnInit, OnDestroy {
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.costs = resp.ciclo.gastos;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
@@ -200,7 +220,7 @@ export class CostsComponent implements OnInit, OnDestroy {
         this.costs = resp.ciclo.gastos;
         this.competencies = resp.ciclo.competencias;
         this.activities = resp.ciclo.actividades;
-        this.dtTrigger.next(void 0);
+        this.rerender();
       } else {
         this.competencies = [];
         this.activities = [];
@@ -221,8 +241,7 @@ export class CostsComponent implements OnInit, OnDestroy {
       this.costs = resp.ciclo.gastos;
       // this.competencies = resp.ciclo.competencias;
       // this.activities = resp.ciclo.actividades;
-      this.dtTrigger.unsubscribe();
-      this.dtTrigger.next(void 0);
+      this.rerender();
     })
   }
 
