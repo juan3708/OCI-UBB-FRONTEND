@@ -36,4 +36,9 @@ export class TeachersService {
     const option = { headers: this.headers };
     return this.http.post(url + '/profesor/delete',id,option);
   }
+
+  getTeachersPerCycle(id){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/ciclo/getteacherspercycle',id,option);
+  }
 }

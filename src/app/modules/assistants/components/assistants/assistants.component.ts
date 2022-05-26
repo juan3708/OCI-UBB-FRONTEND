@@ -7,6 +7,9 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { AssistantModel } from 'src/models/assistant.model';
 import Swal from 'sweetalert2';
 import { AssistantsService } from '../../services/assistants.service';
+import { CycleService } from '../../../cycle/services/cycle.service';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-assistants',
@@ -19,6 +22,9 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   assistants;
+  currentDate;
+  cycles;
+  cycle = new CycleModel();
   assistant = new AssistantModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -33,10 +39,12 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private assistantsService: AssistantsService, private modalService: NgbModal) { }
+  constructor(private assistantsService: AssistantsService, private CycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listAssistants();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
+    this.listCycles();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -59,11 +67,54 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    })
+  }
+  
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe((resp: any) => {
+        this.cycle = resp.ciclo;
+        this.listAssistantsPerCycle();
+    })
+  }
 
-  listAssistants() {
-    this.assistantsService.getAssistants().subscribe((resp: any) => {
-      this.assistants = resp.ayudantes;
-      this.rerender();
+  getCycle(id) {
+    let data = {
+      ciclo_id: id
+    };
+    this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.listAssistantsPerCycle();
+    })
+  }
+
+
+  listAssistantsPerCycle() {
+    let data = {
+      ciclo_id: this.cycle.id
+    }
+    this.assistantsService.getAssistantsPerCycle(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.assistants = resp.ayudantes;
+        Swal.fire({
+          title: 'Espere porfavor',
+          timer: 600,
+          didOpen: async () => {
+            Swal.showLoading()
+          },
+        })
+        this.rerender();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
     });
   }
 
@@ -94,7 +145,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
           icon: 'success',
           title: 'Ayudante creado correctamente'
         });
-        this.listAssistants();
+        this.listAssistantsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -120,7 +171,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
           icon: 'success',
           title: 'Ayudante editado correctamente'
         });
-        this.listAssistants();
+        this.listAssistantsPerCycle();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -159,7 +210,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
               icon: 'success',
               title: 'Ayudante eliminado correctamente'
             });
-            this.listAssistants();
+            this.listAssistantsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

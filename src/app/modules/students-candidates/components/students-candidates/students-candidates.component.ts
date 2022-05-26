@@ -92,7 +92,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     };
     this.CycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
-        console.log(resp.ciclo);
         this.cycle = resp.ciclo;
         this.studentsPerCycle = resp.alumnos;
         this.rerender();
@@ -114,7 +113,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     };
     this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      console.log(resp);
       if (resp.alumnos == undefined) {
         this.studentsPerCycle = []
       } else {

@@ -1,12 +1,15 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
-import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { TeacherModel } from 'src/models/teacher.model';
 import Swal from 'sweetalert2';
 import { TeachersService } from '../../services/teachers.service';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { CycleService } from '../../../cycle/services/cycle.service';
+import { formatDate } from '@angular/common';
+import { SpinnerComponent } from '../../../../shared/spinner/spinner.component';
 
 @Component({
   selector: 'app-teachers',
@@ -17,10 +20,14 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  spinner = new SpinnerComponent()
   teachers;
   teacher = new TeacherModel();
+  cycles;
+  cycle = new CycleModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
+  currentDate;
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -32,10 +39,12 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private teachersService: TeachersService, private modalService: NgbModal) { }
+  constructor(private teachersService: TeachersService, private CycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listTeachers();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.listCycles();
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -59,11 +68,56 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  listTeachers() {
-    this.teachersService.getTeachers().subscribe((resp: any) => {
-      this.teachers = resp.profesores;
-      this.rerender();
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    })
+  }
+
+  listTeachersPerCycle() {
+    let data = {
+      ciclo_id: this.cycle.id
+    }
+    this.teachersService.getTeachersPerCycle(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.teachers = resp.profesores;
+        Swal.fire({
+          title: 'Espere porfavor',
+          timer: 600,
+          didOpen: async () => {
+            Swal.showLoading()
+          },
+        })
+        this.rerender();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
     });
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.listTeachersPerCycle();
+
+
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      ciclo_id: id
+    };
+    this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.listTeachersPerCycle();
+    })
   }
 
   openModal(ModalContent) {
@@ -78,101 +132,6 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.teacher = resp.profesor;
     });
   }
-
-  teacherFormCreate(rut, name, surname, email, faculty, modality, modal) {
-    let data = {
-      rut,
-      nombre: name,
-      apellidos: surname,
-      email,
-      facultad: faculty,
-      modalidad: modality
-    };
-    this.teachersService.createTeacher(data).subscribe((resp: any) => {
-      if (resp.code == 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Profesor creado correctamente'
-        });
-        this.listTeachers();
-      } else {
-        if (resp.code == 400) {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Ingrese correctamente los valores',
-          });
-        } else {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Error al registrar al profesor',
-            text: resp.message
-          });
-        }
-      }
-    })
-  }
-
-  teacherFormEdit(form: NgForm, modal) {
-    this.teachersService.editTeacher(this.teacher).subscribe((resp: any) => {
-      if (resp.code == 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Profesor editado correctamente'
-        });
-        this.listTeachers();
-      } else {
-        if (resp.code == 400) {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Ingrese correctamente los valores',
-          });
-        } else {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Error al editar al profesor',
-            text: resp.message
-          });
-        }
-      }
-    })
-  }
-
-  deleteTeacher(id) {
-    let data = {
-      id
-    };
-    Swal.fire({
-      title: '¿Esta seguro que desea eliminar este profesor?',
-      text: "No se puede revertir esta operación.",
-      icon: 'warning',
-      showCancelButton: true,
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Eliminar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.teachersService.deleteTeacher(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Profesor eliminado correctamente'
-            });
-            this.listTeachers();
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al eliminar al profesor',
-              text: resp.id
-            });
-          }
-        })
-      }
-    })
-  }
-
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
