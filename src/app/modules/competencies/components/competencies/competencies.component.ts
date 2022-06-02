@@ -1,10 +1,10 @@
-import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CompetenciesModel } from '../../../../../models/competencies.model';
 import { CompetenciesService } from '../../services/competencies.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { NgForm } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { CycleModel } from '../../../../../models/cycle.model';
@@ -17,7 +17,7 @@ import { DataTableDirective } from 'angular-datatables';
   styleUrls: ['./competencies.component.scss']
 })
 export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   competition = new CompetenciesModel();
@@ -25,6 +25,10 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
   cycle = new CycleModel();
   currentDate;
   competencies;
+  studentsPerCycle = [];
+  studentsAdd = [];
+  students = [];
+  costs = [];
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -39,7 +43,10 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   });
 
-  constructor(private CompetenciesService: CompetenciesService, private CycleService: CycleService, private modalService: NgbModal) { }
+  editScorePerStudent = this.fb.group({
+    studentScore: this.fb.array([])
+  });
+  constructor(private CompetenciesService: CompetenciesService, private CycleService: CycleService, private modalService: NgbModal, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.listcycles();
@@ -57,25 +64,29 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
+  }
+
+  get studentScore() {
+    return this.editScorePerStudent.controls["studentScore"] as FormArray;
   }
 
   listcycles() {
     this.CycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
-      
+
     });
   }
 
-  listCompetenciesPerCycle(){
+  listCompetenciesPerCycle() {
     let data = {
       id: this.cycle.id
     };
@@ -85,16 +96,17 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  getCyclePerFinishtDate(){
+  getCyclePerFinishtDate() {
     let data = {
-      fecha_termino : this.currentDate
+      fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.competencies = resp.ciclo.competencias;
+        this.studentsPerCycle = resp.alumnosParticipantes;
         this.rerender();
-      }else{
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
@@ -103,13 +115,14 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-    getCycle(id) {
+  getCycle(id) {
     let data = {
       id
     };
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.competencies = resp.ciclo.competencias;
+      this.studentsPerCycle = resp.alumnosParticipantes;
       this.rerender();
     })
   }
@@ -125,7 +138,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
 
-  competitionFormCreate(type, location,date, modal) {
+  competitionFormCreate(type, location, date, modal) {
     let data = {
       tipo: type,
       fecha: date,
@@ -163,7 +176,105 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.CompetenciesService.getCompetitionById(data).subscribe((resp: any) => {
       this.competition = resp.competencia
+      this.students = resp.competencia.alumnos;
+      this.costs = resp.competencia.gastos;
+      this.deleteStudentCompetitionArray();
+      console.log(this.students);
+      console.log(this.studentsPerCycle);
+      if (this.students.length >= 1) {
+        //this.setEditFeeForm();
+      }
     });
+  }
+
+  deleteStudentCompetitionArray() {
+    this.studentsPerCycle.forEach((s, index) => {
+      console.log("StudentPerCycle",s);
+      this.students.forEach(sp => {
+        console.log("Students",sp);
+        if (s.id == sp.id) {
+          this.studentsPerCycle.splice(index, 1);
+        }
+      })
+    });
+  }
+
+  addOrRemoveStudentAddArray(event, student) {
+    if (event) {
+      this.studentsAdd.push(student);
+    } else {
+      this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
+    }
+  }
+
+
+  addStudents(modal) {
+    if (this.studentsAdd.length == 0) {
+      this.Toast.fire({
+        icon: 'info',
+        title: 'No se realizaron cambios'
+      });
+      modal.dismiss();
+      this.clearForm();
+      this.getCycle(this.cycle.id);
+    } else {
+      let data = {
+        competencia_id: this.competition.id,
+        alumnos_id: this.studentsAdd
+      }
+
+      this.CompetenciesService.addStudents(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Alumnos agregados correctamente',
+          });
+          modal.dismiss();
+          this.getCycle(this.cycle.id);
+          this.clearForm();
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al agregar los alumnos a la competencia',
+          });
+        }
+      })
+    }
+  }
+
+  removeStudent(student) {
+    let data = {
+      competencia_id: this.competition.id,
+      alumno_id: student
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea eliminar al alumno de la competencia?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.CompetenciesService.deleteStudent(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.students.splice(this.students.indexOf(student), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha eliminado correctamente',
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
   competitionFormEdit(form: NgForm, modal) {
@@ -190,6 +301,50 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
+  }
+
+  setEditFeeForm() {
+    this.students.map((e: any) => {
+      const studentScoreForm = this.fb.group({
+        id: e.id,
+        nombre: new FormControl({ value: e.nombre, disabled: true }),
+        puntaje: e.pivot.puntaje
+      });
+      this.studentScore.push(studentScoreForm);
+    })
+    this.editScorePerStudent.setValue({
+      studentScore: this.studentScore
+    });
+  }
+
+  establishmentQuotesEdit(form, modal) {
+    let ids = []
+    let puntajes = [];
+    for (let index = 0; index < this.studentScore.length; index++) {
+      ids.push(this.studentScore.value[index].id);
+      puntajes.push(this.studentScore.value[index].puntajes);
+    }
+    let data = {
+      competencia_id: this.competition.id,
+      alumnos_id: ids,
+      puntajes: puntajes
+    };
+
+    this.CompetenciesService.updateScores(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se asignaron correctamente los puntajes'
+        });
+        this.clearForm();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al asignar los puntajes'
+        });
+      }
+    })
   }
 
   deleteCompetition(id) {
@@ -223,6 +378,12 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     });
+  }
+
+  clearForm() {
+    this.studentsAdd = [];
+    this.studentScore.controls.splice(0, this.studentScore.length);
+    this.editScorePerStudent.reset();
   }
 
   ngOnDestroy(): void {

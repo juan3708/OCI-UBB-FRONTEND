@@ -7,6 +7,8 @@ import { StudentModel } from 'src/models/student.model';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { CycleService } from '../../../cycle/services/cycle.service';
 
 @Component({
   selector: 'app-students',
@@ -19,6 +21,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   students;
   establishments;
+  cycle = new CycleModel();
   student = new StudentModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -33,7 +36,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private CycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.listStudents();
@@ -154,10 +157,12 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteStudent(id) {
     let data = {
-      id
+      ciclo_id: this.cycle.id,
+      alumno_id: id,
+      participante: 0
     };
     Swal.fire({
-      title: '¿Está seguro que desea eliminar este alumno?',
+      title: '¿Esta seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -167,23 +172,23 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.studentsService.deleteStudent(data).subscribe((resp: any) => {
+        this.CycleService.updateCandidates(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
-              title: 'Alumno eliminado correctamente'
+              title: 'Se ha realizado correctamente',
             });
-            this.listStudents();
+           // this.getCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el alumno',
-              text: resp.id
+              title: 'Error al realizar la acción',
+              text: resp.message
             });
           }
-        });
+        })
       }
-    });
+    })
   }
 
   ngOnDestroy(): void {

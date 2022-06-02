@@ -9,7 +9,7 @@
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
-            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" style="width: 100px;">
                 <option *ngFor="let cycle of cycles" [value]="cycle.id">
                     {{cycle.nombre}}</option>
             </select>
@@ -136,21 +136,51 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Asignar Nivel</h4>
+                        <h4 class="card">Asignar alumnos al Nivel: {{level.nombre}}</h4>
                         <form class="forms-sample">
                             <div class="form-group">
-                                <label for="establishment">Establecimiento</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="establishment"
-                                        (change)="getStudentsForEstableshments($event.target.value)" #establishment>
-                                        <option selected>Seleccione un establecimiento</option>
-                                        <option *ngFor="let establishment of establishments" [value]="establishment.id">
-                                            {{establishment.nombre}}</option>
-                                    </select>
+                                <div class="table-responsive" *ngIf="studentsPerLevel.length >= 1">
+                                    <h4 class="card">Alumnos del nivel</h4>
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                                <th>
+                                                    <b>Eliminar</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of studentsPerLevel">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                                <td>
+                                                    <a type="button" data-dismiss="modal"
+                                                        (click)="removeStudent(student.id)"><i
+                                                            class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="table-responsive" *ngIf="students.length >= 1">
+                                <br>
+                                <h4 class="card">Alumnos</h4>
+                                <div class="table-responsive">
                                     <table class="table table-striped" style="text-align: center;">
                                         <thead class="table table-bordered">
                                             <tr>
@@ -186,7 +216,7 @@
                                                                 class="form-check-input position-static"
                                                                 style="text-align: center;" [value]="student.id"
                                                                 id="studentLevel"
-                                                                (change)="addOrRemoveStudent($event.target.checked, studentLevel.value)"
+                                                                (change)="addOrRemoveStudent($event.target.checked, student.id)"
                                                                 #studentLevel>
                                                             <i class="input-helper"></i>
                                                         </label>
@@ -211,11 +241,11 @@
 </ng-template>
 <!-- Modal AddStudentLevel Ends -->
 
-<!-- Modal AddStudentLevel starts -->
+<!-- Modal StudentPerLevel starts -->
 <ng-template class="modal fade" #ModalStudentPerLevel let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();getCycle(cycle.id)">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -259,4 +289,4 @@
         </div>
     </div>
 </ng-template>
-<!-- Modal AddStudentLevel Ends -->
+<!-- Modal StudentPerLevel Ends -->

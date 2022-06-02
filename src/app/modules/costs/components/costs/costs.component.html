@@ -9,7 +9,7 @@
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
-            <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" style="width: 100px;">
+            <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" [(ngModel)]="cycle.id" style="width: 100px;">
                 <option *ngFor="let cycle of cycles" [value]="cycle.id">
                     {{cycle.nombre}}</option>
             </select>

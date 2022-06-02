@@ -23,10 +23,13 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
 
 
   studentsPerCycle = [];
-  establishments;
+  studentsEnrolled = [];
+  establishments = [];
   establishmentName;
   selectedFile: File = null;
   fileName: string;
+  studentsAdd = [];
+  cupos = [];
   cycles;
   currentDate;
   cycle = new CycleModel();
@@ -48,7 +51,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
 
   ngOnInit(): void {
     this.listCycles();
-    this.listEstablishments();
     this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.getCyclePerFinishtDate();
     this.dtOptions = {
@@ -80,12 +82,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     })
   }
 
-  listEstablishments() {
-    this.EstablishmentsService.getEstablishments().subscribe((resp: any) => {
-      this.establishments = resp.establecimientos;
-    })
-  }
-
   getCyclePerFinishtDate() {
     let data = {
       fecha_termino: this.currentDate
@@ -93,7 +89,12 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     this.CycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cycle = resp.ciclo;
-        this.studentsPerCycle = resp.alumnos;
+        this.studentsPerCycle = resp.alumnosInscritos;
+        this.studentsEnrolled = resp.alumnosParticipantes;
+        this.establishments = resp.establecimientos;
+        for (let index = 0; index < this.establishments.length; index++) {
+          this.cupos.push(this.establishments[index].alumnosParticipantes.length);
+        }
         this.rerender();
       } else {
         this.Toast.fire({
@@ -113,11 +114,13 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     };
     this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      if (resp.alumnos == undefined) {
-        this.studentsPerCycle = []
-      } else {
-        this.studentsPerCycle = resp.alumnos;
+      this.studentsPerCycle = resp.alumnosInscritos;
+      this.studentsEnrolled = resp.alumnosParticipantes;
+      this.establishments = resp.establecimientos;
+      for (let index = 0; index < this.establishments.length; index++) {
+        this.cupos.push(this.establishments[index].alumnosParticipantes.length);
       }
+    
       this.rerender();
     })
   }
@@ -147,7 +150,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       formData.append('file', this.selectedFile, this.fileName);
       formData.append('ciclo_id', this.cycle.id.toString());
       this.StudentsCandidatesService.chargeStudentsPerCycle(formData).subscribe((resp: any) => {
-        console.log(resp);
         if (resp.code == 200) {
           this.Toast.fire({
             icon: 'success',
@@ -175,8 +177,103 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     this.selectedFile = null;
   }
 
+  addOrRemoveStudents(event, student, index) {
+    if (this.establishments[index].cupos > this.cupos[index]) {
+      if (event) {
+        this.studentsAdd.push(student);
+        this.cupos[index]++;
+      } else {
+        this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
+        this.cupos[index]--;
+      }
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'El establecimiento ha superado sus cupos maximos.',
+      });
+    }
+  }
+
+  updateCandidates(modal) {
+    if (this.studentsAdd.length == 0) {
+      this.Toast.fire({
+        icon: 'info',
+        title: 'No se han realizado cambios',
+      });
+      this.clearForm();
+      this.getCycle(this.cycle.id);
+      modal.dismiss();
+    } else {
+      let data = {
+        ciclo_id: this.cycle.id,
+        alumnos_id: this.studentsAdd,
+        participante: 1
+      };
+
+      this.CycleService.updateCandidates(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se han inscritos correctamente',
+          });
+          this.clearForm();
+          this.getCycle(this.cycle.id);
+          modal.dismiss();
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al inscribir alumnos',
+            text: resp.message
+          });
+        }
+      })
+    }
+  }
+
+  removeStudent(id, indexEstablishments, indexStudent) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      alumno_id: id,
+      participante: 0
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea desincribir al alumno?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.CycleService.updateCandidates(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.establishments[indexEstablishments].alumnosParticipantes.splice(indexStudent, 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha realizado correctamente',
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
+  }
+
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
+  }
+
+  clearForm() {
+    this.studentsAdd = [];
+    this.cupos = [];
+    this.establishments = [];
   }
 
 }

@@ -36,4 +36,19 @@ export class CompetenciesService {
     const option = { headers: this.headers };
     return this.http.post(url + '/competencia/delete', id, option);
   }
+
+  addStudents(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/competencia/attach', data, option);
+  }
+
+  deleteStudent(id){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/competencia/detach', id, option);
+  }
+
+  updateScores(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/competencia/updatescores', data, option);
+  }
 }

@@ -239,8 +239,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.costs = resp.ciclo.gastos;
-      // this.competencies = resp.ciclo.competencias;
-      // this.activities = resp.ciclo.actividades;
+      this.competencies = resp.ciclo.competencias;
+      this.activities = resp.ciclo.actividades;
       this.rerender();
     })
   }
