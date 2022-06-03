@@ -30,6 +30,14 @@
   color: #b66dff;
 }
 
-.btn{
-  background-color: #ebedf2 !important;
+// .btn{
+//   background-color: #ebedf2 !important;
+// }
+
+::ng-deep .card {
+  margin-bottom: 20px !important;
+}
+
+::ng-deep .card .card-header.active > a > span {
+  color: #1d2124 !important;
 }

@@ -27,7 +27,9 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   establishment = new EstablishmentModel();
   cycle = new CycleModel();
   cycles;
+  emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
   currentDate;
+  emailsArray = [];
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -62,7 +64,6 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       if(this.cicloOld != this.cicloNew){
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-        console.log("cambio");
       }
     }
   }
@@ -92,7 +93,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
@@ -240,34 +241,69 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   sendInvitations(to, subject, content, formLink, modal) {
-    if (to == '' || subject == '' || content == '' || formLink == '') {
+    if (subject == '' || content == '' || formLink == '') {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor rellenar todo los campos'
+        title: 'Porfavor rellenar todo los campos con asterisco(*)'
       });
     } else {
-
-      let data = {
-        emails: to,
-        subject,
-        content,
-        formLink,
-        start_date: this.cycle.fecha_inicio
-      }
-      this.cycleService.sendEmails(data).subscribe((resp: any) => {
-        if (resp.code == 200) {
-          this.Toast.fire({
-            icon: 'success',
-            title: 'Invitaciones enviadas correctamente'
-          });
-          modal.dismiss();
+      this.establishments.forEach(e => {
+        this.emailsArray.push(e.email, e.email_profesor);
+      });
+      if (to != '') {
+        let bool = this.emailsRegex.test(to);
+        if (bool) {
+          this.emailsArray.push(to);
+          let data = {
+            emails: this.emailsArray,
+            subject,
+            content,
+            formLink,
+            start_date: this.cycle.fecha_inicio
+          };
+          this.cycleService.sendEmails(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
+              this.Toast.fire({
+                icon: 'success',
+                title: 'Invitaciones enviadas correctamente'
+              });
+              modal.dismiss();
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al enviar invitaciones'
+              });
+            }
+          })
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Error al enviar invitaciones'
+            title: 'Email incorrecto'
           });
         }
-      })
+      } else {
+        let data = {
+          emails: this.emailsArray,
+          subject,
+          content,
+          formLink,
+          start_date: this.cycle.fecha_inicio
+        };
+        this.cycleService.sendEmails(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Invitaciones enviadas correctamente'
+            });
+            modal.dismiss();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al enviar invitaciones'
+            });
+          }
+        })
+      }
     }
   }
 

@@ -17,8 +17,10 @@ import { formatDate } from '@angular/common';
   templateUrl: './level.component.html',
   styleUrls: ['./level.component.scss']
 })
+
 export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, {static: false})
+
   dtElement: DataTableDirective;
 
   cicloOld;
@@ -27,7 +29,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   level = new LevelModel();
   levels;
   cycles;
-  studentsPerLevel= [];
+  studentsPerLevel = [];
   cycle = new CycleModel();
   currentDate;
   students = [];
@@ -68,7 +70,6 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       if(this.cicloOld != this.cicloNew){
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-        console.log("cambio");
       }
     }
   }
@@ -78,13 +79,13 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
@@ -98,8 +99,8 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     })
   }
 
-  
-  listLevelsPerCycle(){
+
+  listLevelsPerCycle() {
     let data = {
       id: this.cycle.id
     };
@@ -121,17 +122,18 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     })
   }
 
-  getCyclePerFinishtDate(){
+  getCyclePerFinishtDate() {
     let data = {
-      fecha_termino : this.currentDate
+      fecha_termino: this.currentDate
     };
     this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
       if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.levels = resp.ciclo.niveles;
         this.establishments = resp.ciclo.establecimientos;
+        this.students = resp.alumnosParticipantes;
         this.rerender();
-      }else{
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
@@ -155,26 +157,15 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
   }
-  
-  addOrRemoveStudent(event, student){
-    if(event == true){
+
+  addOrRemoveStudent(event, student) {
+    if (event == true) {
       this.studentsIdAddLevel.push(student);
-    }else{
-      this.studentsIdAddLevel.splice(this.studentsIdAddLevel.indexOf(student),1);
+    } else {
+      this.studentsIdAddLevel.splice(this.studentsIdAddLevel.indexOf(student), 1);
     }
   }
 
-
-  getStudentsForEstableshments(id) {
-    let data = {
-      id
-    };
-    this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
-      if (resp.code == 200) {
-        this.students = resp.establecimiento.alumnos;
-      }
-    })
-  }
 
   getLevel(id) {
     let data = {
@@ -183,6 +174,9 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     this.LevelService.getLevelById(data).subscribe((resp: any) => {
       this.level = resp.nivel;
       this.studentsPerLevel = resp.nivel.alumnos;
+      this.students = resp.alumnosSinNivel;
+
+      this.rerender();
     })
   }
 
@@ -268,7 +262,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el nivel',
-              text: resp.id
+              text: resp.message
             });
           }
         });
@@ -278,25 +272,25 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
   addLevelStudent(modal) {
-    if(this.studentsIdAddLevel.length < 1){
+    if (this.studentsIdAddLevel.length < 1) {
       this.Toast.fire({
         icon: 'error',
         title: 'Seleccione alumnos porfavor'
       });
-    }else{
-      let data ={
+    } else {
+      let data = {
         nivel_id: this.level.id,
         alumnos_id: this.studentsIdAddLevel
       };
-      this.LevelService.levelassociate(data).subscribe((resp:any)=>{
-        if(resp.code == 200){
+      this.LevelService.levelassociate(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
           modal.dismiss();
           this.Toast.fire({
             icon: 'success',
             title: 'Se asigno correctamente el nivel'
           });
           this.clearForm();
-        }else{
+        } else {
           this.Toast.fire({
             icon: 'error',
             title: 'Error al asignar el nivel'
@@ -306,9 +300,44 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     }
   }
 
-  clearForm(){
+  removeStudent(student) {
+    let data = {
+      nivel_id : this.level.id,
+      alumno_id: student
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea desincribir al alumno?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.LevelService.deleteStudent(data).subscribe((resp: any)=>{
+          if(resp.code == 200){
+            this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha eliminado correctamente',
+            });
+          }else{
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
+  }
+
+  clearForm() {
     this.students = [];
-    this.studentsIdAddLevel= [];
+    this.studentsIdAddLevel = [];
   }
 
   ngOnDestroy(): void {

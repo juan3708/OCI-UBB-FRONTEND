@@ -43,5 +43,9 @@ export class LevelService {
     return this.http.post(url + '/nivel/levelassociate', data, option);
   }
 
+  deleteStudent(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/nivel/deletestudent', data, option);
+  }
 
 }

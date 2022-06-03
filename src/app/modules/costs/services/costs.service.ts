@@ -47,9 +47,8 @@ export class CostsService {
     return this.http.post(url + '/gastos/delete', id, option);
   }
 
-  deleteDetails(id) {
-
+  deleteDetails(data) {
     const option = { headers: this.headers };
-    return this.http.post(url + '/detalle/delete', id, option);
+    return this.http.post(url + '/detalle/delete', data, option);
   }
 }

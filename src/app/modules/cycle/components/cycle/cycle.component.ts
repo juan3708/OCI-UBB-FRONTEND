@@ -162,9 +162,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.establishmentsFee.push(establishmentsFeeForm);
     })
-    this.editFeeEstablishment.setValue({
-      establishmentsFee: this.establishmentsFee
-    });
+    this.editFeeEstablishment.setControl('establishmentsFee',this.establishmentsFee);
   }
 
   deleteCycle(id) {

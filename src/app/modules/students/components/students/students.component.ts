@@ -7,6 +7,9 @@ import { StudentModel } from 'src/models/student.model';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { CycleService } from '../../../cycle/services/cycle.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-students',
@@ -19,6 +22,9 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   students;
   establishments;
+  currentDate;
+  cycle = new CycleModel();
+  cycles;
   student = new StudentModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -33,11 +39,14 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private CycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listStudents();
-    this.listEstablishments();
+    // this.listStudents();
+    // this.listEstablishments();
+    this.listCycles();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -73,8 +82,44 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    });
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.students = resp.alumnosParticipantes;
+        this.rerender();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.students = resp.alumnosParticipantes;
+      this.rerender();
+
+    })
+  }
+
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal) {
@@ -154,10 +199,12 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteStudent(id) {
     let data = {
-      id
+      ciclo_id: this.cycle.id,
+      alumno_id: id,
+      participante: 0
     };
     Swal.fire({
-      title: '¿Está seguro que desea eliminar este alumno?',
+      title: '¿Esta seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -167,23 +214,23 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.studentsService.deleteStudent(data).subscribe((resp: any) => {
+        this.CycleService.updateCandidates(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
-              title: 'Alumno eliminado correctamente'
+              title: 'Se ha realizado correctamente',
             });
-            this.listStudents();
+           // this.getCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el alumno',
-              text: resp.id
+              title: 'Error al realizar la acción',
+              text: resp.message
             });
           }
-        });
+        })
       }
-    });
+    })
   }
 
   ngOnDestroy(): void {

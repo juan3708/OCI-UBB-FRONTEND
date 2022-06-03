@@ -55,6 +55,11 @@ export class LessonsService {
     return this.http.post(url +'/clase/chargestudents', data, option);
   }
 
+  removeStudents(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/deletestudents', data, option);
+  }
+
   UpdateListLesson(data){
     const option = { headers: this.headers };
     return this.http.post(url +'/clase/updatelistlesson', data, option);

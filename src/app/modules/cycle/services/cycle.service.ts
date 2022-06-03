@@ -76,17 +76,12 @@ export class CycleService {
 
   updateCandidates(data) {
     const option = { headers: this.headers };
-    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
-  }
-
-  updateEnrolled(data) {
-    const option = { headers: this.headers };
-    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+    return this.http.post(url+'/ciclo/updatecandidates', data, option);
   }
 
   deleteStudents(data) {
     const option = { headers: this.headers };
-    return this.http.post(url+'/ciclo/getbyfinishdate', data, option);
+    return this.http.post(url+'/ciclo/deletestudents', data, option);
   }
 
   getStudentsCandidatePerCycle(data) {

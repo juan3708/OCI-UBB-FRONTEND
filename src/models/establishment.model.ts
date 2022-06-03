@@ -8,4 +8,5 @@ export class EstablishmentModel{
     nombre_profesor:string;
     email:string;
     telefono:number;
+    cupos: number;
 }

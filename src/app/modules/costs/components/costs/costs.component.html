@@ -4,7 +4,7 @@
     <div class="card-body">
         <h4 class="card-title"><b>Gastos</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear
+            (click)="openModal(ModalContent);clearForm()">Crear
             gasto</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -260,6 +260,9 @@
                                         <label for="name">Nombre</label>
                                         <input type="text" class="form-control" id="name" placeholder="Nombre"
                                             formControlName="name">
+                                    </div>
+                                    <div class="form-group" style="display: none">
+                                        <input type="text" class="form-control" id="id" formControlName="id">
                                     </div>
                                     <div>
                                         <label for="priceDetail">Valor</label>

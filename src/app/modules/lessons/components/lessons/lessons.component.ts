@@ -39,8 +39,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   studentsId = [];
   studentsAssistance = [];
   students = [];
-  studentsManualAdd = [];
+  studentsAdd = [];
   studentsLesson = [];
+  removeStudents = [];
   studentList;
   teachers;
   assistants;
@@ -52,6 +53,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   removeAssistants = [];
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
+  dt: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -159,8 +161,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         this.cycle = resp.ciclo;
         this.lessons = resp.clases;
         this.levels = resp.ciclo.niveles;
+        this.students = resp.alumnosParticipantes;
         this.rerender();
-
       } else {
         this.Toast.fire({
           icon: 'error',
@@ -179,19 +181,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.levels = resp.ciclo.niveles;
       console.log(resp.clases)
       this.lessons = resp.clases;
+      this.students = resp.alumnosParticipantes;
       this.rerender();
 
-    })
-  }
-
-  getStudentsForEstableshments(id) {
-    let data = {
-      id
-    };
-    this.EstablishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
-      if (resp.code == 200) {
-        this.students = resp.establecimiento.alumnos;
-      }
     })
   }
 
@@ -204,8 +196,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.studentsLesson = resp.clase.alumnos;
       this.lessonAssistants = resp.clase.ayudantes;
       this.lessonTeachers = resp.clase.profesores;
-      this.chargeForCycle(this.lesson.ciclo_id);
+      this.students = resp.alumnosSinClase;
       this.getLevelById(this.lesson.nivel_id);
+      this.rerender();
     });
 
   }
@@ -245,6 +238,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             title: 'Clase creada correctamente'
           });
           this.listLessonsPerCycle();
+          this.clearForm();
 
         } else {
           if (resp.code == 400) {
@@ -339,22 +333,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  chargeForCycle(id) {
-    let data = {
-      id
-    };
-    this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.cycle = resp.ciclo;
-      if (resp.code == 200) {
-        this.levels = resp.ciclo.niveles;
-      } else {
-        this.levels = [];
-      }
-    })
-  }
-
-
-
   chargeStudentsPerLevel(level) {
     this.studentsPerLevel = [];
     if (level != 'undefined') {
@@ -369,6 +347,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             title: 'No existen alumnos asociados al nivel seleccionado',
           });
         }
+        this.deleteStudentLevelArray();
       });
     } else {
       this.Toast.fire({
@@ -378,11 +357,21 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
-  addOrRemoveStudent(event, student) {
+  deleteStudentLevelArray(){
+    this.students.forEach((s, index) => {
+      this.studentsPerLevel.forEach(sp =>{
+        if(s.id == sp.id){
+          this.students.splice(index, 1);
+        }
+      })
+    });
+  }
+
+  addOrRemoveStudentCreate(event, student) {
     if (event) {
-      this.studentsManualAdd.push(student);
+      this.studentsAdd.push(student);
     } else {
-      this.studentsManualAdd.splice(this.studentsManualAdd.indexOf(student), 1);
+      this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
     }
   }
 
@@ -402,8 +391,17 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
-  removeStudentsArray(student) {
+  removeStudentsPerLevelArray(student) {
     this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
+  }
+
+  removeStudentsLessonArray(student) {
+    this.studentsLesson.splice(this.studentsLesson.indexOf(student), 1);
+    this.removeStudents.push(student);
+    this.Toast.fire({
+      icon: 'info',
+      title: 'Se ha almacenado correctamente el alumno a eliminar',
+    });
   }
 
   removeTeacherArray(teacher) {
@@ -421,9 +419,12 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   concatStudentsArrays(modal) {
-    if (this.studentsManualAdd.length >= 1) {
-      this.studentsPerLevel = this.studentsPerLevel.concat(this.studentsManualAdd);
-      this.studentsManualAdd = [];
+    if (this.studentsPerLevel.length >= 1) {
+      this.studentsId = this.studentsPerLevel.map((s: any) => {
+        return s.id;
+      });
+      this.studentsId = this.studentsId.concat(this.studentsAdd);
+      this.studentsAdd = [];
       modal.dismiss();
     } else {
       this.Toast.fire({
@@ -434,9 +435,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   AssignStudentToLesson(lesson_id) {
-    this.studentsId = this.studentsPerLevel.map((s: any) => {
-      return s.id;
-    });
     let data = {
       clase_id: lesson_id,
       alumnos_id: this.studentsId
@@ -743,13 +741,92 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.clearForm();
   }
 
+  addOrRemoveStudentPerLesson(modal) {
+    if (this.removeStudents.length == 0 && this.studentsAdd.length == 0) {
+      this.Toast.fire({
+        icon: 'info',
+        title: 'No se efectuaron cambios'
+      });
+      modal.dismiss();
+    } else if (this.removeStudents.length >= 1 && this.studentsLesson.length == 0 && this.studentsAdd.length == 0) {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Debe seleccionar un alumno'
+      });
+    } else {
+      if (this.removeStudents.length >= 1) {
+        let data = {
+          clase_id : this.lesson.id,
+          alumnos_id: this.removeStudents
+        };
+        this.lessonsService.removeStudents(data).subscribe((resp: any)=>{
+          if(resp.code != 200){
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al eliminar alumno de la clase'
+            });
+            modal.dismiss();
+            return
+          }
+        });
+        if(this.studentsAdd.length >=1){
+          let data = {
+            clase_id : this.lesson.id,
+            alumnos_id: this.studentsAdd
+          };
+          console.log(data);
+          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
+            if(resp.code !=200){
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al asignar alumno a la clase'
+              });
+              modal.dismiss();
+              return
+            }
+          })
+        }
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se guardaron correctamente los cambios'
+        });
+        modal.dismiss();
+        this.clearForm();
+      }else{
+        if(this.studentsAdd.length >=1){
+          let data = {
+            clase_id : this.lesson.id,
+            alumnos_id: this.studentsAdd
+          };
+          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
+            if(resp.code !=200){
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al asignar alumno a la clase'
+              });
+              modal.dismiss();
+              return
+            }
+          })
+        }
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se guardaron correctamente los cambios'
+        });
+        modal.dismiss();
+        this.clearForm();
+      }
+    }
+  }
+
+
 
   clearForm() {
-    this.levels = [];
     this.studentsPerLevel = [];
     this.studentsId = [];
     this.students = [];
-    this.studentsManualAdd = [];
+    this.studentsAdd = [];
+    this.removeStudents = [];
     this.addAssistants = [];
     this.addTeachers = [];
     this.removeAssistants = [];
