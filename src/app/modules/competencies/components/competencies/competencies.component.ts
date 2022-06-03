@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CompetenciesModel } from '../../../../../models/competencies.model';
 import { CompetenciesService } from '../../services/competencies.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -16,10 +16,14 @@ import { DataTableDirective } from 'angular-datatables';
   templateUrl: './competencies.component.html',
   styleUrls: ['./competencies.component.scss']
 })
-export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild(DataTableDirective, { static: false })
+
+export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
+  @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   competition = new CompetenciesModel();
   cycles;
   cycle = new CycleModel();
@@ -46,17 +50,30 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
   editScorePerStudent = this.fb.group({
     studentScore: this.fb.array([])
   });
-  constructor(private CompetenciesService: CompetenciesService, private CycleService: CycleService, private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(private CompetenciesService: CompetenciesService, private cycleService: CycleService, private modalService: NgbModal, private fb: FormBuilder) {
+      this.cicloOld = {};
+  }
 
   ngOnInit(): void {
-    this.listcycles();
+    // this.listcycles();
     //this.listCompetencies();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+   
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -80,7 +97,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listcycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
 
     });
@@ -90,7 +107,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id: this.cycle.id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.competencies = resp.ciclo.competencias;
       this.rerender();
     })
@@ -100,8 +117,8 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
-      if (resp.code == 200) {
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+      if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.competencies = resp.ciclo.competencias;
         this.studentsPerCycle = resp.alumnosParticipantes;
@@ -119,7 +136,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.competencies = resp.ciclo.competencias;
       this.studentsPerCycle = resp.alumnosParticipantes;

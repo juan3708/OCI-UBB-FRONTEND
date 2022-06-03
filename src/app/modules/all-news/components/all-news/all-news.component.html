@@ -1,32 +1,20 @@
-<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;"> -->
-<!-- <div class="col-lg-10 grid-margin stretch-card"> -->
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+  <div class="col-lg-10 grid-margin stretch-card"> -->
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title"><b>Actividades</b></h4>
+        <h4 class="card-title"><b>Noticias</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear
-            actividad</button>
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-            </div>
-            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
-                <option *ngFor="let cycle of cycles" [value]="cycle.id">
-                    {{cycle.nombre}}</option>
-            </select> -->
-        </div>
+            (click)="openModal(ModalContent)">Crear noticia</button>
         <div class="table-responsive">
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
                 style="text-align: center;">
                 <thead class="table table-bordered">
                     <tr>
                         <th>
-                            <b>Nombre</b>
+                            <b>Título</b>
                         </th>
                         <th>
                             <b>Fecha</b>
-                        </th>
-                        <th>
-                            <b>Descripción</b>
                         </th>
                         <th>
                             <b>Acción</b>
@@ -34,22 +22,19 @@
                     </tr>
                 </thead>
                 <tbody class="table table-bordered">
-                    <tr *ngFor="let activity of activities">
+                    <tr *ngFor="let noticia of noticias">
                         <td>
-                            {{activity.nombre}}
+                            {{noticia.titulo}}
                         </td>
                         <td>
-                            {{activity.fecha | date:"dd/MM/yyyy"}}
-                        </td>
-                        <td>
-                            {{activity.descripcion}}
+                            {{noticia.fecha | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);getActivity(activity.id)"><i
+                                (click)="openModal(ModalContentEdit);editNews(noticia)"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteNews(noticia.id)"><i class="mdi mdi-delete"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -57,10 +42,10 @@
         </div>
     </div>
 </div>
-<!-- </div> -->
-<!-- </div> -->
+<!-- </div>
+  </div> -->
 
-<!-- Modal Create starts  -->
+<!-- Modal Create starts -->
 <ng-template class="modal fade" #ModalContent let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -72,24 +57,22 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Crear actividad {{cycle.nombre}}</h4>
+                        <h4 class="card-title">Crear noticia</h4>
                         <p class="card-description">
-                            Ingrese los campos para la creacion de la actividad.
+                            Ingrese los campos para la creación de la noticia.
                         </p>
                         <form class="forms-sample">
                             <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name" placeholder="Nombre" #name>
+                                <label for="title">Título de la noticia</label>
+                                <input type="text" class="form-control" id="title" placeholder="Ingrese el título de la noticia." #title>
                             </div>
                             <div class="form-group">
-                                <label for="description">Descripción</label>
-                                <input type="text" class="form-control" id="description" placeholder="descripcion"
-                                    #description>
+                                <label for="lead">Entrada de la noticia</label>
+                                <textarea class="form-control" id="lead" rows="5" placeholder="Ingrese un resumen de la noticia. Invitación a leer." #lead></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="date">Fecha</label>
-                                <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    placeholder="aaaa-mm-dd" #date>
+                                <label for="body">Cuerpo de la noticia</label>
+                                <textarea class="form-control" id="body" rows="15" placeholder="Ingrese cuerpo de la noticia." #body></textarea>
                             </div>
                         </form>
                     </div>
@@ -98,13 +81,14 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="activityFormCreate(name.value, description.value, date.value,modal)">Crear</button>
+                (click)="newsFormCreate(title.value, lead.value, body.value, modal)">Crear</button>
             <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
 </ng-template>
+<!-- Modal Create Ends -->
 
-<!-- Modal starts Edit -->
+<!-- Modal Edit starts -->
 <ng-template class="modal fade" #ModalContentEdit let-modal>
     <div class="modal-content">
         <div class="modal-header">
@@ -116,25 +100,22 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Editar actividad</h4>
+                        <h4 class="card-title">Editar noticia</h4>
                         <p class="card-description">
-                            Ingrese los campos para la modificacion de la actividad.
+                            Ingrese los campos para la modificacion del la noticia.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
-                                <label for="name">Nombre</label>
-                                <input type="text" class="form-control" placeholder="Nombre"
-                                    [(ngModel)]="activity.nombre" name="name" #name="ngModel">
+                                <label for="title">Título de la noticia</label>
+                                <input type="text" class="form-control" id="title" [(ngModel)]="news.titulo" name="title" #title="ngModel">
                             </div>
                             <div class="form-group">
-                                <label for="description">Descripcion</label>
-                                <input type="text" class="form-control" placeholder="descripcion"
-                                    [(ngModel)]="activity.descripcion" name="description" #description="ngModel">
+                                <label for="lead">Entrada de la noticia</label>
+                                <textarea class="form-control" id="lead" rows="5" [(ngModel)]="news.entrada" name="lead" #lead="ngModel"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="date">Fecha</label>
-                                <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    [(ngModel)]="activity.fecha" name="date" #date="ngModel">
+                                <label for="body">Cuerpo de la noticia</label>
+                                <textarea class="form-control" id="body" rows="15" [(ngModel)]="news.cuerpo" name="body" #body="ngModel"></textarea>
                             </div>
                         </form>
                     </div>
@@ -142,9 +123,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="activityFormEdit(f, modal)">Editar</button>
-            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
-                (click)="modal.close()">Cancelar</button>
+            <button type="button" class="btn btn-success" (click)="newsFormEdit(f, modal)">Editar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
 </ng-template>

@@ -6,12 +6,15 @@ import { url } from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class CycleService {
-
+  
+  cycle;
   private headers = new HttpHeaders(
     { 'Content-Type': 'application/json' }
   );
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    this.cycle = {};
+  }
 
   getCycles(){
     return this.http.get(url +'/ciclo/all');

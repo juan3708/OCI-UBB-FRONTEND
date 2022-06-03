@@ -35,6 +35,7 @@ import { AllEstablishmentsModule } from './modules/all-establishments/all-establ
 import { AllTeachersModule } from './modules/all-teachers/all-teachers.module';
 import { StudentsCandidatesModule } from './modules/students-candidates/students-candidates.module';
 import { AllStudentsModule } from './modules/all-students/all-students.module';
+import { AllNewsModule } from './modules/all-news/all-news.module';
 
 
 
@@ -80,6 +81,7 @@ import { AllStudentsModule } from './modules/all-students/all-students.module';
     AllStudentsModule,
     StudentsCandidatesModule,
     DataTablesModule,
+    AllNewsModule
 
   ],
   providers: [ThemeService],

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
@@ -16,11 +16,13 @@ import { formatDate } from '@angular/common';
   templateUrl: './assistants.component.html',
   styleUrls: ['./assistants.component.scss']
 })
-export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
-
+  cicloOld;
+  cicloNew;
+  ciclo;
   assistants;
   currentDate;
   cycles;
@@ -39,16 +41,29 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private assistantsService: AssistantsService, private CycleService: CycleService,private modalService: NgbModal) { }
+  constructor(private assistantsService: AssistantsService, private cycleService: CycleService,private modalService: NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
-    this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
+    // this.listCycles();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+        console.log("cambio");
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -68,7 +83,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -77,7 +92,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe((resp: any) => {
+    this.cycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe((resp: any) => {
         this.cycle = resp.ciclo;
         this.listAssistantsPerCycle();
     })
@@ -87,7 +102,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       ciclo_id: id
     };
-    this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+    this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.listAssistantsPerCycle();
     })

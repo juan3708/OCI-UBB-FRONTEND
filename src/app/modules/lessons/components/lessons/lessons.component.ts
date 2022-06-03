@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
@@ -19,10 +19,13 @@ import { DataTableDirective } from 'angular-datatables';
   templateUrl: './lessons.component.html',
   styleUrls: ['./lessons.component.scss']
 })
-export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   lessons;
   cycles;
   establishments;
@@ -62,17 +65,30 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
     //this.listLessons();
-    this.listCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+        console.log("cambio");
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -163,6 +179,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.levels = resp.ciclo.niveles;
+      console.log(resp.clases)
       this.lessons = resp.clases;
       this.students = resp.alumnosParticipantes;
       this.rerender();

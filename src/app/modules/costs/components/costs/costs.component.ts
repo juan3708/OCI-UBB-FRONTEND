@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DetailsModel } from '../../../../../models/details.model';
 import { CostsModel } from '../../../../../models/costs.model';
 import { CostsService } from '../../services/costs.service';
@@ -17,10 +17,13 @@ import { DataTableDirective } from 'angular-datatables';
   templateUrl: './costs.component.html',
   styleUrls: ['./costs.component.scss']
 })
-export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   detail = new DetailsModel();
   detailsList;
   costs;
@@ -55,18 +58,31 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
   });
 
 
-  constructor(private CostsService: CostsService, private modalService: NgbModal, private CycleService: CycleService, private fb: FormBuilder) { }
-
+  constructor(private CostsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) { 
+    this.cicloOld = {};
+  }
+  
   ngOnInit(): void {
     //this.listCosts();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
-    this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
+    // this.listCycles();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
   }
+
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
+
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -115,7 +131,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     });
   }
@@ -124,7 +140,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id: this.cycle.id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.costs = resp.gastos;
       this.rerender();
     })
@@ -134,7 +150,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.costs = resp.gastos;
@@ -152,11 +168,11 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  chargeForCycle(id) {
+  getCycle(id) {
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.costs = resp.ciclo.gastos;
       this.competencies = resp.ciclo.competencias;

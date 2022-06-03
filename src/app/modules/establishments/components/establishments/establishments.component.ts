@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -16,11 +16,13 @@ import { DataTableDirective } from 'angular-datatables';
   templateUrl: './establishments.component.html',
   styleUrls: ['./establishments.component.scss']
 })
-export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
-
+  cicloOld;
+  cicloNew;
+  ciclo;
   establishments;
   establishment = new EstablishmentModel();
   cycle = new CycleModel();
@@ -41,17 +43,29 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private CycleService: CycleService, private modalService: NgbModal) { }
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
     //this.listEstablishmentsPerCycle();
-    this.lisCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.lisCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -72,7 +86,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
 
   listEstablishmentsPerCycle() {
-    this.CycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
+    this.cycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
@@ -128,7 +142,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   lisCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -137,7 +151,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
@@ -148,7 +162,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.establishments = resp.ciclo.establecimientos;
@@ -247,7 +261,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
             formLink,
             start_date: this.cycle.fecha_inicio
           };
-          this.CycleService.sendEmails(data).subscribe((resp: any) => {
+          this.cycleService.sendEmails(data).subscribe((resp: any) => {
             if (resp.code == 200) {
               this.Toast.fire({
                 icon: 'success',
@@ -275,7 +289,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
           formLink,
           start_date: this.cycle.fecha_inicio
         };
-        this.CycleService.sendEmails(data).subscribe((resp: any) => {
+        this.cycleService.sendEmails(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',

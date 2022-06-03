@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -17,11 +17,13 @@ import { StudentsCandidatesService } from '../../services/students-candidates.se
   templateUrl: './students-candidates.component.html',
   styleUrls: ['./students-candidates.component.scss']
 })
-export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
-
+  cicloOld;
+  cicloNew;
+  ciclo;
   studentsPerCycle = [];
   studentsEnrolled = [];
   establishments = [];
@@ -47,16 +49,29 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal, private CycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) { }
+  constructor(private studentsService: StudentsService, private modalService: NgbModal, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
-    this.listCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.listCycles();
+    // this.listEstablishments();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -77,7 +92,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
 
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -86,7 +101,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
+    this.cycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.studentsPerCycle = resp.alumnosInscritos;
@@ -112,7 +127,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     let data = {
       ciclo_id: id
     };
-    this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+    this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.studentsPerCycle = resp.alumnosInscritos;
       this.studentsEnrolled = resp.alumnosParticipantes;
@@ -122,7 +137,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       }
     
       this.rerender();
-    })
+    });
   }
 
   openModal(ModalContent) {

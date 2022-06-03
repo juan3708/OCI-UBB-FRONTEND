@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -16,10 +16,13 @@ import { SpinnerComponent } from '../../../../shared/spinner/spinner.component';
   templateUrl: './teachers.component.html',
   styleUrls: ['./teachers.component.scss']
 })
-export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   spinner = new SpinnerComponent()
   teachers;
   teacher = new TeacherModel();
@@ -39,18 +42,30 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private teachersService: TeachersService, private CycleService: CycleService, private modalService: NgbModal) { }
+  constructor(private teachersService: TeachersService, private cycleService: CycleService, private modalService: NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.listCycles();
-    this.getCyclePerFinishtDate();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.listCycles();
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
   }
 
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+        console.log("cambio");
+      }
+    }
+  }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -69,7 +84,7 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -102,7 +117,7 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe((resp: any) => {
+    this.cycleService.getCycleByFinishDate(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.listTeachersPerCycle();
 
@@ -114,7 +129,7 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       ciclo_id: id
     };
-    this.CycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+    this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.listTeachersPerCycle();
     })
