@@ -225,7 +225,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
         participante: 1
       };
 
-      this.CycleService.updateCandidates(data).subscribe((resp: any) => {
+      this.cycleService.updateCandidates(data).subscribe((resp: any) => {
         if (resp.code == 200) {
           this.Toast.fire({
             icon: 'success',
@@ -262,7 +262,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.CycleService.updateCandidates(data).subscribe((resp: any) => {
+        this.cycleService.updateCandidates(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.establishments[indexEstablishments].alumnosParticipantes.splice(indexStudent, 1);
             this.Toast.fire({

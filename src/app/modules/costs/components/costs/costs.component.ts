@@ -58,10 +58,10 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   });
 
 
-  constructor(private CostsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) { 
+  constructor(private CostsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) {
     this.cicloOld = {};
   }
-  
+
   ngOnInit(): void {
     //this.listCosts();
     // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
@@ -75,13 +75,14 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
 
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
     }
+  }
 
 
   ngAfterViewInit(): void {
@@ -204,12 +205,12 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.details.push(detailFormGroup);
     });
 
-    this.costsFormCreate.patchValue({'date': this.cost.fecha});
-    this.costsFormCreate.patchValue({'price': this.cost.valor});
-    this.costsFormCreate.patchValue({'activity': this.cost.actividad_id});
-    this.costsFormCreate.patchValue({'competition': this.cost.competencia_id});
+    this.costsFormCreate.patchValue({ 'date': this.cost.fecha });
+    this.costsFormCreate.patchValue({ 'price': this.cost.valor });
+    this.costsFormCreate.patchValue({ 'activity': this.cost.actividad_id });
+    this.costsFormCreate.patchValue({ 'competition': this.cost.competencia_id });
     this.costsFormCreate.setControl('details', this.details);
-   }
+  }
 
   createCosts(form, modal) {
     if (this.details.length > 0) {

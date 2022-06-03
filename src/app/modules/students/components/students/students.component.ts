@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, DoCheck } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../../services/students.service';
@@ -16,10 +16,13 @@ import { formatDate } from '@angular/common';
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.scss']
 })
-export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   students;
   establishments;
   currentDate;
@@ -39,18 +42,28 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private CycleService: CycleService,private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private cycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
     // this.listStudents();
     // this.listEstablishments();
-    this.listCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    //this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -83,7 +96,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     });
   }
@@ -92,7 +105,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino: this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.students = resp.alumnosParticipantes;
@@ -110,7 +123,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.students = resp.alumnosParticipantes;
       this.rerender();
@@ -214,7 +227,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.CycleService.updateCandidates(data).subscribe((resp: any) => {
+        this.cycleService.updateCandidates(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
