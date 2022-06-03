@@ -135,7 +135,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   competitionFormCreate(type, location, date, modal) {
@@ -179,19 +179,15 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.students = resp.competencia.alumnos;
       this.costs = resp.competencia.gastos;
       this.deleteStudentCompetitionArray();
-      console.log(this.students);
-      console.log(this.studentsPerCycle);
       if (this.students.length >= 1) {
-        //this.setEditFeeForm();
+        this.setEditFeeForm();
       }
     });
   }
 
   deleteStudentCompetitionArray() {
-    this.studentsPerCycle.forEach((s, index) => {
-      console.log("StudentPerCycle",s);
-      this.students.forEach(sp => {
-        console.log("Students",sp);
+    this.students.forEach((s) => {
+      this.studentsPerCycle.forEach((sp,index) => {
         if (s.id == sp.id) {
           this.studentsPerCycle.splice(index, 1);
         }
@@ -307,14 +303,14 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.students.map((e: any) => {
       const studentScoreForm = this.fb.group({
         id: e.id,
+        rut: new FormControl({ value: e.rut, disabled: true }),
         nombre: new FormControl({ value: e.nombre, disabled: true }),
+        apellidos: new FormControl({ value: e.apellidos, disabled: true }),
         puntaje: e.pivot.puntaje
       });
       this.studentScore.push(studentScoreForm);
     })
-    this.editScorePerStudent.setValue({
-      studentScore: this.studentScore
-    });
+    this.editScorePerStudent.setControl('studentScore', this.studentScore);
   }
 
   establishmentQuotesEdit(form, modal) {
@@ -322,14 +318,13 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit {
     let puntajes = [];
     for (let index = 0; index < this.studentScore.length; index++) {
       ids.push(this.studentScore.value[index].id);
-      puntajes.push(this.studentScore.value[index].puntajes);
+      puntajes.push(this.studentScore.value[index].puntaje);
     }
     let data = {
       competencia_id: this.competition.id,
       alumnos_id: ids,
       puntajes: puntajes
     };
-
     this.CompetenciesService.updateScores(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();

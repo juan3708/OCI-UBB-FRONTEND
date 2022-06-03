@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { CycleService } from '../../../cycle/services/cycle.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-students',
@@ -21,7 +22,9 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   students;
   establishments;
+  currentDate;
   cycle = new CycleModel();
+  cycles;
   student = new StudentModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -39,8 +42,11 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private studentsService: StudentsService, private CycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listStudents();
-    this.listEstablishments();
+    // this.listStudents();
+    // this.listEstablishments();
+    this.listCycles();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -76,8 +82,44 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    });
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.students = resp.alumnosParticipantes;
+        this.rerender();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.students = resp.alumnosParticipantes;
+      this.rerender();
+
+    })
+  }
+
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal) {

@@ -152,7 +152,8 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-success" (click)="competitionFormEdit(f, modal)">Editar</button>
-      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm()">Cancelar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm()">Cancelar</button>
     </div>
   </div>
 </ng-template>
@@ -161,9 +162,193 @@
 <!-- Modal AddStudents starts -->
 <ng-template class="modal fade" #ModalAddStudents let-modal>
   <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card">Alumnos que participaran de la competición</h4>
+            <div class="table-responsive">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Rut</b>
+                    </th>
+                    <th>
+                      <b>Nombre</b>
+                    </th>
+                    <th>
+                      <b>Apellidos</b>
+                    </th>
+                    <th>
+                      <b>Eliminar</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                  <tr *ngFor="let student of students">
+                    <td>
+                      {{student.rut}}
+                    </td>
+                    <td>
+                      {{student.nombre}}
+                    </td>
+                    <td>
+                      {{student.apellidos}}
+                    </td>
+                    <td>
+                      <a type="button" data-dismiss="modal" (click)="removeStudent(student.id)"><i
+                          class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <h4 class="card">Alumnos</h4>
+            <form class="forms-sample">
+              <div class="form-group">
+                <div class="table-responsive">
+                  <table class="table table-striped" style="text-align: center;">
+                    <thead class="table table-bordered">
+                      <tr>
+                        <th>
+                          <b>Rut</b>
+                        </th>
+                        <th>
+                          <b>Nombre</b>
+                        </th>
+                        <th>
+                          <b>Apellidos</b>
+                        </th>
+                        <th>
+                          <b>Asignar</b>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="table table-bordered">
+                      <tr *ngFor="let student of studentsPerCycle">
+                        <td>
+                          {{student.rut}}
+                        </td>
+                        <td>
+                          {{student.nombre}}
+                        </td>
+                        <td>
+                          {{student.apellidos}}
+                        </td>
+                        <td>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label" aria-label="Asignar">
+                              <input type="checkbox" class="form-check-input position-static"
+                                style="text-align: center;" [value]="student.id" id="studentLevel"
+                                (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)" #studentLevel>
+                              <i class="input-helper"></i>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="addStudents(modal)">Guardar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal AddStudents end -->
+
+<!-- Modal ModalEditScores starts -->
+<ng-template class="modal fade" #ModalEditScores let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body" [formGroup]="editScorePerStudent">
+            <h4 class="card">Editar puntaje de competición tipo: {{competition.tipo}} con fecha {{competition.fecha}}
+            </h4>
+            <div class="table-responsive">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Rut</b>
+                    </th>
+                    <th>
+                      <b>Nombre</b>
+                    </th>
+                    <th>
+                      <b>Apellidos</b>
+                    </th>
+                    <th>
+                      <b>Puntaje</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered" formArrayName="studentScore">
+                  <ng-container *ngFor="let student of studentScore.controls; let i = index">
+                    <tr [formGroupName]="i">
+                      <td>
+                        {{student.controls.rut.value}}
+                      </td>
+                      <td>
+                        {{student.controls.nombre.value}}
+                      </td>
+                      <td>
+                        {{student.controls.apellidos.value}}
+                      </td>
+                      <div class="form-group" style="display: none">
+                        <input type="text" class="form-control" id="id" formControlName="id">
+                      </div>
+                      <td>
+                        <div class="scoreInput">
+                          <input type="text" class="form-control" id="fee" formControlName="puntaje">
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success"
+        (click)="establishmentQuotesEdit(editScorePerStudent.value, modal)">Editar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm();">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal ModalEditScores ends -->
+
+<!-- Modal ModalListCost starts -->
+<ng-template class="modal fade" #ModalListCost let-modal>
+  <div class="modal-content">
       <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
-              (click)="modal.dismiss();clearForm()">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();getCycle(cycle.id)">
               <span aria-hidden="true">&times;</span>
           </button>
       </div>
@@ -171,106 +356,40 @@
           <div class="col-12 stretch-card">
               <div class="card">
                   <div class="card-body">
-                      <h4 class="card">Alumnos que participaran de la competición</h4>
-                      <div class="table-responsive">
-                          <table class="table table-striped" style="text-align: center;">
-                              <thead class="table table-bordered">
-                                  <tr>
-                                      <th>
-                                          <b>Rut</b>
-                                      </th>
-                                      <th>
-                                          <b>Nombre</b>
-                                      </th>
-                                      <th>
-                                          <b>Apellidos</b>
-                                      </th>
-                                      <th>
-                                          <b>Eliminar</b>
-                                      </th>
-                                  </tr>
-                              </thead>
-                              <tbody class="table table-bordered">
-                                  <tr *ngFor="let student of students">
-                                      <td>
-                                          {{student.rut}}
-                                      </td>
-                                      <td>
-                                          {{student.nombre}}
-                                      </td>
-                                      <td>
-                                          {{student.apellidos}}
-                                      </td>
-                                      <td>
-                                          <a type="button" data-dismiss="modal"
-                                              (click)="removeStudent(student.id)"><i
-                                                  class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
-                                      </td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </div>
-                      <br>
-                      <h4 class="card">Alumnos</h4>
-                      <form class="forms-sample">
-                          <div class="form-group">
-                              <div class="table-responsive">
-                                  <table class="table table-striped" style="text-align: center;">
-                                      <thead class="table table-bordered">
-                                          <tr>
-                                              <th>
-                                                  <b>Rut</b>
-                                              </th>
-                                              <th>
-                                                  <b>Nombre</b>
-                                              </th>
-                                              <th>
-                                                  <b>Apellidos</b>
-                                              </th>
-                                              <th>
-                                                  <b>Asignar</b>
-                                              </th>
-                                          </tr>
-                                      </thead>
-                                      <tbody class="table table-bordered">
-                                          <tr *ngFor="let student of studentsPerCycle">
-                                              <td>
-                                                  {{student.rut}}
-                                              </td>
-                                              <td>
-                                                  {{student.nombre}}
-                                              </td>
-                                              <td>
-                                                  {{student.apellidos}}
-                                              </td>
-                                              <td>
-                                                  <div class="form-check form-check-success">
-                                                      <label class="form-check-label" aria-label="Asignar">
-                                                          <input type="checkbox"
-                                                              class="form-check-input position-static"
-                                                              style="text-align: center;" [value]="student.id"
-                                                              id="studentLevel"
-                                                              (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)"
-                                                              #studentLevel>
-                                                          <i class="input-helper"></i>
-                                                      </label>
-                                                  </div>
-                                              </td>
-                                          </tr>
-                                      </tbody>
-                                  </table>
-                              </div>
-                          </div>
-                      </form>
+                      <h4 class="card">Alumnos por nivel</h4>
+                      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                          style="text-align: center;">
+                          <thead class="table table-bordered">
+                              <tr>
+                                  <th>
+                                      <b>Nombre</b>
+                                  </th>
+                                  <th>
+                                      <b>Apellidos</b>
+                                  </th>
+                                  <th>
+                                      <b>RUT</b>
+                                  </th>
+                              </tr>
+                          </thead>
+                          <tbody class="table table-bordered">
+                              <tr *ngFor="let student of studentsPerLevel">
+                                  <td>
+                                      {{student.nombre}}
+                                  </td>
+                                  <td>
+                                      {{student.apellidos}}
+                                  </td>
+                                  <td>
+                                      {{student.rut}}
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
                   </div>
               </div>
           </div>
       </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addStudents(modal)">Guardar</button>
-          <button type="button" class="btn btn-light" data-dismiss="modal"
-              (click)="modal.close();clearForm()">Cancelar</button>
-      </div>
   </div>
 </ng-template>
-<!-- Modal AddStudents end -->
+<!-- Modal ModalListCost starts -->

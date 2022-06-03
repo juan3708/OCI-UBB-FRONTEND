@@ -49,7 +49,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
   costsFormCreate = this.fb.group({
     date: new FormControl(''),
     price: new FormControl(''),
-    cycle: new FormControl,
     activity: new FormControl,
     competition: new FormControl,
     details: this.fb.array([])
@@ -58,6 +57,16 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private CostsService: CostsService, private modalService: NgbModal, private CycleService: CycleService, private fb: FormBuilder) { }
 
+  ngOnInit(): void {
+    //this.listCosts();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
+    this.listCycles();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
+  }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -96,13 +105,95 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  clearForm() {
-    this.details.controls.splice(0, this.details.length);
-    this.costsFormCreate.reset();
-    this.competencies = [];
-    this.activities = [];
-    this.ids = [];
+  listCosts() {
+    this.CostsService.getCosts().subscribe((resp: any) => {
+      this.costs = resp.gastos;
+      this.rerender();
+    });
   }
+
+
+
+  listCycles() {
+    this.CycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    });
+  }
+
+  listCostsPerCycle() {
+    let data = {
+      id: this.cycle.id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.costs = resp.gastos;
+      this.rerender();
+    })
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.costs = resp.gastos;
+        this.competencies = resp.ciclo.competencias;
+        this.activities = resp.ciclo.actividades;
+        this.rerender();
+      } else {
+        this.competencies = [];
+        this.activities = [];
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  chargeForCycle(id) {
+    let data = {
+      id
+    };
+    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.costs = resp.ciclo.gastos;
+      this.competencies = resp.ciclo.competencias;
+      this.activities = resp.ciclo.actividades;
+      this.rerender();
+    })
+  }
+
+  getCost(id) {
+    let data = {
+      id
+    };
+    this.details.clear();
+    this.CostsService.getCostsById(data).subscribe((resp: any) => {
+      this.cost = resp.gastos;
+      this.detailsList = resp.gastos.detalles;
+      this.setCostCreateForm();
+    });
+  }
+
+  setCostCreateForm() {
+    this.costsFormCreate.reset();
+    this.detailsList.map((d: any) => {
+      const detailFormGroup = this.fb.group({
+        id: d.id,
+        name: d.nombre,
+        priceDetail: d.valor
+      });
+      this.details.push(detailFormGroup);
+    });
+
+    this.costsFormCreate.patchValue({'date': this.cost.fecha});
+    this.costsFormCreate.patchValue({'price': this.cost.valor});
+    this.costsFormCreate.patchValue({'activity': this.cost.actividad_id});
+    this.costsFormCreate.patchValue({'competition': this.cost.competencia_id});
+    this.costsFormCreate.setControl('details', this.details);
+   }
 
   createCosts(form, modal) {
     if (this.details.length > 0) {
@@ -171,109 +262,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Ingrese un detalle porfavor'
       });
     }
-  }
-
-  ngOnInit(): void {
-    //this.listCosts();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
-    this.listCycles();
-    this.dtOptions = {
-      language: LanguageDataTable.spanish_datatables,
-      responsive: true
-    };
-  }
-
-
-  listCosts() {
-    this.CostsService.getCosts().subscribe((resp: any) => {
-      this.costs = resp.gastos;
-      this.rerender();
-    });
-  }
-
-
-
-  listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
-      this.cycles = resp.ciclos;
-    });
-  }
-
-  listCostsPerCycle() {
-    let data = {
-      id: this.cycle.id
-    };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
-      this.costs = resp.ciclo.gastos;
-      this.rerender();
-    })
-  }
-
-  getCyclePerFinishtDate() {
-    let data = {
-      fecha_termino: this.currentDate
-    };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
-      if (resp.code == 200) {
-        this.cycle = resp.ciclo;
-        this.costs = resp.ciclo.gastos;
-        this.competencies = resp.ciclo.competencias;
-        this.activities = resp.ciclo.actividades;
-        this.rerender();
-      } else {
-        this.competencies = [];
-        this.activities = [];
-        this.Toast.fire({
-          icon: 'error',
-          title: 'Error al cargar el ciclo'
-        });
-      }
-    })
-  }
-
-  chargeForCycle(id) {
-    let data = {
-      id
-    };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
-      this.cycle = resp.ciclo;
-      this.costs = resp.ciclo.gastos;
-      this.competencies = resp.ciclo.competencias;
-      this.activities = resp.ciclo.actividades;
-      this.rerender();
-    })
-  }
-
-  getCost(id) {
-    let data = {
-      id
-    };
-    this.details.clear();
-    this.CostsService.getCostsById(data).subscribe((resp: any) => {
-      this.cost = resp.gastos;
-      this.detailsList = resp.gastos.detalles;
-      this.setCostCreateForm();
-    });
-  }
-
-  setCostCreateForm() {
-    this.detailsList.map((d: any) => {
-      const detailFormGroup = this.fb.group({
-        id: d.id,
-        name: d.nombre,
-        priceDetail: d.valor
-      });
-      this.details.push(detailFormGroup);
-    })
-    this.costsFormCreate.setValue({
-      date: this.cost.fecha,
-      price: this.cost.valor,
-      cycle: this.cost.ciclo_id,
-      activity: this.cost.actividad_id,
-      competition: this.cost.competencia_id,
-      details: this.details
-    });
   }
 
   editCost(form, modal) {
@@ -448,10 +436,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
-  }
-
   deleteCost(id) {
     let data = {
       id
@@ -468,7 +452,10 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
     }).then((result) => {
       if (result.isConfirmed) {
         for (let index = 0; index < this.detailsList.length; index++) {
-          this.CostsService.deleteDetails(this.detailsList[index].id).subscribe((resp: any) => {
+          let data = {
+            id: this.detailsList[index].id
+          }
+          this.CostsService.deleteDetails(data).subscribe((resp: any) => {
             if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
@@ -494,6 +481,16 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit {
         })
       }
     });
+  }
+
+  clearForm() {
+    this.details.controls.splice(0, this.details.length);
+    this.costsFormCreate.reset();
+    this.ids = [];
+  }
+
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   ngOnDestroy(): void {
