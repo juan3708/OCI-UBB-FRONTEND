@@ -1,5 +1,5 @@
 import { DataTableDirective } from 'angular-datatables';
-import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LevelModel } from '../../../../../models/level.model';
 import { LevelService } from '../../services/level.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -17,11 +17,13 @@ import { formatDate } from '@angular/common';
   templateUrl: './level.component.html',
   styleUrls: ['./level.component.scss']
 })
-export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
 
-
+  cicloOld;
+  cicloNew;
+  ciclo;
   level = new LevelModel();
   levels;
   cycles;
@@ -44,18 +46,31 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private LevelService: LevelService, private CycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { }
+  constructor(private LevelService: LevelService, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngOnInit(): void {
     //this.listLevels();
-    this.listCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     //this.listEstablishments();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+        console.log("cambio");
+      }
+    }
   }
 
   ngAfterViewInit(): void {
@@ -88,7 +103,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id: this.cycle.id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.levels = resp.ciclo.niveles;
       this.rerender();
     })
@@ -101,7 +116,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
@@ -110,7 +125,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino : this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
       if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.levels = resp.ciclo.niveles;
@@ -129,7 +144,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.levels = resp.ciclo.niveles;
       this.establishments = resp.ciclo.establecimientos;

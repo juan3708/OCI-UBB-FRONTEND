@@ -9,10 +9,10 @@
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
-            <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" style="width: 100px;">
+            <!-- <select class="custom-select" id="cycle" (change)="chargeForCycle($event.target.value)" style="width: 100px;">
                 <option *ngFor="let cycle of cycles" [value]="cycle.id">
                     {{cycle.nombre}}</option>
-            </select>
+            </select> -->
         </div>
         <div class="table-responsive">
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
@@ -36,7 +36,7 @@
                 <tbody class="table table-bordered">
                     <tr *ngFor="let cost of costs">
                         <td>
-                            {{cost.fecha | date:"dd/MM/yyyy"}}
+                            {{cost.fecha | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
                             {{cost.valor | currency: 'CLP':"$"}}

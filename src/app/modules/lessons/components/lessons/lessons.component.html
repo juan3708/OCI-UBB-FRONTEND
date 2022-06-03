@@ -9,10 +9,10 @@
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
-            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
                 <option *ngFor="let cycle of cycles" [value]="cycle.id">
                     {{cycle.nombre}}</option>
-            </select>
+            </select> -->
         </div>
         <div class="table-responsive">
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
@@ -434,6 +434,73 @@
                                         class="fa-solid fa-rectangle-list"></i> Alumnos</a>
                             </li>
                         </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="information" role="tabpanel"
+                                aria-labelledby="information-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Contenido</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nivel</b>
+                                                </th>
+                                                <th>
+                                                    <b>Fecha</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let lesson of lessons;">
+                                                <td>
+                                                    {{lesson.contenido}}
+                                                </td>
+                                                <td>
+                                                    {{lesson.nivel.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{lesson.fecha}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="students-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of studentsLesson;">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

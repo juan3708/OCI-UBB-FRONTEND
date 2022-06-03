@@ -31,6 +31,7 @@ const routes: Routes = [
   { path: 'all-establishments', loadChildren: () => import('./modules/all-establishments/all-establishments-routing.module').then(m => m.AllEstablishmentsRoutingModule) },
   { path: 'all-teachers', loadChildren: () => import('./modules/all-teachers/all-teachers-routing.module').then(m => m.AllTeachersRoutingModule) },
   { path: 'all-students', loadChildren: () => import('./modules/all-students/all-students-routing.module').then(m => m.AllStudentsRoutingModule) },
+  { path: 'all-news', loadChildren: () => import('./modules/all-news/all-news-routing.module').then(m => m.AllNewsRoutingModule) },
   { path: 'studentscandidates', loadChildren: () => import('./modules/students-candidates/students-candidates-routing.module').then(m => m.StudentsCandidatesRoutingModule) }
 
 

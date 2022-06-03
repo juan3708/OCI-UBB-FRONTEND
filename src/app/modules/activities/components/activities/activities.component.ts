@@ -1,4 +1,4 @@
-import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';import { ActivitiesModel } from '../../../../../models/activities.model';
 import { ActivitiesService } from '../../services/activities.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,10 +15,13 @@ import { DataTableDirective } from 'angular-datatables';
   templateUrl: './activities.component.html',
   styleUrls: ['./activities.component.scss']
 })
-export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   activities;
   cycles;
   cycle = new CycleModel();
@@ -37,7 +40,9 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private activitiesService: ActivitiesService, private CycleService: CycleService, private modalService : NgbModal) { }
+  constructor(private activitiesService: ActivitiesService, private cycleService: CycleService, private modalService : NgbModal) { 
+    this.cicloOld = {};
+  }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -57,13 +62,24 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     //this.listActivities();
-    this.listCycles();
-    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-    this.getCyclePerFinishtDate();
+    // this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+  }
+
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+        console.log("cambio");
+      }
+    }
   }
 
   listActivities(){
@@ -77,14 +93,14 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       id: this.cycle.id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.activities = resp.ciclo.actividades;
       this.rerender();
     })
   }
 
   listCycles(){
-    this.CycleService.getCycles().subscribe((resp: any)=>{
+    this.cycleService.getCycles().subscribe((resp: any)=>{
       this.cycles = resp.ciclos;
     })
   }
@@ -93,7 +109,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
     let data = {
       fecha_termino : this.currentDate
     };
-    this.CycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
       if(resp.code == 200){
         this.cycle = resp.ciclo;
         this.activities = resp.ciclo.actividades;
@@ -107,11 +123,11 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-    getCycle(id) {
+  getCycle(id) {
     let data = {
       id
     };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.activities = resp.ciclo.actividades;
       this.rerender();

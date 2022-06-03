@@ -43,10 +43,10 @@
                             {{cycle.nombre}}
                         </td>
                         <td>
-                            {{cycle.fecha_inicio}}
+                            {{cycle.fecha_inicio | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
-                            {{cycle.fecha_termino}}
+                            {{cycle.fecha_termino | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
                             {{cycle.presupuesto |currency: 'CLP':"$"}}
