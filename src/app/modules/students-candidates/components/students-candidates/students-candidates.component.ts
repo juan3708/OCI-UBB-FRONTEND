@@ -213,7 +213,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     if (this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'info',
-        title: 'No se han realizado cambios',
+        title: 'No se efectuaron mas cambios',
       });
       this.clearForm();
       this.getCycle(this.cycle.id);
@@ -248,7 +248,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   removeStudent(id, indexEstablishments, indexStudent) {
     let data = {
       ciclo_id: this.cycle.id,
-      alumno_id: id,
+      alumnos_id: id,
       participante: 0
     };
     Swal.fire({
@@ -263,6 +263,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     }).then((result) => {
       if (result.isConfirmed) {
         this.cycleService.updateCandidates(data).subscribe((resp: any) => {
+          console.log(resp);
           if (resp.code == 200) {
             this.establishments[indexEstablishments].alumnosParticipantes.splice(indexStudent, 1);
             this.Toast.fire({

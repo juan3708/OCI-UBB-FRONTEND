@@ -23,6 +23,8 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   cicloNew;
   ciclo;
   activities;
+  detailsPerCost;
+  costs;
   cycles;
   cycle = new CycleModel();
   currentDate;
@@ -176,7 +178,12 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     };
     this.activitiesService.getActivityById(data).subscribe((resp: any)=>{
       this.activity = resp.actividad;
+      this.costs = resp.gastos;
     })
+  }
+
+  getDetailsPerCost(cost){
+    this.detailsPerCost = cost.detalles;
   }
 
   activityFormEdit(form: NgForm, modal){

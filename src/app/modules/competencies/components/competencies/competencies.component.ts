@@ -27,6 +27,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   competition = new CompetenciesModel();
   cycles;
   cycle = new CycleModel();
+  detailsPerCost;
   currentDate;
   competencies;
   studentsPerCycle = [];
@@ -90,6 +91,10 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     else {
       this.dtTrigger.next();
     }
+  }
+
+  getDetailsPerCost(cost){
+    this.detailsPerCost = cost.detalles;
   }
 
   get studentScore() {
@@ -194,7 +199,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.CompetenciesService.getCompetitionById(data).subscribe((resp: any) => {
       this.competition = resp.competencia
       this.students = resp.competencia.alumnos;
-      this.costs = resp.competencia.gastos;
+      this.costs = resp.gastos;
       this.deleteStudentCompetitionArray();
       if (this.students.length >= 1) {
         this.setEditFeeForm();
@@ -225,7 +230,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     if (this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'info',
-        title: 'No se realizaron cambios'
+        title: 'No se efectuaron mas cambios'
       });
       modal.dismiss();
       this.clearForm();

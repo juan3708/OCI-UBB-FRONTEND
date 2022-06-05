@@ -223,14 +223,42 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Seleccionar establecimientos {{cycle.nombre}}</h4>
+                        <h4 class="card-title">Seleccionar establecimientos que participaran de las {{cycle.nombre}}</h4>
                         <p class="card-description">
                             Seleccione los establecimientos que participaran de las OCI.
                         </p>
                         <form class="forms-sample" #f="ngForm">
+                            <h5>Establecimientos seleccionados</h5>
                             <div class="table-responsive">
-                                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
-                                    class="table table-striped" style="text-align: center;">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Nombre del establecimiento</b>
+                                            </th>
+                                            
+                                            <th>
+                                                <b>Eliminar</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let establishment of establishmentsPerCycle">
+                                            <td>
+                                                {{establishment.nombre}}
+                                            </td>
+                                            <td>
+                                                <a type="button" data-dismiss="modal" (click)="removeEstablishment(establishment.id)"><i
+                                                    class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <h5>Establecimientos</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped" style="text-align: center;">
                                     <thead class="table table-bordered">
                                         <tr>
                                             <th>
@@ -287,7 +315,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="editFeeEstablishment">
-                        <h4 class="card-title">Editar cupos {{cycle.nombre}}</h4>
+                        <h4 class="card">Editar cupos de los establecimiento</h4>
                         <p class="card-description">
                             Ingrese los campos para la modificacion de cupos por establecimiento.
                         </p>

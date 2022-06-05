@@ -53,7 +53,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.listCycles();
     this.listCoordinators();
-    this.listEstablishments();
+    //this.listEstablishments();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -149,6 +149,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.establishmentsPerCycle = resp.ciclo.establecimientos;
+      this.establishments = resp.establecimientosSinCiclo
       this.setEditFeeForm();
     })
   }
@@ -238,12 +239,20 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addEstablishmentsPerCycle(modal) {
-    if (this.establishmentsPerCycleId.length < 1) {
+    if (this.establishmentsPerCycleId.length < 1 && this.establishmentsPerCycle < 1) {
       this.Toast.fire({
         icon: 'error',
         title: 'Seleccione establecimientos porfavor'
       });
     } else {
+      if(this.establishmentsPerCycleId.length == 0 ){
+        this.Toast.fire({
+          icon: 'info',
+          title: 'No se efectuaron mas cambios'
+        });
+        modal.dismiss();
+        this.clearForm();
+    }else{
       let data = {
         ciclo_id: this.cycle.id,
         establecimientos_id: this.establishmentsPerCycleId
@@ -264,6 +273,43 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       })
     }
+    }
+  }
+
+  removeEstablishment(establishment) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      establecimiento_id: establishment
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea eliminar al establecimiento de las OCI?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.CycleService.deleteEstablishments(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.establishmentsPerCycle.splice(this.establishmentsPerCycle.indexOf(establishment), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha eliminado correctamente',
+            });
+            this.getCycle(this.cycle.id);
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
   establishmentQuotesEdit(form, modal) {
