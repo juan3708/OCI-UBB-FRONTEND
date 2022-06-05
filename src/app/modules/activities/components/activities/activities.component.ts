@@ -79,7 +79,6 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
       if(this.cicloOld != this.cicloNew){
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-        console.log("cambio");
       }
     }
   }

@@ -75,7 +75,6 @@ export class NavbarComponent implements OnInit {
     };
     this.cycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
-        console.log(resp.ciclo);
         this.cycle = resp.ciclo;
         this.cycleService.cycle = resp.ciclo;
       }

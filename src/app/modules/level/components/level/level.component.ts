@@ -175,7 +175,6 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.level = resp.nivel;
       this.studentsPerLevel = resp.nivel.alumnos;
       this.students = resp.alumnosSinNivel;
-
       this.rerender();
     })
   }
@@ -323,6 +322,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
+            this.getLevel(this.level.id);
           }else{
             this.Toast.fire({
               icon: 'error',

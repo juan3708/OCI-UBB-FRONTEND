@@ -263,13 +263,13 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     }).then((result) => {
       if (result.isConfirmed) {
         this.cycleService.updateCandidates(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.establishments[indexEstablishments].alumnosParticipantes.splice(indexStudent, 1);
             this.Toast.fire({
               icon: 'success',
               title: 'Se ha realizado correctamente',
             });
+            this.getCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',

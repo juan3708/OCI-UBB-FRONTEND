@@ -60,7 +60,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       if(this.cicloOld != this.cicloNew){
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-        console.log("cambio");
       }
     }
   }
@@ -87,9 +86,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      console.log(resp.ciclo);
       this.noticias = resp.ciclo.noticias;
-      console.log(resp.ciclo.noticias);
       this.rerender();
     });
   }
@@ -183,7 +180,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }).then((result) => {
       if (result.isConfirmed) {
         this.allNewsService.deleteNews(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',

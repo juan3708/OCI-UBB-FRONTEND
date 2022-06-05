@@ -145,6 +145,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
       this.cycle = resp.ciclo;
       this.competencies = resp.ciclo.competencias;
       this.studentsPerCycle = resp.alumnosParticipantes;
+      this.deleteStudentCompetitionArray();
       this.rerender();
     })
   }
@@ -283,6 +284,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
+            this.getCycle(this.cycle.id);            
           } else {
             this.Toast.fire({
               icon: 'error',

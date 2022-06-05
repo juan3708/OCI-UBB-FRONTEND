@@ -86,7 +86,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       if(this.cicloOld != this.cicloNew){
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-        console.log("cambio");
       }
     }
   }
@@ -179,7 +178,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.levels = resp.ciclo.niveles;
-      console.log(resp.clases)
       this.lessons = resp.clases;
       this.students = resp.alumnosParticipantes;
       this.rerender();
@@ -407,11 +405,19 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   removeTeacherArray(teacher) {
     this.lessonTeachers.splice(this.lessonTeachers.indexOf(teacher), 1);
     this.removeTeachers.push(teacher);
+    this.Toast.fire({
+      icon: 'info',
+      title: 'Se ha almacenado correctamente el profesor a eliminar',
+    });
   }
 
   removeAssistantArray(assistant) {
     this.lessonAssistants.splice(this.lessonAssistants.indexOf(assistant), 1);
     this.removeAssistants.push(assistant);
+    this.Toast.fire({
+      icon: 'info',
+      title: 'Se ha almacenado correctamente el ayudante a eliminar',
+    });
   }
 
   changeStatusAssistance(event, student) {
@@ -774,7 +780,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             clase_id : this.lesson.id,
             alumnos_id: this.studentsAdd
           };
-          console.log(data);
           this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
             if(resp.code !=200){
               this.Toast.fire({
