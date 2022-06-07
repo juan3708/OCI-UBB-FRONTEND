@@ -33,4 +33,11 @@ export class AllNewsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/noticia/delete', id, option);
   }
+
+  chargePhotosPerNews(data){
+    const option = new HttpHeaders();
+    option.set('Accept', 'application/json');
+    option.delete('Content-Type');
+    return this.http.post(url+'/image/add',data,{headers: option});
+  }
 }

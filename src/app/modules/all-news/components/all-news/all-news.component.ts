@@ -17,13 +17,18 @@ import { AllNewsService } from '../../services/all-news.service';
   styleUrls: ['./all-news.component.scss']
 })
 export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   cicloOld;
   cicloNew;
   ciclo;
   noticias;
+  selectedFiles: File[] = Array();
+  fileNames: string;
+  url = 'http://127.0.0.1:8000/storage/images/';
+  filesNamesArray: string[] = Array();
+  new;
   cycle = new CycleModel();
   news = new NewsModel();
   dtOptions: DataTables.Settings = {};
@@ -39,7 +44,18 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private allNewsService: AllNewsService, private modalService: NgbModal, private cycleService: CycleService) { 
+  ToastImg = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+  constructor(private allNewsService: AllNewsService, private modalService: NgbModal, private cycleService: CycleService) {
     this.cicloOld = {};
   }
 
@@ -55,9 +71,9 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -65,19 +81,19 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   getCycle(id) {
@@ -86,12 +102,12 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.noticias = resp.ciclo.noticias;
+      this.noticias = resp.noticias;
       this.rerender();
     });
   }
 
-  listNewsPerCycle(){
+  listNewsPerCycle() {
     let data = {
       id: this.cycle.id
     };
@@ -101,7 +117,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  newsFormCreate(title, lead, body, modal){
+  newsFormCreate(title, lead, body, modal) {
     let data = {
       titulo: title,
       entrada: lead,
@@ -109,15 +125,29 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       fecha: formatDate(new Date(), 'yyyy-MM-dd', 'en'),
       ciclo_id: this.cycle.id
     };
-    this.allNewsService.createNews(data).subscribe((resp:any)=>{
-      if(resp.code===200){        
+    this.allNewsService.createNews(data).subscribe((resp: any) => {
+      if (resp.code === 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
+        let noticia_id = resp.noticia.id;
+        console.log(this.selectedFiles.length);
+        if (this.selectedFiles.length >= 1) {
+          console.log('paso el if');
+          for (let index = 0; index < this.selectedFiles.length; index++) {
+            const formData = new FormData();
+            formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
+            formData.append('noticia_id', noticia_id.toString());
+            this.allNewsService.chargePhotosPerNews(formData).subscribe((resp: any) => {
+              console.log(resp);
+            })
+          }
+        }
         this.listNewsPerCycle();
-      }else{
+        this.clearForm();
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -134,16 +164,16 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  newsFormEdit(form: NgForm, modal){
-    this.allNewsService.editNews(this.news).subscribe((resp: any)=>{
-      if(resp.code == 200){
+  newsFormEdit(form: NgForm, modal) {
+    this.allNewsService.editNews(this.news).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Noticia editada correctamente',
         });
         this.listNewsPerCycle();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -159,12 +189,17 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       }
     })
   }
-  
-  editNews(news:NewsModel){
+
+  editNews(news: NewsModel) {
     this.news = news;
   }
 
-  deleteNews(id){
+  setNew(noticia) {
+    this.new = noticia;
+    console.log(this.new);
+  }
+
+  deleteNews(id) {
     let data = {
       id
     };
@@ -190,12 +225,42 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar la noticia',
-              text: resp.id 
+              text: resp.id
             });
           }
         });
       }
     });
+  }
+
+  onFileSelected(event) {
+    this.clearForm();
+    let bool;
+    if (this.fileNames == undefined) {
+      this.fileNames = '';
+    }
+    for (let index = 0; index < event.target.files.length; index++) {
+      if (this.fileNames == '') {
+        this.selectedFiles.push(<File>event.target.files[index]);
+        this.fileNames = this.fileNames + this.selectedFiles[index].name + ', ';
+        this.filesNamesArray.push(this.selectedFiles[index].name);
+      } else {
+        bool = this.fileNames.includes(event.target.files[index].name);
+        if (bool == false) {
+          this.selectedFiles.push(<File>event.target.files[index]);
+          this.fileNames = this.fileNames + this.selectedFiles[index].name + ', ';
+          this.filesNamesArray.push(this.selectedFiles[index].name);
+
+        }
+      }
+    }
+    this.fileNames = this.fileNames.slice(0, -2);
+  }
+
+  clearForm() {
+    this.selectedFiles = Array();
+    this.fileNames = undefined;
+    this.filesNamesArray = Array();
   }
 
   ngOnDestroy(): void {

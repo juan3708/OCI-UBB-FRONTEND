@@ -35,6 +35,8 @@
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteNews(noticia.id)"><i class="mdi mdi-delete"></i></button>
+                                <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="openModal(ModalSeeImages);setNew(noticia)"><i class="mdi mdi-eye"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -49,7 +51,7 @@
 <ng-template class="modal fade" #ModalContent let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -74,6 +76,12 @@
                                 <label for="body">Cuerpo de la noticia</label>
                                 <textarea class="form-control" id="body" rows="15" placeholder="Ingrese cuerpo de la noticia." #body></textarea>
                             </div>
+                            <label for="body">Adjunte imagen(es)</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="myfile"
+                                    (change)="onFileSelected($event)" multiple accept=".png, .jpg, .svg">
+                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione archivo(s)'}}</label>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -82,7 +90,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
                 (click)="newsFormCreate(title.value, lead.value, body.value, modal)">Crear</button>
-            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm()">Cancelar</button>
         </div>
     </div>
 </ng-template>
@@ -129,3 +137,30 @@
     </div>
 </ng-template>
 <!-- Modal Edit ends -->
+
+
+<!-- Modal Image starts -->
+<ng-template class="modal fade" #ModalSeeImages let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div *ngFor="let adjunto of new.adjuntos">
+                              <div>
+                                <img class="d-block w-100" src="{{url}}{{adjunto.url}}" alt="Second slide">
+                              </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Image ends -->
+
