@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, DoCheck } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../../services/students.service';
 import Swal from 'sweetalert2';
@@ -6,16 +7,27 @@ import { StudentModel } from 'src/models/student.model';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { CycleModel } from '../../../../../models/cycle.model';
+import { CycleService } from '../../../cycle/services/cycle.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.scss']
 })
-export class StudentsComponent implements OnInit, OnDestroy {
+export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   students;
   establishments;
+  currentDate;
+  cycle = new CycleModel();
+  cycles;
   student = new StudentModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -30,57 +42,122 @@ export class StudentsComponent implements OnInit, OnDestroy {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private cycleService: CycleService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.listStudents();
-    this.listEstablishments();
+    // this.listStudents();
+    // this.listEstablishments();
+    //this.listCycles();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
   }
 
-  listStudents(){
-    this.studentsService.getStudents().subscribe((resp:any)=>{
-      this.students=resp.alumnos;
-      this.dtTrigger.next(void 0);
+  ngDoCheck(): void {
+    if(this.cycleService.cycle.id != undefined){
+      this.cicloNew = this.cycleService.cycle;
+      if(this.cicloOld != this.cicloNew){
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
+  listStudents() {
+    this.studentsService.getStudents().subscribe((resp: any) => {
+      this.students = resp.alumnos;
+      this.rerender();
     });
   }
 
-  listEstablishments(){
-    this.studentsService.getEstablishments().subscribe((resp:any)=>{
-      this.establishments=resp.establecimientos;
+  listEstablishments() {
+    this.studentsService.getEstablishments().subscribe((resp: any) => {
+      this.establishments = resp.establecimientos;
     });
   }
 
-  openModal( ModalContent ) {
-    this.modalService.open( ModalContent, { size : 'lg'} );
+  listCycles() {
+    this.cycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    });
   }
 
-  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal){
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.students = resp.alumnosParticipantes;
+        this.rerender();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.students = resp.alumnosParticipantes;
+      this.rerender();
+
+    })
+  }
+
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'xl' });
+  }
+
+  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal) {
     let data = {
       rut,
       nombre: name,
       apellidos: surname,
-      telefono: phoneNumber, 
+      telefono: phoneNumber,
       email,
       fecha_nacimiento: dateOfBirth,
       curso: grade,
-      direccion: address, 
+      direccion: address,
       telefono_apoderado: parentNumber,
       nombre_apoderado: parent,
       establecimiento_id: establishment
     };
-    this.studentsService.createStudent(data).subscribe((resp: any) =>{
-      if(resp.code==200){        
+    this.studentsService.createStudent(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno creado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -106,17 +183,17 @@ export class StudentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  studentFormEdit(form: NgForm, modal){
-    this.studentsService.editStudent(this.student).subscribe((resp: any)=> {
+  studentFormEdit(form: NgForm, modal) {
+    this.studentsService.editStudent(this.student).subscribe((resp: any) => {
 
-      if(resp.code == 200){
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno editado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -135,10 +212,12 @@ export class StudentsComponent implements OnInit, OnDestroy {
 
   deleteStudent(id) {
     let data = {
-      id
+      ciclo_id: this.cycle.id,
+      alumno_id: id,
+      participante: 0
     };
     Swal.fire({
-      title: '¿Está seguro que desea eliminar este alumno?',
+      title: '¿Esta seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -148,23 +227,23 @@ export class StudentsComponent implements OnInit, OnDestroy {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.studentsService.deleteStudent(data).subscribe((resp: any) => {
+        this.cycleService.updateCandidates(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
-              title: 'Alumno eliminado correctamente'
+              title: 'Se ha realizado correctamente',
             });
-            this.listStudents();
+           // this.getCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
-              title: 'Error al eliminar el alumno',
-              text: resp.id 
+              title: 'Error al realizar la acción',
+              text: resp.message
             });
           }
-        });
+        })
       }
-    });
+    })
   }
 
   ngOnDestroy(): void {

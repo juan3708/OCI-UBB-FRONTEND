@@ -1,59 +1,66 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;"> -->
-    <!-- <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Actividades</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
-                    actividad</button>
-                <div class="table-responsive">
-                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>Nombre</b>
-                                </th>
-                                <th>
-                                    <b>Fecha</b>
-                                </th>
-                                <th>
-                                    <b>Descripción</b>
-                                </th>
-                                <th>
-                                    <b>Ciclo</b>
-                                </th>
-                                <th>
-                                    <b>Acción</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let activity of activities">
-                                <td>
-                                    {{activity.nombre}}
-                                </td>
-                                <td>
-                                    {{activity.fecha | date:"dd/MM/yyyy"}}
-                                </td>
-                                <td>
-                                    {{activity.descripcion}}
-                                </td>
-                                <td>
-                                    {{activity.ciclo.nombre}}
-                                </td>
-                                <td>
-                                     <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getActivity(activity.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<!-- <div class="col-lg-10 grid-margin stretch-card"> -->
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Actividades</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Crear
+            actividad</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
             </div>
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select> -->
         </div>
-    <!-- </div> -->
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Fecha</b>
+                        </th>
+                        <th>
+                            <b>Descripción</b>
+                        </th>
+                        <th>
+                            <b>Acción</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let activity of activities">
+                        <td>
+                            {{activity.nombre}}
+                        </td>
+                        <td>
+                            {{activity.fecha | date:"dd/MM/yyyy"}}
+                        </td>
+                        <td>
+                            {{activity.descripcion}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);getActivity(activity.id)"><i
+                                    class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
+                                <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalListCost);getActivity(activity.id)"><i
+                                  class="fa-solid fa-file-invoice-dollar"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div> -->
 <!-- </div> -->
 
 <!-- Modal Create starts  -->
@@ -68,7 +75,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Crear actividad</h4>
+                        <h4 class="card-title">Crear actividad {{cycle.nombre}}</h4>
                         <p class="card-description">
                             Ingrese los campos para la creacion de la actividad.
                         </p>
@@ -87,18 +94,6 @@
                                 <input style="width: 50%;" type="date" class="form-control" id="date"
                                     placeholder="aaaa-mm-dd" #date>
                             </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="inputGroupSelect01" #cycle>
-                                        <option selected>Seleccione un Ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -106,7 +101,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="activityFormCreate(name.value, description.value, date.value, cycle.value,modal)">Crear</button>
+                (click)="activityFormCreate(name.value, description.value, date.value,modal)">Crear</button>
             <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
     </div>
@@ -144,18 +139,6 @@
                                 <input style="width: 50%;" type="date" class="form-control" id="date"
                                     [(ngModel)]="activity.fecha" name="date" #date="ngModel">
                             </div>
-                            <div class="form-group">
-                                <label for="cycle">Ciclo</label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                    </div>
-                                    <select class="custom-select" id="cycle" [(ngModel)]="activity.ciclo_id" name="cycle" #cycle>
-                                        <option selected>Seleccione un Ciclo</option>
-                                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -169,3 +152,99 @@
     </div>
 </ng-template>
 <!-- Modal Edit ends -->
+
+<!-- Modal ModalListCost starts -->
+<ng-template class="modal fade" #ModalListCost let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Gastos de la competencia {{activity.nombre}}</h4>
+                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                            style="text-align: center;">
+                            <thead class="table table-bordered">
+                                <tr>
+                                    <th>
+                                        <b>Fecha</b>
+                                    </th>
+                                    <th>
+                                        <b>Valor</b>
+                                    </th>
+                                    <th>
+                                      <b>Ver Detalles</b>
+                                  </th>
+                                </tr>
+                            </thead>
+                            <tbody class="table table-bordered">
+                                <tr *ngFor="let cost of costs">
+                                    <td>
+                                        {{cost.fecha | date:"dd-MM-yyyy"}}
+                                    </td>
+                                    <td>
+                                        {{cost.valor | currency: 'CLP':"$"}}
+                                    </td>
+                                    <td>
+                                      <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                      (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                                          class="mdi mdi-eye"></i></button>
+                                  </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </ng-template>
+  <!-- Modal ModalListCost starts -->
+  
+  <!-- Modal ModalDetailList starts -->
+  <ng-template class="modal fade" #ModalDetailList let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Detalles del gasto</h4>
+                        <table class="table table-striped"
+                            style="text-align: center;">
+                            <thead class="table table-bordered">
+                                <tr>
+                                    <th>
+                                        <b>Nombre</b>
+                                    </th>
+                                    <th>
+                                        <b>Valor</b>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="table table-bordered">
+                                <tr *ngFor="let detail of detailsPerCost">
+                                    <td>
+                                        {{detail.nombre}}
+                                    </td>
+                                    <td>
+                                        {{detail.valor | currency: 'CLP':"$"}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </ng-template>
+  <!-- Modal ModalDetailList starts -->

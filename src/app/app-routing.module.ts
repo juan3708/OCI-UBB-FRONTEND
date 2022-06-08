@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { StudentsCandidatesRoutingModule } from './modules/students-candidates/students-candidates-routing.module';
 
 
 const routes: Routes = [
@@ -27,7 +28,12 @@ const routes: Routes = [
   { path: 'teachers', loadChildren: () => import('./modules/teachers/teachers-routing.module').then(m => m.TeachersRoutingModule) },
   { path: 'assistants', loadChildren: () => import('./modules/assistants/assistants-routing.module').then(m => m.AssistantsRoutingModule) },
   { path: '', loadChildren: () => import('./modules/homepage/homepage-routing.module').then(m => m.HomepageRoutingModule), },
-
+  { path: 'all-assistants', loadChildren: () => import('./modules/all-assistants/all-assistants-routing.module').then(m => m.AllAssistantsRoutingModule) },
+  { path: 'all-establishments', loadChildren: () => import('./modules/all-establishments/all-establishments-routing.module').then(m => m.AllEstablishmentsRoutingModule) },
+  { path: 'all-teachers', loadChildren: () => import('./modules/all-teachers/all-teachers-routing.module').then(m => m.AllTeachersRoutingModule) },
+  { path: 'all-students', loadChildren: () => import('./modules/all-students/all-students-routing.module').then(m => m.AllStudentsRoutingModule) },
+  { path: 'all-news', loadChildren: () => import('./modules/all-news/all-news-routing.module').then(m => m.AllNewsRoutingModule) },
+  { path: 'studentscandidates', loadChildren: () => import('./modules/students-candidates/students-candidates-routing.module').then(m => m.StudentsCandidatesRoutingModule) }
 ];
 
 @NgModule({

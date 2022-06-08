@@ -2,9 +2,17 @@
   <div class="col-lg-10 grid-margin stretch-card"> -->
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title"><b>Alumnos</b></h4>
-        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-          (click)="openModal(ModalContent)">Registrar alumno</button>
+        <h4 class="card-title"><b>Alumnos Participantes</b></h4>
+        <!-- <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+          (click)="openModal(ModalContent)">Registrar alumno</button> -->
+          <!-- <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select>
+        </div> -->
         <div class="table-responsive">
           <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
             <thead class="table table-bordered">
@@ -19,8 +27,11 @@
                   <b>RUT</b>
                 </th>
                 <th>
-                  <b>Acción</b>
+                  <b>Establecimiento</b>
                 </th>
+                <!-- <th>
+                  <b>Acción</b>
+                </th> -->
               </tr>
             </thead>
             <tbody class="table table-bordered">
@@ -35,9 +46,12 @@
                   {{student.rut}}
                 </td>
                 <td>
+                  {{student.establecimiento.nombre}}
+                </td>
+                <!-- <td>
                   <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getStudent(student.id)"><i class="mdi mdi-grease-pencil"></i></button>
                   <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteStudent(student.id)" ><i class="mdi mdi-delete"></i></button>
-                </td>
+                </td> -->
               </tr>
             </tbody>
           </table>

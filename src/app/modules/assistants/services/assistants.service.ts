@@ -36,4 +36,9 @@ export class AssistantsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/ayudante/delete',id,option);
   }
+
+  getAssistantsPerCycle(id){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/ciclo/getassistantspercycle',id,option);
+  }
 }
