@@ -10,6 +10,7 @@ import { HomepageService } from '../../services/homepage.service';
 export class NewsHomepageComponent implements OnInit {
   
   noticias;
+  url = 'http://127.0.0.1:8000/storage/images/';
   constructor(private router: Router, private homepageService: HomepageService) { }
 
   ngOnInit(): void {
@@ -20,6 +21,7 @@ export class NewsHomepageComponent implements OnInit {
     this.homepageService.getNews().subscribe((resp:any) => {
       console.log(resp);
       this.noticias = resp.noticias;
+      console.log(this.url);
     })
   }
 

@@ -43,11 +43,37 @@
                     <div class="col-lg-8 entries">
 
                         <article class="entry" *ngFor="let noticia of noticias">
-
-                            <div class="entry-img">
-                                <img src="assets/images/samples/1280x768/2.jpg" alt="" class="img-fluid">
+                            <div *ngIf="noticia.adjuntos.length < 2">
+                                <div class="entry-img" *ngFor="let adjunto of noticia.adjuntos">
+                                    <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
+                                </div>
                             </div>
-
+                            <div *ngIf="noticia.adjuntos.length >= 2">
+                                <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#carouselExampleCaptions"
+                                            *ngFor="let adjunto of noticia.adjuntos;let index = index"
+                                            [attr.data-slide-to]="index"></li>
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item"
+                                            *ngFor="let adjunto of noticia.adjuntos;let index = index;let isFirst = first"
+                                            [ngClass]="{active:isFirst}">
+                                            <img [src]="url+adjunto.url" class="d-block w-100" [alt]="adjunto.title">
+                                        </div>
+                                    </div>
+                                    <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button"
+                                        data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button"
+                                        data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            </div>
                             <h2 class="entry-title">
                                 <a (click)="onSelectNews(noticia)">{{noticia.titulo}}</a>
                             </h2>

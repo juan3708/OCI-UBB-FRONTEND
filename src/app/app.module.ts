@@ -77,7 +77,7 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
     TeachersModule,
     LessonsModule,
     AssistantsModule,
-    HomepageModule
+    HomepageModule, 
     AllAssistantsModule,
     AllEstablishmentsModule,
     AllTeachersModule,

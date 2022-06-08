@@ -9,11 +9,14 @@ import { Router } from '@angular/router';
 export class NewsSingleHomepageComponent implements OnInit {
 
   single;
+  url = 'http://127.0.0.1:8000/storage/images/';
   constructor(private router: Router) {
     this.single = this.router.getCurrentNavigation().extras.state.news;
   }
 
   ngOnInit(): void {
   }
+
+  
 
 }
