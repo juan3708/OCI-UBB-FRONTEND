@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { UserPagesService } from 'src/app/user-pages/services/user-pages.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, DoCheck {
   public uiBasicCollapsed = false;
   public studentsCollapsed = false;
   public teachersCollapsed = false;
   public establishmentsCollapsed = false;
   public assistantsCollapsed = false;
   public samplePagesCollapsed = false;
+
+  userLocal;
   
-  constructor() { }
+  constructor(private userPagesService: UserPagesService) { 
+    this.userLocal = {};
+  }
 
   ngOnInit() {
     const body = document.querySelector('body');
@@ -31,6 +36,15 @@ export class SidebarComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngDoCheck(): void {
+    if(localStorage.getItem('access_token')){
+      let user = this.userPagesService.getUserByToken();
+      if(user.id != this.userLocal.id){
+        this.userLocal = user;
+      }
+    }
   }
 
 }

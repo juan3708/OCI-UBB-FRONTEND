@@ -1,7 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
+import { UserPagesService } from 'src/app/user-pages/services/user-pages.service';
 import { CycleModel } from 'src/models/cycle.model';
 
 @Component({
@@ -10,21 +12,38 @@ import { CycleModel } from 'src/models/cycle.model';
   styleUrls: ['./navbar.component.scss'],
   providers: [NgbDropdownConfig]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, DoCheck {
   public iconOnlyToggled = false;
   public sidebarToggled = false;
+
+  userLocal;
   cycles;
   currentDate;
   cycle = new CycleModel();
 
-  constructor(config: NgbDropdownConfig, private cycleService: CycleService) {
+  constructor(config: NgbDropdownConfig, private cycleService: CycleService, private userPagesService: UserPagesService, private router: Router) {
     config.placement = 'bottom-right';
+    this.userLocal = {};
   }
 
   ngOnInit() {
     this.listCycles();
     this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.getCyclePerFinishtDate();
+  }
+
+  ngDoCheck(): void {
+    if(localStorage.getItem('access_token')){
+      let user = this.userPagesService.getUserByToken();
+      if(user.id != this.userLocal.id){
+        this.userLocal = user;
+      }
+    }
+  }
+
+  logout(){
+    this.userPagesService.logout();
+    this.router.navigateByUrl('/user-pages/login');
   }
 
   // toggle sidebar in small devices
@@ -62,7 +81,7 @@ export class NavbarComponent implements OnInit {
     let data = {
       ciclo_id: id
     };
-    console.log(id);
+    let user = this.userPagesService.getUserByToken();
     this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       resp.ciclo;
       this.cycleService.cycle = resp.ciclo;
