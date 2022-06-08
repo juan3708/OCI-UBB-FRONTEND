@@ -17,9 +17,9 @@ export class AppComponent implements OnInit{
   constructor(private router: Router) {
     
     // Removing Sidebar, Navbar, Footer for Documentation, Error and Auth pages
-    router.events.forEach((event) => { 
+    router.events.forEach((event) => {
       if(event instanceof NavigationStart) {
-        if((event['url'] == '/user-pages/login') || (event['url'] == '/user-pages/register') || (event['url'] == '/error-pages/404') || (event['url'] == '/error-pages/500') ) {
+        if((event['url'] == '/user-pages/login') || (event['url'] == '/user-pages/register') || (event['url'] == '/error-pages/404') || (event['url'] == '/error-pages/500') || (event['url'] == '/') || (event['url'] == '/about') || (event['url'] == '/news') || this.isNews(event['url']) || (event['url'] == '/#contact') || (event['url'] == '/#featured')) {
           this.showSidebar = false;
           this.showNavbar = false;
           this.showFooter = false;
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit{
           document.querySelector('.page-body-wrapper').classList.add('full-page-wrapper');
           document.querySelector('.content-wrapper').classList.remove('auth', 'auth-img-bg', );
           document.querySelector('.content-wrapper').classList.remove('auth', 'lock-full-bg');
-          if((event['url'] == '/error-pages/404') || (event['url'] == '/error-pages/500')) {
+          if((event['url'] == '/error-pages/404') || (event['url'] == '/error-pages/500') || (event['url'] == '/') || (event['url'] == '/about') || (event['url'] == '/news') || (event['url'] == '/#contact') || (event['url'] == '/#featured')) {
             document.querySelector('.content-wrapper').classList.add('p-0');
           }
         } else {
@@ -52,15 +52,21 @@ export class AppComponent implements OnInit{
     });
   }
 
-
+  isNews(url){
+    if(url.includes('/news/') && url.length > 6){
+      return true;
+    }else{
+      return false;
+    }
+  }
 
   ngOnInit() {
     // Scroll to top after route change
-    this.router.events.subscribe((evt) => {
-      if (!(evt instanceof NavigationEnd)) {
-          return;
-      }
-      window.scrollTo(0, 0);
-    });
+    // this.router.events.subscribe((evt) => {
+    //   if (!(evt instanceof NavigationEnd)) {
+    //       return;
+    //   }
+    //   window.scrollTo(0, 0);
+    // });
   }
 }
