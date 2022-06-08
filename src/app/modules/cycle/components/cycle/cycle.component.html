@@ -1,71 +1,80 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Ciclos</b></h4>
-                <button type="button" style="float: right; margin: 8px;"
-                    class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Crear
-                    ciclo</button>
-                <div class="table-responsive">
-                    <table class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>Año</b>
-                                </th>
-                                <th>
-                                    <b>Nombre</b>
-                                </th>
-                                <th>
-                                    <b>Fecha Inicio</b>
-                                </th>
-                                <th>
-                                    <b>Fecha Termino</b>
-                                </th>
-                                <th>
-                                    <b>Presupuesto</b>
-                                </th>
-                                <th>
-                                    <b>Coordinador</b>
-                                </th>
-                                <th>
-                                    <b>Acciones</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let cycle of cycles">
-                                <td>
-                                    {{cycle.anio}}
-                                </td>
-                                <td>
-                                    {{cycle.nombre}}
-                                </td>
-                                <td>
-                                    {{cycle.fecha_inicio}}
-                                </td>
-                                <td>
-                                    {{cycle.fecha_termino}}
-                                </td>
-                                <td>
-                                    {{cycle.presupuesto}}
-                                </td>
-                                <td>
-                                    {{cycle.coordinador.nombre}} {{cycle.coordinador.apellido}}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getCycle(cycle.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteCycle(cycle.id)"><i class="mdi mdi-delete"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Ciclos</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Crear
+            ciclo</button>
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Año</b>
+                        </th>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Fecha Inicio</b>
+                        </th>
+                        <th>
+                            <b>Fecha Termino</b>
+                        </th>
+                        <th>
+                            <b>Presupuesto</b>
+                        </th>
+                        <th>
+                            <b>Coordinador</b>
+                        </th>
+                        <th>
+                            <b>Acciones</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let cycle of cycles">
+                        <td>
+                            {{cycle.anio}}
+                        </td>
+                        <td>
+                            {{cycle.nombre}}
+                        </td>
+                        <td>
+                            {{cycle.fecha_inicio | date:"dd-MM-yyyy"}}
+                        </td>
+                        <td>
+                            {{cycle.fecha_termino | date:"dd-MM-yyyy"}}
+                        </td>
+                        <td>
+                            {{cycle.presupuesto |currency: 'CLP':"$"}}
+                        </td>
+                        <td>
+                            {{cycle.coordinador.nombre}} {{cycle.coordinador.apellido}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
+                                (click)="openModal(ModalContentEdit);getCycle(cycle.id)"><i
+                                    class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-select"
+                                (click)="openModal(SelectEstableshments);getCycle(cycle.id)"><i
+                                    class="mdi mdi-book-plus"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-quotas"
+                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)"><i
+                                    class="mdi mdi-school"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteCycle(cycle.id)"><i class="mdi mdi-delete"></i></button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    <!-- </div>
+    </div>
+</div>
+<!-- </div>
 </div> -->
 
 <!-- Modal Create starts -->
@@ -200,3 +209,159 @@
     </div>
 </ng-template>
 <!-- Modal Edit ends -->
+
+<!-- Modal SelectEstableshments starts -->
+<ng-template class="modal fade" #SelectEstableshments let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Seleccionar establecimientos que participaran de las {{cycle.nombre}}</h4>
+                        <p class="card-description">
+                            Seleccione los establecimientos que participaran de las OCI.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <h5>Establecimientos seleccionados</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Nombre del establecimiento</b>
+                                            </th>
+                                            
+                                            <th>
+                                                <b>Eliminar</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let establishment of establishmentsPerCycle">
+                                            <td>
+                                                {{establishment.nombre}}
+                                            </td>
+                                            <td>
+                                                <a type="button" data-dismiss="modal" (click)="removeEstablishment(establishment.id)"><i
+                                                    class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <h5>Establecimientos</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Seleccionar</b>
+                                            </th>
+                                            <th>
+                                                <b>Nombre del establecimiento</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let establishment of establishments">
+                                            <td>
+                                                <div class="form-check form-check-success">
+                                                    <label class="form-check-label" aria-label="Asignar">
+                                                        <input type="checkbox" class="form-check-input position-static"
+                                                            style="text-align: center;" id="establishment"
+                                                            (change)="addOrRemoveEstablishments($event.target.checked, establishment.id)"
+                                                            #studentLevel>
+                                                        <i class="input-helper"></i>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{establishment.nombre}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addEstablishmentsPerCycle(modal)">Asginar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal SelectEstableshments ends -->
+
+<!-- Modal EditQuotasPerEstableshment starts -->
+<ng-template class="modal fade" #EditQuotasPerEstableshment let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body" [formGroup]="editFeeEstablishment">
+                        <h4 class="card">Editar cupos de los establecimiento</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la modificacion de cupos por establecimiento.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-striped"
+                                style="text-align: center;">
+                                <thead class="table table-bordered">
+                                    <tr>
+                                        <th>
+                                            <b>Nombre del establecimiento</b>
+                                        </th>
+                                        <th>
+                                            <b>Cupos</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table table-bordered" formArrayName="establishmentsFee">
+                                    <ng-container
+                                        *ngFor="let establishment of establishmentsFee.controls; let i = index">
+                                        <tr [formGroupName]="i">
+                                            <td>
+                                                {{establishment.controls.nombre.value}}
+                                            </td>
+                                            <div class="form-group" style="display: none">
+                                                <input type="text" class="form-control" id="id" formControlName="id">
+                                            </div>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="fee"
+                                                        formControlName="cupos">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="establishmentQuotesEdit(editFeeEstablishment.value, modal)">Editar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm();">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal EditQuotasPerEstableshment ends -->

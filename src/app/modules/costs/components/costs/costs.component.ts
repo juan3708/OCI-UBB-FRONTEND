@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DetailsModel } from '../../../../../models/details.model';
 import { CostsModel } from '../../../../../models/costs.model';
 import { CostsService } from '../../services/costs.service';
@@ -7,24 +7,36 @@ import Swal from 'sweetalert2';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { formatDate } from '@angular/common';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-costs',
   templateUrl: './costs.component.html',
   styleUrls: ['./costs.component.scss']
 })
-export class CostsComponent implements OnInit {
+export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
+  cicloOld;
+  cicloNew;
+  ciclo;
   detail = new DetailsModel();
   detailsList;
   costs;
   cost = new CostsModel();
+  currentDate;
   competencies = [];
   activities = [];
   ids = [];
   cycles;
   cycle = new CycleModel();
   total = 0;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -40,14 +52,55 @@ export class CostsComponent implements OnInit {
   costsFormCreate = this.fb.group({
     date: new FormControl(''),
     price: new FormControl(''),
-    cycle: new FormControl,
     activity: new FormControl,
     competition: new FormControl,
     details: this.fb.array([])
   });
 
 
-  constructor(private CostsService: CostsService, private modalService: NgbModal, private CycleService: CycleService, private fb: FormBuilder) { }
+  constructor(private CostsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) {
+    this.cicloOld = {};
+  }
+
+  ngOnInit(): void {
+    //this.listCosts();
+    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    // this.getCyclePerFinishtDate();
+    // this.listCycles();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
+  }
+
+
+  ngDoCheck(): void {
+    if (this.cycleService.cycle.id != undefined) {
+      this.cicloNew = this.cycleService.cycle;
+      if (this.cicloOld != this.cicloNew) {
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
+  }
+
+
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
+  }
+
 
   get details() {
     return this.costsFormCreate.controls["details"] as FormArray;
@@ -69,12 +122,94 @@ export class CostsComponent implements OnInit {
 
   }
 
-  clearForm() {
-    this.details.controls.splice(0, this.details.length);
+  listCosts() {
+    this.CostsService.getCosts().subscribe((resp: any) => {
+      this.costs = resp.gastos;
+      this.rerender();
+    });
+  }
+
+
+
+  listCycles() {
+    this.cycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    });
+  }
+
+  listCostsPerCycle() {
+    let data = {
+      id: this.cycle.id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.costs = resp.gastos;
+      this.rerender();
+    })
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.costs = resp.gastos;
+        this.competencies = resp.ciclo.competencias;
+        this.activities = resp.ciclo.actividades;
+        this.rerender();
+      } else {
+        this.competencies = [];
+        this.activities = [];
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al cargar el ciclo'
+        });
+      }
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+      this.costs = resp.ciclo.gastos;
+      this.competencies = resp.ciclo.competencias;
+      this.activities = resp.ciclo.actividades;
+      this.rerender();
+    })
+  }
+
+  getCost(id) {
+    let data = {
+      id
+    };
+    this.details.clear();
+    this.CostsService.getCostsById(data).subscribe((resp: any) => {
+      this.cost = resp.gastos;
+      this.detailsList = resp.gastos.detalles;
+      this.setCostCreateForm();
+    });
+  }
+
+  setCostCreateForm() {
     this.costsFormCreate.reset();
-    this.competencies = [];
-    this.activities = [];
-    this.ids = [];
+    this.detailsList.map((d: any) => {
+      const detailFormGroup = this.fb.group({
+        id: d.id,
+        name: d.nombre,
+        priceDetail: d.valor
+      });
+      this.details.push(detailFormGroup);
+    });
+
+    this.costsFormCreate.patchValue({ 'date': this.cost.fecha });
+    this.costsFormCreate.patchValue({ 'price': this.cost.valor });
+    this.costsFormCreate.patchValue({ 'activity': this.cost.actividad_id });
+    this.costsFormCreate.patchValue({ 'competition': this.cost.competencia_id });
+    this.costsFormCreate.setControl('details', this.details);
   }
 
   createCosts(form, modal) {
@@ -93,7 +228,7 @@ export class CostsComponent implements OnInit {
       let data = {
         valor: this.total,
         fecha: form.date,
-        ciclo_id: form.cycle,
+        ciclo_id: this.cycle.id,
         actividad_id: form.activity,
         competencia_id: form.competition
       }
@@ -121,7 +256,7 @@ export class CostsComponent implements OnInit {
             icon: 'success',
             title: 'Se ha creado correctamente'
           });
-          this.listCosts();
+          this.listCostsPerCycle();
           this.clearForm();
         } else {
           if (resp.code == 400) {
@@ -146,74 +281,6 @@ export class CostsComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.listCosts();
-    this.listCycles();
-  }
-
-
-  listCosts() {
-    this.CostsService.getCosts().subscribe((resp: any) => {
-      this.costs = resp.gastos;
-    });
-  }
-
-
-
-  listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
-      this.cycles = resp.ciclos;
-    });
-  }
-
-  chargeForCycle(id) {
-    let data = {
-      id
-    };
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
-      this.cycle = resp.ciclo;
-      if (resp.code == 200) {
-        this.competencies = resp.ciclo.competencias;
-        this.activities = resp.ciclo.actividades;
-      } else {
-        this.competencies = [];
-        this.activities = [];
-      }
-    })
-  };
-
-  getCost(id) {
-    let data = {
-      id
-    };
-    this.details.clear();
-    this.CostsService.getCostsById(data).subscribe((resp: any) => {
-      this.cost = resp.gastos;
-      this.detailsList = resp.gastos.detalles;
-      this.chargeForCycle(this.cost.ciclo_id);
-      this.setCostCreateForm();
-    });
-  }
-
-  setCostCreateForm() {
-    this.detailsList.map((d: any) => {
-      const detailFormGroup = this.fb.group({
-        id: d.id,
-        name: d.nombre,
-        priceDetail: d.valor
-      });
-      this.details.push(detailFormGroup);
-    })
-    this.costsFormCreate.setValue({
-      date: this.cost.fecha,
-      price: this.cost.valor,
-      cycle: this.cost.ciclo_id,
-      activity: this.cost.actividad_id,
-      competition: this.cost.competencia_id,
-      details: this.details
-    });
-  }
-
   editCost(form, modal) {
     this.total = 0;
     if (this.details.length > 0) {
@@ -232,7 +299,7 @@ export class CostsComponent implements OnInit {
         id: this.cost.id,
         valor: this.total,
         fecha: form.date,
-        ciclo_id: form.cycle,
+        ciclo_id: this.cycle.id,
         actividad_id: form.activity,
         competencia_id: form.competition
       };
@@ -361,7 +428,7 @@ export class CostsComponent implements OnInit {
             icon: 'success',
             title: 'Se ha editado correctamente'
           });
-          this.listCosts();
+          this.listCostsPerCycle();
           this.clearForm();
         } else {
           if (resp.code == 400) {
@@ -386,10 +453,6 @@ export class CostsComponent implements OnInit {
     }
   }
 
-  openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
-  }
-
   deleteCost(id) {
     let data = {
       id
@@ -406,7 +469,10 @@ export class CostsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         for (let index = 0; index < this.detailsList.length; index++) {
-          this.CostsService.deleteDetails(this.detailsList[index].id).subscribe((resp: any) => {
+          let data = {
+            id: this.detailsList[index].id
+          }
+          this.CostsService.deleteDetails(data).subscribe((resp: any) => {
             if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
@@ -422,7 +488,7 @@ export class CostsComponent implements OnInit {
               icon: 'success',
               title: 'Se ha eliminado correctamente'
             });
-            this.listCosts();
+            this.listCostsPerCycle();
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -434,4 +500,17 @@ export class CostsComponent implements OnInit {
     });
   }
 
+  clearForm() {
+    this.details.controls.splice(0, this.details.length);
+    this.costsFormCreate.reset();
+    this.ids = [];
+  }
+
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'xl' });
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
 }

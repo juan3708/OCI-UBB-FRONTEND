@@ -1,160 +1,440 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title"><b>Competencias</b></h4>
-          <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear Competencia</button>
-          <div class="table-responsive">
-            <table class="table table-striped" style="text-align: center;">
-              <thead class="table table-bordered">
-                <tr>
-                  <th >
-                    <b>Tipo</b>
-                  </th>
-                  <th>
-                    <b>Lugar</b>
-                  </th>
-                  <th>
-                    <b>Fecha</b>
-                  </th>
-                  <th>
-                    <b>Ciclo</b>
-                  </th>
-                  <th>
-                    <b>Acción</b>
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="table table-bordered">
-                <tr *ngFor="let competition of competencies">
-                  <td>
-                    {{competition.tipo}}
-                  </td>
-                  <td>
-                    {{competition.lugar}}
-                  </td>
-                  <td>
-                    {{competition.fecha | date:"dd/MM/yyyy"}}
-                  </td>
-                  <td>
-                    {{competition.ciclo.nombre}}
-                  </td>
-                  <td>
-                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                    <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteCompetition(competition.id)" ><i class="mdi mdi-delete"></i></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title"><b>Competencias</b></h4>
+    <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+      (click)="openModal(ModalContent)">Crear Competencia</button>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
       </div>
-    <!-- </div>
+      <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+        <option *ngFor="let cycle of cycles" [value]="cycle.id">
+          {{cycle.nombre}}</option>
+      </select> -->
+    </div>
+    <div class="table-responsive">
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+        style="text-align: center;">
+        <thead class="table table-bordered">
+          <tr>
+            <th>
+              <b>Tipo</b>
+            </th>
+            <th>
+              <b>Lugar</b>
+            </th>
+            <th>
+              <b>Fecha</b>
+            </th>
+            <th>
+              <b>Acción</b>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table table-bordered">
+          <tr *ngFor="let competition of competencies">
+            <td>
+              {{competition.tipo}}
+            </td>
+            <td>
+              {{competition.lugar}}
+            </td>
+            <td>
+              {{competition.fecha | date:"dd-MM-yyyy"}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i
+                  class="mdi mdi-grease-pencil"></i></button>
+              <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                (click)="deleteCompetition(competition.id)"><i class="mdi mdi-delete"></i></button>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalAddStudents);getCompetition(competition.id)"><i
+                  class="fa-solid fa-person-circle-plus"></i></button>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalEditScores);getCompetition(competition.id)"><i
+                  class="fa-solid fa-medal"></i></button>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalListCost);getCompetition(competition.id)"><i
+                  class="fa-solid fa-file-invoice-dollar"></i></button>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- </div>
   </div> -->
-  
-  <!-- Modal Create starts -->
-  <ng-template class="modal fade" #ModalContent let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-12 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Crear Competencias</h4>
-              <p class="card-description">
-                Ingrese los campos para la creacion de la competencia.
-              </p>
-              <form class="forms-sample">
-                <div class="form-group">
-                  <label for="type">Tipo</label>
-                  <input type="text" class="form-control" id="type" placeholder="Tipo" #type>
-                </div>
-                <div class="form-group">
-                  <label for="location">Lugar</label>
-                  <input type="text" class="form-control" id="location" placeholder="Lugar" #location>
-                </div>
-                <div class="form-group">
-                  <label for="date">Fecha</label>
-                  <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" #date>
-                </div>
-                <div class="form-group">
-                  <label for="cycle">Ciclo</label>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                    </div>
-                    <select class="custom-select" id="inputGroupSelect01" #cycle>
-                      <option selected>Seleccione un ciclo</option>
-                      <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}</option>
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalContent let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Crear Competencias {{cycle.nombre}}</h4>
+            <p class="card-description">
+              Ingrese los campos para la creacion de la competencia.
+            </p>
+            <form class="forms-sample">
+              <div class="form-group">
+                <label for="type">Tipo</label>
+                <input type="text" class="form-control" id="type" placeholder="Tipo" #type>
+              </div>
+              <div class="form-group">
+                <label for="location">Lugar</label>
+                <input type="text" class="form-control" id="location" placeholder="Lugar" #location>
+              </div>
+              <div class="form-group">
+                <label for="date">Fecha</label>
+                <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" #date>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="competitionFormCreate(type.value, location.value, date.value, cycle.value, modal)">Crear</button>
-        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
       </div>
     </div>
-  </ng-template>
-  <!-- Modal Create Ends -->
-  
-  <!-- Modal Edit starts -->
-  <ng-template class="modal fade" #ModalContentEdit let-modal>
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="col-12 stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Editar competencia</h4>
-                <p class="card-description">
-                  Ingrese los campos para la edicion de la competencia.
-                </p>
-                <form class="forms-sample" #f="ngForm">
-                  <div class="form-group">
-                    <label for="type">Tipo</label>
-                    <input type="text" class="form-control" id="type" [(ngModel)]="competition.tipo" name="type" #type="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="location">Lugar</label>
-                    <input type="text" class="form-control" id="location" [(ngModel)]="competition.lugar" name="location" #location="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="date">Fecha</label>
-                    <input style="width: 50%;" type="date" class="form-control" id="date" [(ngModel)]="competition.fecha" name="date" #date="ngModel">
-                  </div>
-                  <div class="form-group">
-                    <label for="cycle">Ciclo</label>
-                    <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                      </div>
-                      <select class="custom-select" id="cycle" [(ngModel)]="competition.ciclo_id" name="cycle" #cycle="ngModel">
-                        <option selected>Seleccione un ciclo</option>
-                        <option *ngFor="let cycle of cycles" [value]="cycle.id">{{cycle.nombre}}</option>
-                      </select>
-                    </div>
-                  </div>
-                </form>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success"
+        (click)="competitionFormCreate(type.value, location.value, date.value, modal)">Crear</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Create Ends -->
+
+<!-- Modal Edit starts -->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Editar competencia</h4>
+            <p class="card-description">
+              Ingrese los campos para la edicion de la competencia.
+            </p>
+            <form class="forms-sample" #f="ngForm">
+              <div class="form-group">
+                <label for="type">Tipo</label>
+                <input type="text" class="form-control" id="type" [(ngModel)]="competition.tipo" name="type"
+                  #type="ngModel">
               </div>
+              <div class="form-group">
+                <label for="location">Lugar</label>
+                <input type="text" class="form-control" id="location" [(ngModel)]="competition.lugar" name="location"
+                  #location="ngModel">
+              </div>
+              <div class="form-group">
+                <label for="date">Fecha</label>
+                <input style="width: 50%;" type="date" class="form-control" id="date" [(ngModel)]="competition.fecha"
+                  name="date" #date="ngModel">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="competitionFormEdit(f, modal)">Editar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Edit ends -->
+
+<!-- Modal AddStudents starts -->
+<ng-template class="modal fade" #ModalAddStudents let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card">Alumnos que participaran de la competición</h4>
+            <div class="table-responsive">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Rut</b>
+                    </th>
+                    <th>
+                      <b>Nombre</b>
+                    </th>
+                    <th>
+                      <b>Apellidos</b>
+                    </th>
+                    <th>
+                      <b>Eliminar</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                  <tr *ngFor="let student of students">
+                    <td>
+                      {{student.rut}}
+                    </td>
+                    <td>
+                      {{student.nombre}}
+                    </td>
+                    <td>
+                      {{student.apellidos}}
+                    </td>
+                    <td>
+                      <a type="button" data-dismiss="modal" (click)="removeStudent(student.id)"><i
+                          class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <br>
+            <h4 class="card">Alumnos</h4>
+            <form class="forms-sample">
+              <div class="form-group">
+                <div class="table-responsive">
+                  <table class="table table-striped" style="text-align: center;">
+                    <thead class="table table-bordered">
+                      <tr>
+                        <th>
+                          <b>Rut</b>
+                        </th>
+                        <th>
+                          <b>Nombre</b>
+                        </th>
+                        <th>
+                          <b>Apellidos</b>
+                        </th>
+                        <th>
+                          <b>Asignar</b>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="table table-bordered">
+                      <tr *ngFor="let student of studentsPerCycle">
+                        <td>
+                          {{student.rut}}
+                        </td>
+                        <td>
+                          {{student.nombre}}
+                        </td>
+                        <td>
+                          {{student.apellidos}}
+                        </td>
+                        <td>
+                          <div class="form-check form-check-success">
+                            <label class="form-check-label" aria-label="Asignar">
+                              <input type="checkbox" class="form-check-input position-static"
+                                style="text-align: center;" [value]="student.id" id="studentLevel"
+                                (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)" #studentLevel>
+                              <i class="input-helper"></i>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success" (click)="addStudents(modal)">Guardar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal AddStudents end -->
+
+<!-- Modal ModalEditScores starts -->
+<ng-template class="modal fade" #ModalEditScores let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body" [formGroup]="editScorePerStudent">
+            <h4 class="card">Editar puntaje de competición tipo: {{competition.tipo}} con fecha {{competition.fecha}}
+            </h4>
+            <div class="table-responsive">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Rut</b>
+                    </th>
+                    <th>
+                      <b>Nombre</b>
+                    </th>
+                    <th>
+                      <b>Apellidos</b>
+                    </th>
+                    <th>
+                      <b>Puntaje</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered" formArrayName="studentScore">
+                  <ng-container *ngFor="let student of studentScore.controls; let i = index">
+                    <tr [formGroupName]="i">
+                      <td>
+                        {{student.controls.rut.value}}
+                      </td>
+                      <td>
+                        {{student.controls.nombre.value}}
+                      </td>
+                      <td>
+                        {{student.controls.apellidos.value}}
+                      </td>
+                      <div class="form-group" style="display: none">
+                        <input type="text" class="form-control" id="id" formControlName="id">
+                      </div>
+                      <td>
+                        <div class="scoreInput">
+                          <input type="text" class="form-control" id="fee" formControlName="puntaje">
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="competitionFormEdit(f, modal)">Editar</button>
-          <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
-        </div>
       </div>
-    </ng-template>
-    <!-- Modal Edit ends -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success"
+        (click)="establishmentQuotesEdit(editScorePerStudent.value, modal)">Editar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal"
+        (click)="modal.close();clearForm();">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal ModalEditScores ends -->
+
+<!-- Modal ModalListCost starts -->
+<ng-template class="modal fade" #ModalListCost let-modal>
+  <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <div class="col-12 stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card">Gastos de la competencia {{competition.tipo}}</h4>
+                      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                          style="text-align: center;">
+                          <thead class="table table-bordered">
+                              <tr>
+                                  <th>
+                                      <b>Fecha</b>
+                                  </th>
+                                  <th>
+                                      <b>Valor</b>
+                                  </th>
+                                  <th>
+                                    <b>Ver Detalles</b>
+                                </th>
+                              </tr>
+                          </thead>
+                          <tbody class="table table-bordered">
+                              <tr *ngFor="let cost of costs">
+                                  <td>
+                                      {{cost.fecha | date:"dd-MM-yyyy"}}
+                                  </td>
+                                  <td>
+                                      {{cost.valor | currency: 'CLP':"$"}}
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                    (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                                        class="mdi mdi-eye"></i></button>
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+<!-- Modal ModalListCost starts -->
+
+<!-- Modal ModalDetailList starts -->
+<ng-template class="modal fade" #ModalDetailList let-modal>
+  <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <div class="col-12 stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card">Detalles del gasto</h4>
+                      <table class="table table-striped"
+                          style="text-align: center;">
+                          <thead class="table table-bordered">
+                              <tr>
+                                  <th>
+                                      <b>Nombre</b>
+                                  </th>
+                                  <th>
+                                      <b>Valor</b>
+                                  </th>
+                              </tr>
+                          </thead>
+                          <tbody class="table table-bordered">
+                              <tr *ngFor="let detail of detailsPerCost">
+                                  <td>
+                                      {{detail.nombre}}
+                                  </td>
+                                  <td>
+                                      {{detail.valor | currency: 'CLP':"$"}}
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+<!-- Modal ModalDetailList starts -->

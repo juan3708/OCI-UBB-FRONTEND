@@ -1,5 +1,8 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
+import { CycleService } from 'src/app/modules/cycle/services/cycle.service';
+import { CycleModel } from 'src/models/cycle.model';
 
 @Component({
   selector: 'app-navbar',
@@ -10,12 +13,18 @@ import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 export class NavbarComponent implements OnInit {
   public iconOnlyToggled = false;
   public sidebarToggled = false;
-  
-  constructor(config: NgbDropdownConfig) {
+  cycles;
+  currentDate;
+  cycle = new CycleModel();
+
+  constructor(config: NgbDropdownConfig, private cycleService: CycleService) {
     config.placement = 'bottom-right';
   }
 
   ngOnInit() {
+    this.listCycles();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.getCyclePerFinishtDate();
   }
 
   // toggle sidebar in small devices
@@ -41,6 +50,35 @@ export class NavbarComponent implements OnInit {
         body.classList.remove('sidebar-hidden');
       }
     }
+  }
+
+  listCycles() {
+    this.cycleService.getCycles().subscribe((resp: any) => {
+      this.cycles = resp.ciclos;
+    })
+  }
+
+  getCycle(id) {
+    let data = {
+      ciclo_id: id
+    };
+    console.log(id);
+    this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
+      resp.ciclo;
+      this.cycleService.cycle = resp.ciclo;
+    });
+  }
+
+  getCyclePerFinishtDate() {
+    let data = {
+      fecha_termino: this.currentDate
+    };
+    this.cycleService.getStudentsCandidatePerCyclePerFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        this.cycle = resp.ciclo;
+        this.cycleService.cycle = resp.ciclo;
+      }
+    })
   }
 
   // toggle right sidebar

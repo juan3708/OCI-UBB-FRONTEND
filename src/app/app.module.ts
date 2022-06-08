@@ -29,6 +29,16 @@ import { LevelModule } from './modules/level/level.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { AssistantsModule } from './modules/assistants/assistants.module';
+import { DataTablesModule } from 'angular-datatables';
+import { HomepageModule } from './modules/homepage/homepage.module';
+import { AllAssistantsModule } from './modules/all-assistants/all-assistants.module';
+import { AllEstablishmentsModule } from './modules/all-establishments/all-establishments.module';
+import { AllTeachersModule } from './modules/all-teachers/all-teachers.module';
+import { StudentsCandidatesModule } from './modules/students-candidates/students-candidates.module';
+import { AllStudentsModule } from './modules/all-students/all-students.module';
+import { AllNewsModule } from './modules/all-news/all-news.module';
+
+
 
 
 
@@ -66,7 +76,15 @@ import { AssistantsModule } from './modules/assistants/assistants.module';
     LevelModule,
     TeachersModule,
     LessonsModule,
-    AssistantsModule
+    AssistantsModule,
+    HomepageModule, 
+    AllAssistantsModule,
+    AllEstablishmentsModule,
+    AllTeachersModule,
+    AllStudentsModule,
+    StudentsCandidatesModule,
+    DataTablesModule,
+    AllNewsModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]

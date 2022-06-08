@@ -1,18 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CoordinatorsService } from '../../services/coordinators.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { CoordinatorModel } from 'src/models/coordinator.model';
 import { NgForm } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-coordinators',
   templateUrl: './coordinators.component.html',
   styleUrls: ['./coordinators.component.scss']
 })
-export class CoordinatorsComponent implements OnInit {
+export class CoordinatorsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement: DataTableDirective;
 
   coordinators;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -29,15 +36,33 @@ export class CoordinatorsComponent implements OnInit {
 
   ngOnInit(): void {
     this.listCoordinators();
+    this.dtOptions = {
+      language: LanguageDataTable.spanish_datatables,
+      responsive: true
+    };
+  }
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  rerender(): void {
+    if ("dtInstance" in this.dtElement) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+    else {
+      this.dtTrigger.next();
+    }
   }
 
   listCoordinators() {
     this.coordinatorsService.getCoordinators().subscribe((resp: any) => {
       this.coordinators = resp.coordinadores;
-
+      this.rerender();
     })
   }
-
 
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'lg' });
@@ -85,8 +110,8 @@ export class CoordinatorsComponent implements OnInit {
     });
   }
 
-  coordinatorFormEdit(form: NgForm, modal){
-    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any)=> {
+  coordinatorFormEdit(form: NgForm, modal) {
+    this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -137,11 +162,15 @@ export class CoordinatorsComponent implements OnInit {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el coordinador',
-              text: resp.id 
+              text: resp.id
             });
           }
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }

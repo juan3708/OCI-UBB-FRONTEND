@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CycleRoutingModule } from './cycle-routing.module';
 import { CycleComponent } from './components/cycle/cycle.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DataTablesModule } from 'angular-datatables';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     CycleRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DataTablesModule
   ]
 })
 export class CycleModule { }

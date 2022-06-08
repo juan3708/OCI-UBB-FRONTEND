@@ -7,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarComponent implements OnInit {
   public uiBasicCollapsed = false;
+  public studentsCollapsed = false;
+  public teachersCollapsed = false;
+  public establishmentsCollapsed = false;
+  public assistantsCollapsed = false;
   public samplePagesCollapsed = false;
   
   constructor() { }

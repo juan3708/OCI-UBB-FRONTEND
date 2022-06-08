@@ -1,0 +1,412 @@
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
+  <div class="col-lg-10 grid-margin stretch-card"> -->
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Alumnos postulantes</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContentEnrolled)" *ngIf="studentsPerCycle.length >=1 || studentsEnrolled.length >=1 "><i
+                class="fa-solid fa-clipboard-list"></i> Inscribir alumnos</button>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalChargeStudent)"><i class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                    {{cycle.nombre}}</option>
+            </select> -->
+        </div>
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Apellidos</b>
+                        </th>
+                        <th>
+                            <b>RUT</b>
+                        </th>
+                        <th>
+                            <b>Establecimiento</b>
+                        </th>
+                        <th>
+                            <b>Acción</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let student of studentsPerCycle">
+                        <td>
+                            {{student.nombre}}
+                        </td>
+                        <td>
+                            {{student.apellidos}}
+                        </td>
+                        <td>
+                            {{student.rut}}
+                        </td>
+                        <td>
+                            {{student.establecimiento.nombre}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-see"
+                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                    class="mdi mdi-eye"></i></button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div>
+  </div> -->
+
+<!-- Modal Statistics starts -->
+<ng-template class="modal fade" #ModalContentStatistics let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="col-12 grid-margin">
+            <div class="card">
+                <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
+                            aria-controls="student" aria-selected="true"><i class="fa-solid fa-id-card-clip"></i>
+                            Información</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                            aria-controls="profile" aria-selected="false" style="box-sizing: border-box;"><i
+                                class="fa-solid fa-rectangle-list"></i> Asistencia</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
+                            aria-controls="contact" aria-selected="false" style="box-sizing: border-box;"><i
+                                class="fa-solid fa-square-poll-vertical"></i> Puntajes</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">RUT:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Fecha de
+                                                    nacimiento:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
+                                                        date:'dd-M-y'}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Curso:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-4 col-form-label">{{student.curso}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Correo
+                                                    electronico:</label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.email}}</label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
+                                                <div class="col-sm-9">
+                                                    <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
+                                                    apoderado:
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <label
+                                                        class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label label-ident">Telefono del
+                                                    apoderado: </label>
+                                                <div class="col-sm-9">
+                                                    <label
+                                                        class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label
+                                                    class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
+                                                <div class="col-sm-8">
+                                                    <label
+                                                        class="col-sm-8 col-form-label ">{{establishmentName}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Statistics ends -->
+
+<!-- Modal Enrolled starts -->
+<ng-template class="modal fade" #ModalContentEnrolled let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Inscribir alumnos a {{cycle.nombre}}</h4>
+                        <p class="card-description">
+                            Ingrese los alumnos que participaran de las OCI.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
+                                <ngb-panel id="collapse-{{indexEstablishments}}"
+                                    *ngFor="let establishment of  establishments;let indexEstablishments = index"
+                                    title="{{establishment.nombre}} Cupos Maximos: {{establishment.cupos}} Cupos Utilizados: {{cupos[indexEstablishments]}} ">
+                                    <ng-template ngbPanelContent>
+                                        <div class="table-responsive"
+                                            *ngIf="establishments[indexEstablishments].alumnosParticipantes.length >=1">
+                                            <h5>Alumnos Participantes</h5>
+                                            <table class="table table-striped" style="text-align: center;">
+                                                <thead class="table table-bordered">
+                                                    <tr>
+                                                        <th>
+                                                            <b>Nombre</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Apellidos</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>RUT</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Información</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Desinscribir</b>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="table table-bordered">
+                                                    <tr
+                                                        *ngFor="let student of establishments[indexEstablishments].alumnosParticipantes; let indexStudent = index">
+                                                        <td>
+                                                            {{student.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.apellidos}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.rut}}
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-gradient-info btn-rounded btn-sm btn-see"
+                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                                                    class="mdi mdi-eye"></i></button>
+                                                        </td>
+                                                        <td>
+                                                            <a type="button" data-dismiss="modal"
+                                                                (click)="removeStudent(student.id, indexEstablishments, indexStudent)"><i
+                                                                    class="mdi mdi-account-minus"
+                                                                    style="font-size: 20px;"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <br>
+                                        <div class="table-responsive">
+                                            <h5>Alumnos Inscritos</h5>
+                                            <table class="table table-striped" style="text-align: center;">
+                                                <thead class="table table-bordered">
+                                                    <tr>
+                                                        <th>
+                                                            <b>Nombre</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Apellidos</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>RUT</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Información</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Inscribir</b>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="table table-bordered">
+                                                    <tr *ngFor="let student of establishments[indexEstablishments].alumnosInscritos">
+                                                        <td>
+                                                            {{student.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.apellidos}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.rut}}
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-gradient-info btn-rounded btn-sm btn-see"
+                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                                                    class="mdi mdi-eye"></i></button>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-check form-check-success">
+                                                                <label class="form-check-label" aria-label="Asignar">
+                                                                    <input type="checkbox"
+                                                                        class="form-check-input position-static"
+                                                                        style="text-align: center;" [value]="student.id"
+                                                                        id="studentLevel"
+                                                                        (change)="addOrRemoveStudents($event.target.checked, student.id,indexEstablishments)"
+                                                                        [checked]="studentsAdd.includes(student.id)"
+                                                                        #studentLevel>
+                                                                    <i class="input-helper"></i>
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-template>
+                                </ngb-panel>
+                            </ngb-accordion>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="updateCandidates(modal)">Guardar</button>
+            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Enrolled starts -->
+
+<!-- Modal Charge starts -->
+<ng-template class="modal fade" #ModalChargeStudent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();resetFile()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Cargar alumnos a {{cycle.nombre}}</h4>
+                        <p class="card-description">
+                            Cargue el archivo con los datos de los alumnos.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="myfile"
+                                    (change)="onFileSelected($event)" accept=".xlsx">
+                                <label class="custom-file-label" for="customFile">{{fileName || 'Seleccione un
+                                    archivo'}}</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="chargeStudentPerForm(modal)">Cargar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Charge starts -->

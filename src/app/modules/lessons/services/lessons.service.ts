@@ -45,4 +45,43 @@ export class LessonsService {
     const option = { headers: this.headers };
     return this.http.post(url +'/nivel/getbyid', id, option);
   }
+  getTeachersAndAssistants(id){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/getassistantsandteachers', id, option);
+  }
+
+  chargeStudents(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/chargestudents', data, option);
+  }
+
+  removeStudents(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/deletestudents', data, option);
+  }
+
+  UpdateListLesson(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/updatelistlesson', data, option);
+  }
+
+  ChargeTeachers(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/chargeteachers', data, option);
+  }
+
+  DeleteTeachers(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/deleteteachers', data, option);
+  }
+
+  ChargeAssistants(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/chargeassistants', data, option);
+  }
+
+  DeleteAssistants(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/deleteassistants', data, option);
+  }
 }

@@ -1,119 +1,70 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
   <div class="col-lg-10 grid-margin stretch-card"> -->
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title"><b>Establecimientos</b></h4>
-        <button type="button" style="float: right; margin: 8px;"
-          class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Registrar establecimiento</button>
-        <div class="table-responsive">
-          <table class="table table-striped" style="text-align: center;">
-            <thead class="table table-bordered">
-              <tr>
-                <th>
-                  <b>Nombre del establecimiento</b>
-                </th>
-                <th>
-                  <b>Profesor encargado</b>
-                </th>
-                <th>
-                  <b>Contacto</b>
-                </th>
-                <th>
-                  <b>Acción</b>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="table table-bordered">
-              <tr *ngFor="let establishment of establishments">
-                <td>
-                  {{establishment.nombre}}
-                </td>
-                <td>
-                  {{establishment.nombre_profesor}}
-                </td>
-                <td>
-                  {{establishment.email_profesor}}
-                </td>
-                <td>
-                  <button type="button" class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContentEdit);getEstablishment(establishment.id)"><i class="mdi mdi-grease-pencil"></i></button>
-                  <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm" (click)="deleteEstablishment(establishment.id)"><i class="mdi mdi-delete"></i></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title"><b>Establecimientos por Ciclo</b></h4>
+    <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
+      (click)="openModal(EmailModal)"><i class="mdi mdi-email"></i></button>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
       </div>
-    </div>
-  <!-- </div>
-</div> -->
+      <!-- <select class="custom-select" id = "cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
 
-<!-- Modal Create starts -->
-<ng-template class="modal fade" #ModalContent let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <option *ngFor="let cycle of cycles" [value]="cycle.id">
+          {{cycle.nombre}}</option>
+      </select> -->
     </div>
-    <div class="modal-body">
-      <div class="col-12 stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Registrar establecimiento</h4>
-            <p class="card-description">
-              Ingrese los campos para el registro del establecimiento.
-            </p>
-            <form class="forms-sample">
-              <div class="form-group">
-                <label for="establishmentName">Nombre del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentName" placeholder="Nombre del establecimiento" #establishmentName>
-              </div>
-              <div class="form-group">
-                <label for="director">Director del establecimiento</label>
-                <input type="text" class="form-control" id="director" placeholder="Nombre del director" #director>
-              </div>
-              <div class="form-group">
-                <label for="establishmentAddress">Dirección del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentAddress" placeholder="Dirección" #establishmentAddress>
-              </div>
-              <div class="form-group">
-                <label for="establishmentEmail">Correo del establecimiento</label>
-                <input type="email" class="form-control" id="establishmentEmail" placeholder="Ejemplo: email@correo.com" #establishmentEmail>
-              </div>
-              <div class="form-group">
-                <label for="establishmentPhoneNumber">Teléfono del establecimiento</label>
-                <input type="number" class="form-control" id="establishmentPhoneNumber" placeholder="+569" #establishmentPhoneNumber>
-              </div>
-              <div class="form-group">
-                <label for="teacherName">Profesor encargado</label>
-                <input type="text" class="form-control" id="teacherName" placeholder="Nombre del profesor encargado" #teacherName>
-              </div>
-              <div class="form-group">
-                <label for="teacherEmail">Correo del profesor encargado</label>
-                <input type="email" class="form-control" id="teacherEmail" placeholder="Ejemplo: email@correo.com" #teacherEmail>
-              </div>
-              <div class="form-group">
-                <label for="teacherPhoneNumber">Teléfono del profesor encargado</label>
-                <input type="number" class="form-control" id="teacherPhoneNumber" placeholder="+569" #teacherPhoneNumber>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="establishmentFormCreate(establishmentName.value, director.value, establishmentAddress.value, teacherPhoneNumber.value, teacherEmail.value, teacherName.value, establishmentEmail.value, establishmentPhoneNumber.value, modal)">Crear</button>
-      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+    <div class="table-responsive">
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+        style="text-align: center;">
+        <thead class="table table-bordered">
+          <tr>
+            <th>
+              <b>Nombre del establecimiento</b>
+            </th>
+            <th>
+              <b>Profesor encargado</b>
+            </th>
+            <th>
+              <b>Contacto</b>
+            </th>
+            <th>
+              <b>Acción</b>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table table-bordered">
+          <tr *ngFor="let establishment of establishments">
+            <td>
+              {{establishment.nombre}}
+            </td>
+            <td>
+              {{establishment.nombre_profesor}}
+            </td>
+            <td>
+              {{establishment.email_profesor}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                (click)="openModal(ModalContentEdit);getEstablishment(establishment.id)"><i
+                  class="mdi mdi-grease-pencil"></i></button>
+              <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                (click)="deleteEstablishment(establishment.id)"><i class="mdi mdi-delete"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-</ng-template>
-<!-- Modal Create Ends -->
+</div>
+<!-- </div>
+</div> -->
 
 <!-- Modal Edit starts -->
 <ng-template class="modal fade" #ModalContentEdit let-modal>
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button"  class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -128,35 +79,44 @@
             <form class="forms-sample" #f="ngForm">
               <div class="form-group">
                 <label for="establishmentName">Nombre del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentName" [(ngModel)]="establishment.nombre" name="establishmentName" #establishmentName="ngModel">
+                <input type="text" class="form-control" id="establishmentName" [(ngModel)]="establishment.nombre"
+                  name="establishmentName" #establishmentName="ngModel">
               </div>
               <div class="form-group">
                 <label for="director">Director del establecimiento</label>
-                <input type="text" class="form-control" id="director" [(ngModel)]="establishment.director" name="director" #director="ngModel">
+                <input type="text" class="form-control" id="director" [(ngModel)]="establishment.director"
+                  name="director" #director="ngModel">
               </div>
               <div class="form-group">
                 <label for="establishmentAddress">Dirección del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentAddress" [(ngModel)]="establishment.direccion" name="establishmentAddress" #establishmentAddress="ngModel">
+                <input type="text" class="form-control" id="establishmentAddress" [(ngModel)]="establishment.direccion"
+                  name="establishmentAddress" #establishmentAddress="ngModel">
               </div>
               <div class="form-group">
                 <label for="establishmentEmail">Correo del establecimiento</label>
-                <input type="email" class="form-control" id="establishmentEmail" [(ngModel)]="establishment.email" name="establishmentEmail" #establishmentEmail="ngModel">
+                <input type="email" class="form-control" id="establishmentEmail" [(ngModel)]="establishment.email"
+                  name="establishmentEmail" #establishmentEmail="ngModel">
               </div>
               <div class="form-group">
                 <label for="establishmentPhoneNumber">Teléfono del establecimiento</label>
-                <input type="number" class="form-control" id="establishmentPhoneNumber" [(ngModel)]="establishment.telefono" name="establishmentPhoneNumber" #establishmentPhoneNumber="ngModel">
+                <input type="number" class="form-control" id="establishmentPhoneNumber"
+                  [(ngModel)]="establishment.telefono" name="establishmentPhoneNumber"
+                  #establishmentPhoneNumber="ngModel">
               </div>
               <div class="form-group">
                 <label for="teacherName">Profesor encargado</label>
-                <input type="text" class="form-control" id="teacherName" [(ngModel)]="establishment.nombre_profesor" name="teacherName" #teacherName="ngModel">
+                <input type="text" class="form-control" id="teacherName" [(ngModel)]="establishment.nombre_profesor"
+                  name="teacherName" #teacherName="ngModel">
               </div>
               <div class="form-group">
                 <label for="teacherEmail">Correo del profesor encargado</label>
-                <input type="email" class="form-control" id="teacherEmail" [(ngModel)]="establishment.email_profesor" name="teacherEmail" #teacherEmail="ngModel">
+                <input type="email" class="form-control" id="teacherEmail" [(ngModel)]="establishment.email_profesor"
+                  name="teacherEmail" #teacherEmail="ngModel">
               </div>
               <div class="form-group">
                 <label for="teacherPhoneNumber">Teléfono del profesor encargado</label>
-                <input type="number" class="form-control" id="teacherPhoneNumber" [(ngModel)]="establishment.telefono_profesor" name="teacherPhoneNumber" #teacherPhoneNumber="ngModel">
+                <input type="number" class="form-control" id="teacherPhoneNumber"
+                  [(ngModel)]="establishment.telefono_profesor" name="teacherPhoneNumber" #teacherPhoneNumber="ngModel">
               </div>
             </form>
           </div>
@@ -170,3 +130,46 @@
   </div>
 </ng-template>
 <!-- Modal Edit Ends -->
+
+<!-- Modal Mail starts -->
+<ng-template class="modal fade" #EmailModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card" style="text-align: center">Enviar invitacion Masiva</h4>
+            <p class="card-description">
+              Ingrese los campos para enviar una invitacion masiva a los colegios participes de la OCI {{cycle.nombre}}
+            </p>
+            <form class="forms-sample">
+              <div class="form-group">
+                <input type="email" class="form-control to" id="to" placeholder="Destinatarios (No incluidos en la lista de emails de establecimientos)" #to>
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
+              </div>
+              <div class="form-group">
+                <textarea type="text" class="form-control content" id="content" #content rows="20" placeholder="(*)"></textarea>
+              </div>
+              <div class="form-group">
+                <input type="text-area" class="form-control to" id="link" placeholder="Link Formulario (*)" #link>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success"
+        (click)="sendInvitations(to.value, subject.value, content.value, link.value, modal)">Enviar</button>
+      <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Mail Ends -->
