@@ -30,7 +30,7 @@
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
-            <p class="mb-1 text-black">Juan San Martín</p>
+            <p class="mb-1 text-black">{{userLocal.nombre}}</p>
           </div>
         </a>
         <div class="dropdown-menu navbar-dropdown" ngbDropdownMenu aria-labelledby="profileDropdown">
@@ -39,10 +39,10 @@
             Actividad
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/user-pages/login">
+          <button class="dropdown-item" (click)="logout()">
             <i class="mdi mdi-logout mr-2 text-primary"></i>
             Cerrar sesión
-          </a>
+          </button>
         </div>
       </li>
       <!-- <li class="nav-item dropdown" ngbDropdown>
