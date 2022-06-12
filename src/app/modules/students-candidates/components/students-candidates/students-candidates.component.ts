@@ -8,7 +8,6 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { StudentsService } from 'src/app/modules/students/services/students.service';
 import { CycleModel } from 'src/models/cycle.model';
 import { CycleService } from '../../../cycle/services/cycle.service';
-import { formatDate } from '@angular/common';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { StudentsCandidatesService } from '../../services/students-candidates.service';
 
@@ -24,6 +23,20 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   cicloOld;
   cicloNew;
   ciclo;
+  oci1 = {
+    nombre: "",
+    Asistencias: Array(),
+    PorcentajeAsistencia: 0,
+    CantAsistenciasEInasistencias: { asistencias: 0, inasistencias: 0 },
+    Competencias: Array()
+  };
+  oci2 = {
+    nombre: "",
+    Asistencias: Array(),
+    PorcentajeAsistencia: 0,
+    CantAsistenciasEInasistencias: { asistencias: 0, inasistencias: 0 },
+    Competencias: Array()
+  };
   studentsPerCycle = [];
   studentsEnrolled = [];
   establishments = [];
@@ -49,7 +62,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) { 
+  constructor(private studentsService: StudentsService, private modalService: NgbModal, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) {
     this.cicloOld = {};
   }
 
@@ -65,9 +78,9 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -135,9 +148,22 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       for (let index = 0; index < this.establishments.length; index++) {
         this.cupos.push(this.establishments[index].alumnosParticipantes.length);
       }
-    
+
       this.rerender();
     });
+  }
+
+  getLastCyclesPerStudent(id) {
+    let data = {
+      alumno_id: id
+    }
+
+    this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
+      this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
+      this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
+      console.log(this.oci1);
+      console.log(this.oci2);
+    })
   }
 
   openModal(ModalContent) {

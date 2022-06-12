@@ -4,7 +4,8 @@
     <div class="card-body">
         <h4 class="card-title"><b>Alumnos postulantes</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContentEnrolled)" *ngIf="studentsPerCycle.length >=1 || studentsEnrolled.length >=1 "><i
+            (click)="openModal(ModalContentEnrolled)"
+            *ngIf="studentsPerCycle.length >=1 || studentsEnrolled.length >=1 "><i
                 class="fa-solid fa-clipboard-list"></i> Inscribir alumnos</button>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalChargeStudent)"><i class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
@@ -54,7 +55,7 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                (click)="openModal(ModalContentStatistics);getStudent(student.id);getLastCyclesPerStudent(student.id)"><i
                                     class="mdi mdi-eye"></i></button>
 
                         </td>
@@ -84,16 +85,17 @@
                             Información</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                            aria-controls="profile" aria-selected="false" style="box-sizing: border-box;"><i
+                        <a class="nav-link" id="assistancePerCycle-tab" data-toggle="tab" href="#assistancePerCycle"
+                            role="tab" aria-controls="assistancePerCycle" aria-selected="false"><i
                                 class="fa-solid fa-rectangle-list"></i> Asistencia</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                            aria-controls="contact" aria-selected="false" style="box-sizing: border-box;"><i
-                                class="fa-solid fa-square-poll-vertical"></i> Puntajes</a>
+                        <a class="nav-link" id="score-tab" data-toggle="tab" href="#score" role="tab"
+                            aria-controls="score" aria-selected="false"><i class="fa-solid fa-square-poll-vertical"></i>
+                            Puntajes</a>
                     </li>
                 </ul>
+                <!-- TAB INFORMACION ALUMNO -->
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
                         <div class="col-12 grid-margin">
@@ -214,8 +216,271 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                    <!-- TAB ASISTENCIA ALUMNO -->
+                    <div class="tab-pane fade" id="assistancePerCycle" role="tabpanel"
+                        aria-labelledby="assistancePerCycle-tab">
+                        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="first-tab" data-toggle="tab" href="#first" role="tab"
+                                    aria-controls="first" aria-selected="true"
+                                    style="box-sizing: border-box;">{{oci1.nombre}}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="second-tab" data-toggle="tab" href="#second" role="tab"
+                                    aria-controls="second" aria-selected="false"
+                                    style="box-sizing: border-box;">{{oci2.nombre}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <!-- PRIMER TAB -->
+                            <div class="tab-pane fade show active" id="first" role="tabpanel"
+                                aria-labelledby="first-tab">
+                                <div *ngIf="oci1.PorcentajeAsistencia !=-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
+                                                {{oci1.PorcentajeAsistencia}}</h4>
+                                            <div>
+                                                <div>
+                                                    Cantidad de clases asociadas al alumno: {{oci1.Asistencias.length}}
+                                                </div>
+                                                <div>
+                                                    Asistencias: {{oci1.CantAsistenciasEInasistencias[0].asistencias}}
+                                                </div>
+                                                <div>
+                                                    Inasistencias:
+                                                    {{oci1.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header" style="font-size: bold;font-weight:bold;">
+                                            CLASES ASOCIADAS
+                                        </div>
+                                        <div class="card-body text-primary">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" style="text-align: center;">
+                                                    <thead class="table table-bordered">
+                                                        <tr>
+                                                            <th>
+                                                                <b>Fecha</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Contenido</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Asistencia</b>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table table-bordered">
+                                                        <tr *ngFor="let lesson of oci1.Asistencias">
+                                                            <td>
+                                                                {{lesson.fecha}}
+                                                            </td>
+                                                            <td>
+                                                                {{lesson.contenido}}
+                                                            </td>
+                                                            <td *ngIf="lesson.pivot.asistencia == 1"
+                                                                style="color: green;">
+                                                                PRESENTE
+                                                            </td>
+                                                            <td *ngIf="lesson.pivot.asistencia == 0"
+                                                                style="color: red;">
+                                                                AUSENTE
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="oci1.PorcentajeAsistencia == -1"
+                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                            </div>
+                            <!-- SECOND TAB -->
+                            <div class="tab-pane fade" id="second" role="tabpanel" aria-labelledby="second-tab">
+                                <div *ngIf="oci2.PorcentajeAsistencia !=-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
+                                                {{oci2.PorcentajeAsistencia}}</h4>
+                                            <div>
+                                                <div>
+                                                    Cantidad de clases asociadas al alumno: {{oci2.Asistencias.length}}
+                                                </div>
+                                                <div>
+                                                    Asistencias: {{oci2.CantAsistenciasEInasistencias[0].asistencias}}
+                                                </div>
+                                                <div>
+                                                    Inasistencias:
+                                                    {{oci2.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header" style="font-size: bold;font-weight:bold;">
+                                            CLASES ASOCIADAS
+                                        </div>
+                                        <div class="card-body text-primary">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" style="text-align: center;">
+                                                    <thead class="table table-bordered">
+                                                        <tr>
+                                                            <th>
+                                                                <b>Fecha</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Contenido</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Asistencia</b>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table table-bordered">
+                                                        <tr *ngFor="let lesson of oci2.Asistencias">
+                                                            <td>
+                                                                {{lesson.fecha}}
+                                                            </td>
+                                                            <td>
+                                                                {{lesson.contenido}}
+                                                            </td>
+                                                            <td *ngIf="lesson.pivot.asistencia == 1"
+                                                                style="color: green;">
+                                                                PRESENTE
+                                                            </td>
+                                                            <td *ngIf="lesson.pivot.asistencia == 0"
+                                                                style="color: red;">
+                                                                AUSENTE
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="oci2.PorcentajeAsistencia == -1"
+                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TAB PUNTAJE ALUMNO -->
+                    <div class="tab-pane fade" id="score" role="tabpanel" aria-labelledby="score-tab">
+                        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="firstScore-tab" data-toggle="tab" href="#firstScore" role="tab"
+                                    aria-controls="firstScore" aria-selected="true"
+                                    style="box-sizing: border-box;">{{oci1.nombre}}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="secondScore-tab" data-toggle="tab" href="#secondScore" role="tab"
+                                    aria-controls="secondScore" aria-selected="false"
+                                    style="box-sizing: border-box;">{{oci2.nombre}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <!-- PRIMER TAB -->
+                            <div class="tab-pane fade show active" id="firstScore" role="tabpanel"
+                                aria-labelledby="firstScore-tab">
+                                <div *ngIf="oci1.Competencias.length >=1">
+                                    <div class="card">
+                                        <div class="card-body text-primary">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" style="text-align: center;">
+                                                    <thead class="table table-bordered">
+                                                        <tr>
+                                                            <th>
+                                                                <b>Fecha</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Tipo</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Lugar</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Puntaje</b>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table table-bordered">
+                                                        <tr *ngFor="let competition of oci1.Competencias">
+                                                            <td>
+                                                                {{competition.fecha}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.tipo}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.lugar}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.pivot.puntaje}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="oci1.Competencias.length == 0"
+                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                            </div>
+                            <!-- SEGUNDO TAB -->
+                            <div class="tab-pane fade" id="secondScore" role="tabpanel" aria-labelledby="secondScore-tab">
+                                <div *ngIf="oci2.Competencias.length >=1">
+                                    <div class="card">
+                                        <div class="card-body text-primary">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" style="text-align: center;">
+                                                    <thead class="table table-bordered">
+                                                        <tr>
+                                                            <th>
+                                                                <b>Fecha</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Tipo</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Lugar</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Puntaje</b>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table table-bordered">
+                                                        <tr *ngFor="let competition of oci2.Competencias">
+                                                            <td>
+                                                                {{competition.fecha}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.tipo}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.lugar}}
+                                                            </td>
+                                                            <td>
+                                                                {{competition.pivot.puntaje}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="oci2.Competencias.length == 0"
+                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,12 +488,13 @@
 </ng-template>
 <!-- Modal Statistics ends -->
 
+
+
 <!-- Modal Enrolled starts -->
 <ng-template class="modal fade" #ModalContentEnrolled let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
-                (click)="modal.dismiss();">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -284,7 +550,7 @@
                                                         <td>
                                                             <button type="button"
                                                                 class="btn btn-gradient-info btn-rounded btn-sm btn-see"
-                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id);getLastCyclesPerStudent(student.id)"><i
                                                                     class="mdi mdi-eye"></i></button>
                                                         </td>
                                                         <td>
@@ -321,7 +587,8 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="table table-bordered">
-                                                    <tr *ngFor="let student of establishments[indexEstablishments].alumnosInscritos">
+                                                    <tr
+                                                        *ngFor="let student of establishments[indexEstablishments].alumnosInscritos">
                                                         <td>
                                                             {{student.nombre}}
                                                         </td>
@@ -334,7 +601,7 @@
                                                         <td>
                                                             <button type="button"
                                                                 class="btn btn-gradient-info btn-rounded btn-sm btn-see"
-                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id)"><i
+                                                                (click)="openModal(ModalContentStatistics);getStudent(student.id);getLastCyclesPerStudent(student.id)"><i
                                                                     class="mdi mdi-eye"></i></button>
                                                         </td>
                                                         <td>
@@ -402,8 +669,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success"
-                (click)="chargeStudentPerForm(modal)">Cargar</button>
+            <button type="button" class="btn btn-success" (click)="chargeStudentPerForm(modal)">Cargar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();clearForm()">Cancelar</button>
         </div>

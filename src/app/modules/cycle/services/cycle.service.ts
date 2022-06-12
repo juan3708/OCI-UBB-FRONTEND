@@ -103,4 +103,9 @@ export class CycleService {
     const option = { headers: this.headers };
     return this.http.post(url+'/ciclo/getstudentsenrolledpercycleperfinishdate', data, option);
   }
+
+  getAssistancePerDateAndCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getassistanceperdateandcycle', data, option);
+  }
 }

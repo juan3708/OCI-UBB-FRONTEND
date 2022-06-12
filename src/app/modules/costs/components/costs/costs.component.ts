@@ -29,6 +29,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   costs;
   cost = new CostsModel();
   currentDate;
+  students = [];
+  contentSee = 0;
   competencies = [];
   activities = [];
   ids = [];
@@ -500,10 +502,50 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     });
   }
 
+  seeAsistance(start_date, finish_date) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      fecha_inicial: start_date,
+      fecha_final: finish_date
+    };
+    console.log(data);
+    if (start_date == "" || finish_date == "") {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Debe ingresar ambas fechas'
+      });
+    } else {
+      this.cycleService.getAssistancePerDateAndCycle(data).subscribe((resp: any) => {
+        console.log(resp);
+        if (resp.code == 200) {
+          console.log(resp.estudiantesConEstadisticaDeAsistencia);
+          if (resp.estudiantesConEstadisticaDeAsistencia == undefined) {
+            this.students = [];
+          } else {
+            this.students = resp.estudiantesConEstadisticaDeAsistencia;
+          }
+          this.contentSee = 1;
+        }else if(resp.errors.fecha_final != undefined){
+          this.Toast.fire({
+            icon: 'error',
+            title: resp.errors.fecha_final
+          });
+        }else{
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al realizar la consulta'
+          });
+        }
+      })
+    }
+  }
+
   clearForm() {
     this.details.controls.splice(0, this.details.length);
     this.costsFormCreate.reset();
     this.ids = [];
+    this.contentSee = 0;
+    this.students = [];
   }
 
   openModal(ModalContent) {

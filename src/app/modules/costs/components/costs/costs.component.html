@@ -133,6 +133,9 @@
                 <div class="card">
                     <div class="card-body" [formGroup]="costsFormCreate">
                         <h4 class="card-title">Crear Gasto {{cycle.nombre}}</h4>
+                        <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                            (click)="openModal(ModalListStudentPerDatesAndCycle);" style="float: right; margin: 8px;"><i
+                                class="fa-solid fa-users-line">Ver Asistencias</i></button>
                         <p class="card-description">
                             Ingrese los campos para la creacion del gasto.
                         </p>
@@ -290,3 +293,117 @@
     </div>
 </ng-template>
 <!-- Modal Edit starts -->
+
+<!-- Modal ListStudentPerDatesAndCycle starts -->
+<ng-template class="modal fade" #ModalListStudentPerDatesAndCycle let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Ver asistencia</h4>
+                        <p class="card-description">
+                            Seleccione el rango de fecha para buscar
+                        </p>
+                        <form class="forms-sample"
+                            style="float: left; display: flex; justify-content: rigth;flex-wrap: wrap;">
+                            <div class="form-group">
+                                <label for="start_date" style="display: inline-block; margin-bottom: 8px;">Fecha
+                                    inicio</label>
+                                <input type="date" class="form-control" id="start_date" max={{cycle.fecha_termino}}
+                                    min={{cycle.fecha_inicio}}
+                                    style="width: 150px;display:flex; justify-content:flex-start;" #start_date>
+                            </div>
+                            <div class="form-group">
+                                <label for="finish_date" style="display: inline-block; margin-bottom: 8px">Fecha
+                                    final</label>
+                                <input type="date" class="form-control" id="finish_date" max={{cycle.fecha_termino}}
+                                    min={{cycle.fecha_inicio}}
+                                    style="width: 150px; display:flex; justify-content:flex-start;margin-left: 8px;"
+                                    #finish_date>
+                            </div>
+                            <label style="display: inline-block; margin-bottom: 8px"></label>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                (click)="seeAsistance(start_date.value, finish_date.value)"
+                                style="height: 40px;margin-left: 4px;margin-top: 16px;"> <i
+                                    class="fa-solid fa-magnifying-glass"></i></button>
+                        </form>
+                        <br>
+                        <div *ngIf="contentSee == 1">
+                            <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
+                                NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
+                            </div>
+                            <div *ngIf="students.length >= 1">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" style="text-align: center;">
+                                        <thead class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    <b>Rut</b>
+                                                </th>
+                                                <th>
+                                                    <b>Nombre</b>
+                                                </th>
+                                                <th>
+                                                    <b>Apellidos</b>
+                                                </th>
+                                                <th>
+                                                    <b>Porcentaje de asistencia</b>
+                                                </th>
+                                                <th>
+                                                    <b>Asistencias</b>
+                                                </th>
+                                                <th>
+                                                    <b>Inasistencias</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let student of students">
+                                                <td>
+                                                    {{student.rut}}
+                                                </td>
+                                                <td>
+                                                    {{student.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{student.apellidos}}
+                                                </td>
+                                                <td *ngIf="student.PorcentajeAsistencia <=30" style="color: red;">
+                                                    {{student.PorcentajeAsistencia}}%
+                                                </td>
+                                                <td *ngIf="student.PorcentajeAsistencia >30 && student.PorcentajeAsistencia<=50"
+                                                    style="color: yellow;">
+                                                    {{student.PorcentajeAsistencia}}%
+                                                </td>
+                                                <td *ngIf="student.PorcentajeAsistencia >50 && student.PorcentajeAsistencia <=70"
+                                                    style="color: yellowgreen;">
+                                                    {{student.PorcentajeAsistencia}}%
+                                                </td>
+                                                <td *ngIf="student.PorcentajeAsistencia >70" style="color: green;">
+                                                    {{student.PorcentajeAsistencia}}%
+                                                </td>
+                                                <td>
+                                                    {{student.CantAsistenciasEInasistencias[0].asistencias}}
+                                                </td>
+                                                <td>
+                                                    {{student.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal ListStudentPerDatesAndCycle starts -->

@@ -11,7 +11,6 @@ import { LevelService } from '../../../level/services/level.service';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
 
 @Component({
@@ -254,10 +253,30 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         }
       })
     } else {
-      this.Toast.fire({
-        icon: 'error',
-        title: 'Porfavor seleccione alumnos',
-      });
+      this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Clase creada correctamente'
+          });
+          this.listLessonsPerCycle();
+          this.clearForm();
+
+        } else {
+          if (resp.code == 400) {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Ingrese correctamente los valores',
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al registrar la clase',
+              text: resp.message
+            });
+          }
+        }
+      })
     }
 
   }
@@ -339,13 +358,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       };
       this.LevelService.getLevelById(data).subscribe((resp: any) => {
         this.studentsPerLevel = resp.nivel.alumnos;
-        if (this.studentsPerLevel.length < 1) {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'No existen alumnos asociados al nivel seleccionado',
-          });
-        }
-        this.deleteStudentLevelArray();
+        this.students = resp.alumnosSinNivel;
+
       });
     } else {
       this.Toast.fire({
@@ -353,16 +367,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         title: 'Porfavor seleccione un nivel',
       });
     }
-  }
-
-  deleteStudentLevelArray(){
-    this.students.forEach((s, index) => {
-      this.studentsPerLevel.forEach(sp =>{
-        if(s.id == sp.id){
-          this.students.splice(index, 1);
-        }
-      })
-    });
   }
 
   addOrRemoveStudentCreate(event, student) {
