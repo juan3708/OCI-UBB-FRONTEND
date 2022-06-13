@@ -143,7 +143,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.competencies = resp.ciclo.competencias;
+      this.competencies = resp.competencias;
       this.studentsPerCycle = resp.alumnosParticipantes;
       this.deleteStudentCompetitionArray();
       this.rerender();
@@ -206,6 +206,16 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
         this.setEditFeeForm();
       }
     });
+  }
+
+  setCompetition(competition){
+    this.competition = JSON.parse(JSON.stringify(competition));
+    this.students = competition.alumnos;
+    this.deleteStudentCompetitionArray();
+    if (this.students.length >= 1) {
+      this.setEditFeeForm();
+    }
+
   }
 
   deleteStudentCompetitionArray() {

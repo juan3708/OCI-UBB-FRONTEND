@@ -110,6 +110,11 @@ export class CoordinatorsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  setCoordinator(coordinator){
+    this.coordinator = JSON.parse(JSON.stringify(coordinator));
+    
+  }
+
   coordinatorFormEdit(form: NgForm, modal) {
     this.coordinatorsService.editCoordinator(this.coordinator).subscribe((resp: any) => {
       if (resp.code == 200) {

@@ -6,6 +6,9 @@
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Registrar
             Clase</button>
+        <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+            (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()" style="float: right; margin: 8px;"><i
+                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -41,7 +44,7 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalSeeLesson);getLesson(lesson.id)"><i
+                                (click)="openModal(ModalSeeLesson);setLesson(lesson)"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)"><i
@@ -50,10 +53,10 @@
                                 (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"><i
                                     class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalAssignTeacherAndAssistants);getLesson(lesson.id);getTeachersAndAssistants(lesson.id)">
+                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)">
                                 <i class="fa-solid fa-person-chalkboard"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);getLesson(lesson.id)"><i
+                                (click)="openModal(ModalContentEdit);setLesson(lesson)"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteLesson(lesson.id);"><i class="mdi mdi-delete"></i></button>
@@ -180,7 +183,7 @@
                             </div>
                         </div>
                         <div *ngIf="studentsPerLevel.length == 0">
-                            <h4 style="font-size: bold;">NO EXISTEN ALUMNOS ASOCIADOS AL NIVEL</h4>
+                            <h4 style="font-weight:bold;">NO EXISTEN ALUMNOS ASOCIADOS AL NIVEL</h4>
                         </div>
                         <br>
                         <hr>
@@ -238,15 +241,16 @@
                                 </div>
                             </form>
                         </div>
-                        <div *ngIf="students.length == 0"> 
-                            <h4 style="font-size: bold;">NO EXISTEN ALUMNOS PARTICIPANTES DEL CICLO</h4>
+                        <div *ngIf="students.length == 0">
+                            <h4 style="font-weight:bold;">NO EXISTEN ALUMNOS PARTICIPANTES DEL CICLO</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="concatStudentsArrays(modal)" *ngIf="students.length >= 1 || studentsPerLevel.length >=1">Asignar</button>
+            <button type="button" class="btn btn-success" (click)="concatStudentsArrays(modal)"
+                *ngIf="students.length >= 1 || studentsPerLevel.length >=1">Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
@@ -493,7 +497,7 @@
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                     </div>
-                                    <select class="custom-select" id="level" [(ngModel)]="lesson.ciclo_id" name="level"
+                                    <select class="custom-select" id="level" [(ngModel)]="lesson.nivel_id" name="level"
                                         #level="ngModel">
                                         <option selected>Seleccione un nivel</option>
                                         <option *ngFor="let level of levels" [value]="level.id">
@@ -842,3 +846,173 @@
     </div>
 </ng-template>
 <!-- Modal AssignTeacherAndAssistants ends-->
+
+<!-- Modal ListStudentsAssistance starts -->
+<ng-template class="modal fade" #ModalListStudentsAssistance let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Asistencias totales de la OCI: {{cycle.nombre}}</h4>
+                        <form class="forms-sample" #f="ngForm">
+                            <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
+                                <ngb-panel id="collapse-{{indexEstablishments}}"
+                                    *ngFor="let establishment of  establishments;let indexEstablishments = index"
+                                    title="{{establishment.nombre}} TOTAL ALUMNOS: {{establishment.alumnos.length}}">
+                                    <ng-template ngbPanelContent>
+                                        <div class="table-responsive"
+                                            *ngIf="establishment.alumnos.length >=1">
+                                            <h5 style="font-weight:bold;;text-align: center;">Alumnos</h5>
+                                            <table class="table table-striped" style="text-align: center;">
+                                                <thead class="table table-bordered">
+                                                    <tr>
+                                                        <th>
+                                                            <b>Rut</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Nombre</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Apellidos</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Porcentaje de asistencia</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Asistencias</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Inasistencias</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Total Clases</b>
+                                                        </th>
+                                                        <th>
+                                                            <b>Ver clases</b>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="table table-bordered">
+                                                    <tr *ngFor="let student of establishment.alumnos">
+                                                        <td>
+                                                            {{student.rut}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.nombre}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.apellidos}}
+                                                        </td>
+                                                        <td *ngIf="student.PorcentajeAsistencia <=30"
+                                                            style="color: red;">
+                                                            {{student.PorcentajeAsistencia}}%
+                                                        </td>
+                                                        <td *ngIf="student.PorcentajeAsistencia >30 && student.PorcentajeAsistencia<=50"
+                                                            style="color: yellow;">
+                                                            {{student.PorcentajeAsistencia}}%
+                                                        </td>
+                                                        <td *ngIf="student.PorcentajeAsistencia >50 && student.PorcentajeAsistencia <=70"
+                                                            style="color: yellowgreen;">
+                                                            {{student.PorcentajeAsistencia}}%
+                                                        </td>
+                                                        <td *ngIf="student.PorcentajeAsistencia >70"
+                                                            style="color: green;">
+                                                            {{student.PorcentajeAsistencia}}%
+                                                        </td>
+                                                        <td>
+                                                            {{student.CantAsistenciasEInasistencias[0].asistencias}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                        </td>
+                                                        <td>
+                                                            {{student.Asistencias.length}}
+                                                        </td>
+                                                        <td>
+                                                            <button type="button"
+                                                                class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                                                (click)="openModal(ModalContentLessonPerStudent);setStudent(student)"><i
+                                                                    class="fa-solid fa-person-chalkboard"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <br>
+                                        <div
+                                            *ngIf="establishment.alumnos.length ==0">
+                                            <h5 style="font-weight:bold;">NO EXISTEN ASISTENCIAS ASOCIADAS.</h5>
+                                        </div>
+                                    </ng-template>
+                                </ngb-panel>
+                            </ngb-accordion>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal ListStudentsAssistance starts -->
+
+<!-- Modal LessonPerStudent starts -->
+<ng-template class="modal fade" #ModalContentLessonPerStudent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-header" style="font-weight:bold;">
+                        CLASES ASOCIADAS
+                    </div>
+                    <div class="card-body text-primary">
+                        <div class="table-responsive">
+                            <table class="table table-striped" style="text-align: center;">
+                                <thead class="table table-bordered">
+                                    <tr>
+                                        <th>
+                                            <b>Fecha</b>
+                                        </th>
+                                        <th>
+                                            <b>Contenido</b>
+                                        </th>
+                                        <th>
+                                            <b>Asistencia</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table table-bordered">
+                                    <tr *ngFor="let student of student.Asistencias">
+                                        <td>
+                                            {{student.fecha}}
+                                        </td>
+                                        <td>
+                                            {{student.contenido}}
+                                        </td>
+                                        <td *ngIf="student.pivot.asistencia == 1" style="color: green;">
+                                            PRESENTE
+                                        </td>
+                                        <td *ngIf="student.pivot.asistencia == 0" style="color: red;">
+                                            AUSENTE
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal LessonPerStudent Ends -->

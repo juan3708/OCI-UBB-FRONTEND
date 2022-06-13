@@ -25,6 +25,8 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   ciclo;
   establishments;
   establishment = new EstablishmentModel();
+  students = [];
+  student;
   cycle = new CycleModel();
   cycles;
   emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
@@ -141,6 +143,10 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     });
   }
 
+  setEstablishment(establishment){
+    this.establishment = JSON.parse(JSON.stringify(establishment));
+  }
+
   lisCycles() {
     this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
@@ -200,6 +206,27 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
         }
       }
     })
+  }
+
+  getStudents(id){
+    let data ={
+      ciclo_id: this.cycle.id,
+      establecimiento_id: id
+    }
+
+    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp:any)=>{
+      if(resp.code == 200){
+        if(resp.estudiantesConEstadisticaDeAsistencia !=undefined){
+          this.students = resp.estudiantesConEstadisticaDeAsistencia;
+        }else{
+          this.students = [];
+        }
+      }
+    })
+  }
+
+  setStudent(student){
+    this.student = JSON.parse(JSON.stringify(student));
   }
 
   deleteEstablishment(id) {

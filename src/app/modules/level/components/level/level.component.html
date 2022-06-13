@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);getLevel(level.id)"><i
+                                (click)="openModal(ModalContentEdit);setLevel(level)"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteLevel(level.id)"><i class="mdi mdi-delete"></i></button>
@@ -42,7 +42,7 @@
                                 (click)="openModal(ModalAddStudentLevel);getLevel(level.id)"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalStudentPerLevel);getLevel(level.id)"><i
+                                (click)="openModal(ModalStudentPerLevel);setLevel(level)"><i
                                     class="mdi mdi-eye"></i></button>
                         </td>
                     </tr>

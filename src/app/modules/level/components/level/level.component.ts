@@ -148,7 +148,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.levels = resp.ciclo.niveles;
+      this.levels = resp.niveles;
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
@@ -177,6 +177,11 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.students = resp.alumnosSinNivel;
       this.rerender();
     })
+  }
+
+  setLevel(level){
+    this.level = JSON.parse(JSON.stringify(level));
+    this.studentsPerLevel = level.alumnos;
   }
 
   levelFormCreate(name, modal) {

@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import { NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { CycleModel } from '../../../../../models/cycle.model';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
 
 @Component({
@@ -179,6 +178,10 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
       this.activity = resp.actividad;
       this.costs = resp.gastos;
     })
+  }
+
+  setActivity(activity){
+    this.activity = JSON.parse(JSON.stringify(activity));
   }
 
   getDetailsPerCost(cost){

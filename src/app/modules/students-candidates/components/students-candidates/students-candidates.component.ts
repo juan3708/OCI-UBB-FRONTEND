@@ -27,14 +27,14 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     nombre: "",
     Asistencias: Array(),
     PorcentajeAsistencia: 0,
-    CantAsistenciasEInasistencias: { asistencias: 0, inasistencias: 0 },
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
     Competencias: Array()
   };
   oci2 = {
     nombre: "",
     Asistencias: Array(),
     PorcentajeAsistencia: 0,
-    CantAsistenciasEInasistencias: { asistencias: 0, inasistencias: 0 },
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
     Competencias: Array()
   };
   studentsPerCycle = [];
@@ -161,8 +161,6 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
       this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
       this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
-      console.log(this.oci1);
-      console.log(this.oci2);
     })
   }
 
@@ -178,6 +176,12 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       this.student = resp.alumno;
       this.establishmentName = resp.alumno.establecimiento.nombre;
     });
+  }
+
+  setStudent(student){
+    this.student = JSON.parse(JSON.stringify(student));
+    this.establishmentName = student.establecimiento.nombre;
+    
   }
 
   onFileSelected(event) {

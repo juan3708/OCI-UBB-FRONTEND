@@ -146,6 +146,11 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
       this.teacher = resp.profesor;
     });
   }
+
+  setTeacher(teacher){
+    this.teacher = JSON.parse(JSON.stringify(teacher));
+    
+  }
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }

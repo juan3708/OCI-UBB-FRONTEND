@@ -102,7 +102,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.noticias = resp.noticias;
+      this.noticias = resp.ciclo.noticias;
       this.rerender();
     });
   }
@@ -191,7 +191,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   editNews(news: NewsModel) {
-    this.news = news;
+    this.news = JSON.parse(JSON.stringify(news));
   }
 
   setNew(noticia) {

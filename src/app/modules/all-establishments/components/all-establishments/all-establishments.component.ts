@@ -116,6 +116,10 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
     });
   }
 
+  setEstablishment(establishment){
+    this.establishment = JSON.parse(JSON.stringify(establishment));
+  }
+
   establishmentFormEdit(form: NgForm, modal) {
     this.establishmentsService.editEstablishment(this.establishment).subscribe((resp: any) => {
       if (resp.code == 200) {

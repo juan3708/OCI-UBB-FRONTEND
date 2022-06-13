@@ -55,13 +55,13 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalContentDetails);getCost(cost.id)"><i
+                                (click)="openModal(ModalContentDetails);setCost(cost)"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);getCost(cost.id)"><i
+                                (click)="openModal(ModalContentEdit);setCost(cost)"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteCost(cost.id);getCost(cost.id)"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteCost(cost.id);setCost(cost)"><i class="mdi mdi-delete"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -135,7 +135,7 @@
                         <h4 class="card-title">Crear Gasto {{cycle.nombre}}</h4>
                         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
                             (click)="openModal(ModalListStudentPerDatesAndCycle);" style="float: right; margin: 8px;"><i
-                                class="fa-solid fa-users-line">Ver Asistencias</i></button>
+                                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
                         <p class="card-description">
                             Ingrese los campos para la creacion del gasto.
                         </p>
@@ -298,7 +298,8 @@
 <ng-template class="modal fade" #ModalListStudentPerDatesAndCycle let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -361,6 +362,9 @@
                                                 <th>
                                                     <b>Inasistencias</b>
                                                 </th>
+                                                <th>
+                                                    <b>Total Clases</b>
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody class="table table-bordered">
@@ -393,6 +397,9 @@
                                                 </td>
                                                 <td>
                                                     {{student.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                </td>
+                                                <td>
+                                                    {{student.Asistencias.length}}
                                                 </td>
                                             </tr>
                                         </tbody>

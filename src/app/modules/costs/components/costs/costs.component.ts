@@ -177,7 +177,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.costs = resp.ciclo.gastos;
+      this.costs = resp.gastos;
       this.competencies = resp.ciclo.competencias;
       this.activities = resp.ciclo.actividades;
       this.rerender();
@@ -194,6 +194,14 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.detailsList = resp.gastos.detalles;
       this.setCostCreateForm();
     });
+  }
+
+  setCost(cost){
+    this.cost = JSON.parse(JSON.stringify(cost));
+    this.detailsList = cost.detalles;
+    console.log(this.cost);
+    this.setCostCreateForm();
+
   }
 
   setCostCreateForm() {

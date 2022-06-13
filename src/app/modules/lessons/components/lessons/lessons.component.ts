@@ -26,6 +26,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloNew;
   ciclo;
   lessons;
+  lessonSee;
   cycles;
   establishments;
   bool;
@@ -34,6 +35,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cycle = new CycleModel();
   level = new LevelModel();
   levels = [];
+  student;
   studentsPerLevel = [];
   studentsId = [];
   studentsAssistance = [];
@@ -64,7 +66,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { 
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
@@ -80,9 +82,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -200,6 +202,38 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
 
   }
 
+  getStudentAssistancePerCycle(){
+    let data = {
+      ciclo_id : this.cycle.id
+    }
+    this.cycleService.getStudentAssistancePerCycle(data).subscribe((resp:any)=>{
+      console.log(resp);
+      if(resp.code == 200){
+        if(resp.Establecimientos.length >=1){
+        this.establishments = resp.Establecimientos;
+        }else{
+          this.establishments = [];
+        }
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al realizar la consulta'
+        });
+        this.establishments = [];
+      }
+    })
+  }
+  setLesson(lesson) {
+    this.lesson = JSON.parse(JSON.stringify(lesson));
+    this.studentsLesson = lesson.alumnos;
+    this.lessonAssistants = lesson.ayudantes;
+    this.lessonTeachers = lesson.profesores;
+  }
+
+  setStudent(student){
+    this.student = JSON.parse(JSON.stringify(student));
+
+  }
   getTeachersAndAssistants(id) {
     let data = {
       clase_id: id
@@ -766,11 +800,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       if (this.removeStudents.length >= 1) {
         let data = {
-          clase_id : this.lesson.id,
+          clase_id: this.lesson.id,
           alumnos_id: this.removeStudents
         };
-        this.lessonsService.removeStudents(data).subscribe((resp: any)=>{
-          if(resp.code != 200){
+        this.lessonsService.removeStudents(data).subscribe((resp: any) => {
+          if (resp.code != 200) {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar alumno de la clase'
@@ -779,13 +813,13 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             return
           }
         });
-        if(this.studentsAdd.length >=1){
+        if (this.studentsAdd.length >= 1) {
           let data = {
-            clase_id : this.lesson.id,
+            clase_id: this.lesson.id,
             alumnos_id: this.studentsAdd
           };
-          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
-            if(resp.code !=200){
+          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
                 title: 'Error al asignar alumno a la clase'
@@ -801,14 +835,14 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         });
         modal.dismiss();
         this.clearForm();
-      }else{
-        if(this.studentsAdd.length >=1){
+      } else {
+        if (this.studentsAdd.length >= 1) {
           let data = {
-            clase_id : this.lesson.id,
+            clase_id: this.lesson.id,
             alumnos_id: this.studentsAdd
           };
-          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
-            if(resp.code !=200){
+          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
                 title: 'Error al asignar alumno a la clase'

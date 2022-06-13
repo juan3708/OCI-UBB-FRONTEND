@@ -154,6 +154,10 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
+  setCycle(cycle){
+    this.cycle = JSON.parse(JSON.stringify(cycle));
+  }
+
   setEditFeeForm() {
     this.establishmentsPerCycle.map((e: any) => {
       const establishmentsFeeForm = this.fb.group({

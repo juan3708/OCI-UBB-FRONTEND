@@ -126,6 +126,11 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
     });
   }
 
+  setStudent(student){
+    this.student = JSON.parse(JSON.stringify(student));
+    
+  }
+
   studentFormEdit(form: NgForm, modal){
     this.studentsService.editStudent(this.student).subscribe((resp: any)=> {
 

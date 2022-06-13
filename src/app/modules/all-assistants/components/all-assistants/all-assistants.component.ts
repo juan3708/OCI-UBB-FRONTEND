@@ -78,6 +78,10 @@ export class AllAssistantsComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
+  setAssistant(assistant){
+    this.assistant = JSON.parse(JSON.stringify(assistant));
+  }
+
   assistantFormCreate(rut, name, surname, email, modal) {
     let data = {
       rut,

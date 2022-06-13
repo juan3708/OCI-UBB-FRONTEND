@@ -45,12 +45,12 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);getCompetition(competition.id)"><i
+                (click)="openModal(ModalContentEdit);setCompetition(competition)"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                 (click)="deleteCompetition(competition.id)"><i class="mdi mdi-delete"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalAddStudents);getCompetition(competition.id)"><i
+                (click)="openModal(ModalAddStudents);setCompetition(competition)"><i
                   class="fa-solid fa-person-circle-plus"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="openModal(ModalEditScores);getCompetition(competition.id)"><i
