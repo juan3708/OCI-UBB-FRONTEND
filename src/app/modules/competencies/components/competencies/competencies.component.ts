@@ -144,7 +144,11 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.competencies = resp.competencias;
+      if(resp.alumnosParticipantes.length >=1){
       this.studentsPerCycle = resp.alumnosParticipantes;
+      }else{
+        this.studentsPerCycle = [];
+      }
       this.deleteStudentCompetitionArray();
       this.rerender();
     })
@@ -199,8 +203,16 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     };
     this.CompetenciesService.getCompetitionById(data).subscribe((resp: any) => {
       this.competition = resp.competencia
-      this.students = resp.competencia.alumnos;
-      this.costs = resp.gastos;
+      if(resp.competencia.alumnos.length >=1){
+        this.students = resp.competencia.alumnos;
+        }else{
+          this.students = [];
+        }
+        if( resp.gastos.length >=1){
+          this.costs = resp.gastos;
+          }else{
+            this.costs = [];
+          }
       this.deleteStudentCompetitionArray();
       if (this.students.length >= 1) {
         this.setEditFeeForm();
@@ -211,6 +223,11 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   setCompetition(competition){
     this.competition = JSON.parse(JSON.stringify(competition));
     this.students = competition.alumnos;
+    if(competition.alumnos.length >=1){
+      this.students = competition.alumnos;
+      }else{
+        this.students = [];
+      }
     this.deleteStudentCompetitionArray();
     if (this.students.length >= 1) {
       this.setEditFeeForm();

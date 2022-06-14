@@ -19,18 +19,14 @@ export class NewsHomepageComponent implements OnInit {
 
   listAllNews(){
     this.homepageService.getNews().subscribe((resp:any) => {
-      console.log(resp);
       this.noticias = resp.noticias;
-      console.log(this.url);
     })
   }
 
   onSelectNews(news){
-    console.log(news);
     let title = news.titulo.replaceAll(' ', '-').toLowerCase();
     this.router.navigate(['/news', title], {state:{
       news
     }});
-    console.log(title);
   }
 }

@@ -42,9 +42,9 @@ export class StudentsService {
     return this.http.post(url + '/alumno/delete', id, option);
   }
 
-  getAssistance(data){
+  getStatistic(data){
     const option = { headers: this.headers };
-    return this.http.post(url + '/alumno/getassistance', data, option);
+    return this.http.post(url + '/alumno/getstatistic', data, option);
   }
 
   getAssistancePerLastCycles(data){

@@ -199,13 +199,13 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   setCost(cost){
     this.cost = JSON.parse(JSON.stringify(cost));
     this.detailsList = cost.detalles;
-    console.log(this.cost);
     this.setCostCreateForm();
 
   }
 
   setCostCreateForm() {
     this.costsFormCreate.reset();
+    this.details.controls.splice(0, this.details.length);
     this.detailsList.map((d: any) => {
       const detailFormGroup = this.fb.group({
         id: d.id,
@@ -434,12 +434,12 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               })
             }
           }
+          this.listCostsPerCycle();
+          this.clearForm();
           this.Toast.fire({
             icon: 'success',
             title: 'Se ha editado correctamente'
           });
-          this.listCostsPerCycle();
-          this.clearForm();
         } else {
           if (resp.code == 400) {
             this.Toast.fire({
@@ -516,7 +516,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       fecha_inicial: start_date,
       fecha_final: finish_date
     };
-    console.log(data);
     if (start_date == "" || finish_date == "") {
       this.Toast.fire({
         icon: 'error',
@@ -524,9 +523,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       });
     } else {
       this.cycleService.getAssistancePerDateAndCycle(data).subscribe((resp: any) => {
-        console.log(resp);
         if (resp.code == 200) {
-          console.log(resp.estudiantesConEstadisticaDeAsistencia);
           if (resp.estudiantesConEstadisticaDeAsistencia == undefined) {
             this.students = [];
           } else {

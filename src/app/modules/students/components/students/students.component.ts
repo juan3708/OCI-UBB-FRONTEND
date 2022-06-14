@@ -28,7 +28,14 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   currentDate;
   cycle = new CycleModel();
   cycles;
-  student = new StudentModel();
+  student;
+  see = 0;
+  studentStatistic = {
+    Asistencias: Array(),
+    Porcentaje: 0,
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+    Competencias: Array()
+  };
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -42,7 +49,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private cycleService: CycleService,private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private cycleService: CycleService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     // this.listStudents();
@@ -57,9 +64,9 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -183,8 +190,34 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
     });
   }
 
-  setStudent(student){
+  setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
+  }
+
+  getStudentStatistic(id) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      alumno_id: id
+    }
+    this.studentsService.getStatistic(data).subscribe((resp: any)=>{
+      if(resp.code == 200){
+        this.studentStatistic = resp;
+        this.see = 1;
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al realizar la consulta',
+          text: resp.message
+        });
+        this.studentStatistic = {
+          Asistencias: Array(),
+          Porcentaje: 0,
+          CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+          Competencias: Array()
+        };
+        this.see  = 0;
+      }
+    })
   }
 
   studentFormEdit(form: NgForm, modal) {
@@ -237,7 +270,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
               icon: 'success',
               title: 'Se ha realizado correctamente',
             });
-           // this.getCycle();
+            // this.getCycle();
           } else {
             this.Toast.fire({
               icon: 'error',

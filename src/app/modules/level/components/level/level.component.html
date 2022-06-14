@@ -9,7 +9,7 @@
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
-           <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
                 <option *ngFor="let cycle of cycles" [value]="cycle.id">
                     {{cycle.nombre}}</option>
             </select> -->
@@ -42,8 +42,8 @@
                                 (click)="openModal(ModalAddStudentLevel);getLevel(level.id)"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalStudentPerLevel);setLevel(level)"><i
-                                    class="mdi mdi-eye"></i></button>
+                                (click)="openModal(ModalStudentPerLevel);setLevel(level)"
+                                *ngIf="level.alumnos.length >=1"><i class="mdi mdi-eye"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -172,7 +172,8 @@
                                                 <td>
                                                     <a type="button" data-dismiss="modal"
                                                         (click)="removeStudent(student.id)"><i
-                                                            class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                                            class="mdi mdi-account-minus"
+                                                            style="font-size: 20px;"></i></a>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -180,51 +181,57 @@
                                 </div>
                                 <br>
                                 <h4 class="card">Alumnos</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-striped" style="text-align: center;">
-                                        <thead class="table table-bordered">
-                                            <tr>
-                                                <th>
-                                                    <b>Rut</b>
-                                                </th>
-                                                <th>
-                                                    <b>Nombre</b>
-                                                </th>
-                                                <th>
-                                                    <b>Apellidos</b>
-                                                </th>
-                                                <th>
-                                                    <b>Asignar</b>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table table-bordered">
-                                            <tr *ngFor="let student of students">
-                                                <td>
-                                                    {{student.rut}}
-                                                </td>
-                                                <td>
-                                                    {{student.nombre}}
-                                                </td>
-                                                <td>
-                                                    {{student.apellidos}}
-                                                </td>
-                                                <td>
-                                                    <div class="form-check form-check-success">
-                                                        <label class="form-check-label" aria-label="Asignar">
-                                                            <input type="checkbox"
-                                                                class="form-check-input position-static"
-                                                                style="text-align: center;" [value]="student.id"
-                                                                id="studentLevel"
-                                                                (change)="addOrRemoveStudent($event.target.checked, student.id)"
-                                                                #studentLevel>
-                                                            <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div *ngIf="students.length >=1">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="text-align: center;">
+                                            <thead class="table table-bordered">
+                                                <tr>
+                                                    <th>
+                                                        <b>Rut</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Nombre</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Apellidos</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Asignar</b>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table table-bordered">
+                                                <tr *ngFor="let student of students">
+                                                    <td>
+                                                        {{student.rut}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.nombre}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.apellidos}}
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-check form-check-success">
+                                                            <label class="form-check-label" aria-label="Asignar">
+                                                                <input type="checkbox"
+                                                                    class="form-check-input position-static"
+                                                                    style="text-align: center;" [value]="student.id"
+                                                                    id="studentLevel"
+                                                                    (change)="addOrRemoveStudent($event.target.checked, student.id)"
+                                                                    #studentLevel>
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                                <div *ngIf="students.length == 0">
+                                    <h5>NO EXISTEN ALUMNOS PARA ASIGNAR.</h5>
                                 </div>
                             </div>
                         </form>
@@ -245,7 +252,8 @@
 <ng-template class="modal fade" #ModalStudentPerLevel let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();getCycle(cycle.id)">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();getCycle(cycle.id)">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -254,8 +262,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card">Alumnos por nivel</h4>
-                        <table class="table table-striped"
-                            style="text-align: center;">
+                        <table class="table table-striped" style="text-align: center;">
                             <thead class="table table-bordered">
                                 <tr>
                                     <th>

@@ -133,15 +133,12 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
           title: 'Se ha creado correctamente'
         });
         let noticia_id = resp.noticia.id;
-        console.log(this.selectedFiles.length);
         if (this.selectedFiles.length >= 1) {
-          console.log('paso el if');
           for (let index = 0; index < this.selectedFiles.length; index++) {
             const formData = new FormData();
             formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
             formData.append('noticia_id', noticia_id.toString());
             this.allNewsService.chargePhotosPerNews(formData).subscribe((resp: any) => {
-              console.log(resp);
             })
           }
         }
@@ -196,7 +193,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
 
   setNew(noticia) {
     this.new = noticia;
-    console.log(this.new);
   }
 
   deleteNews(id) {

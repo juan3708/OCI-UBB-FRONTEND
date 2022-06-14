@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { StudentsService } from 'src/app/modules/students/services/students.service';
 import { DataTableDirective } from 'angular-datatables';
+import { CycleService } from '../../../cycle/services/cycle.service';
 
 @Component({
   selector: 'app-all-students',
@@ -18,8 +19,15 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
   dtElement: DataTableDirective;
 
   students;
-  establishments;
-  student = new StudentModel();
+  establishments
+  cycles;
+  student;
+  studentStatistic = {
+    Asistencias: Array(),
+    Porcentaje: 0,
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+    Competencias: Array()
+  };
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -33,7 +41,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private cycleService:CycleService,private modalService: NgbModal) { }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -129,6 +137,40 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
   setStudent(student){
     this.student = JSON.parse(JSON.stringify(student));
     
+  }
+
+  getCycles(){
+    this.cycleService.getCycles().subscribe((resp:any)=>{
+      if(resp.code == 200){
+        this.cycles = resp.ciclos;
+      }else{
+        this.cycles = [];
+      }
+    })
+  }
+
+  getStudentStatistic(cycle, student) {
+    let data = {
+      ciclo_id: cycle,
+      alumno_id: student
+    }
+    this.studentsService.getStatistic(data).subscribe((resp: any)=>{
+      if(resp.code == 200){
+        this.studentStatistic = resp;
+      }else{
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al realizar la consulta',
+          text: resp.message
+        });
+        this.studentStatistic = {
+          Asistencias: Array(),
+          Porcentaje: 0,
+          CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+          Competencias: Array()
+        };
+      }
+    })
   }
 
   studentFormEdit(form: NgForm, modal){

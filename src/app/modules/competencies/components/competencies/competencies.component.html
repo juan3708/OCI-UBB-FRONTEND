@@ -53,10 +53,10 @@
                 (click)="openModal(ModalAddStudents);setCompetition(competition)"><i
                   class="fa-solid fa-person-circle-plus"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalEditScores);getCompetition(competition.id)"><i
+                (click)="openModal(ModalEditScores);getCompetition(competition.id)" *ngIf="competition.alumnos.length >=1"><i
                   class="fa-solid fa-medal"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalListCost);getCompetition(competition.id)"><i
+                (click)="openModal(ModalListCost);getCompetition(competition.id)" *ngIf="competition.gastos.length >=1"><i
                   class="fa-solid fa-file-invoice-dollar"></i></button>
 
             </td>
@@ -172,92 +172,104 @@
         <div class="card">
           <div class="card-body">
             <h4 class="card">Alumnos que participaran de la competición</h4>
-            <div class="table-responsive">
-              <table class="table table-striped" style="text-align: center;">
-                <thead class="table table-bordered">
-                  <tr>
-                    <th>
-                      <b>Rut</b>
-                    </th>
-                    <th>
-                      <b>Nombre</b>
-                    </th>
-                    <th>
-                      <b>Apellidos</b>
-                    </th>
-                    <th>
-                      <b>Eliminar</b>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="table table-bordered">
-                  <tr *ngFor="let student of students">
-                    <td>
-                      {{student.rut}}
-                    </td>
-                    <td>
-                      {{student.nombre}}
-                    </td>
-                    <td>
-                      {{student.apellidos}}
-                    </td>
-                    <td>
-                      <a type="button" data-dismiss="modal" (click)="removeStudent(student.id)"><i
-                          class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <br>
+            <div *ngIf="students.length >=1">
+              <div class="table-responsive">
+                <table class="table table-striped" style="text-align: center;">
+                  <thead class="table table-bordered">
+                    <tr>
+                      <th>
+                        <b>Rut</b>
+                      </th>
+                      <th>
+                        <b>Nombre</b>
+                      </th>
+                      <th>
+                        <b>Apellidos</b>
+                      </th>
+                      <th>
+                        <b>Eliminar</b>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="table table-bordered">
+                    <tr *ngFor="let student of students">
+                      <td>
+                        {{student.rut}}
+                      </td>
+                      <td>
+                        {{student.nombre}}
+                      </td>
+                      <td>
+                        {{student.apellidos}}
+                      </td>
+                      <td>
+                        <a type="button" data-dismiss="modal" (click)="removeStudent(student.id)"><i
+                            class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="students.length == 0">
+              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ALUMNOS ASOCIADOS A LA COMPETENCIA</h5>
             </div>
             <br>
-            <h4 class="card">Alumnos</h4>
-            <form class="forms-sample">
-              <div class="form-group">
-                <div class="table-responsive">
-                  <table class="table table-striped" style="text-align: center;">
-                    <thead class="table table-bordered">
-                      <tr>
-                        <th>
-                          <b>Rut</b>
-                        </th>
-                        <th>
-                          <b>Nombre</b>
-                        </th>
-                        <th>
-                          <b>Apellidos</b>
-                        </th>
-                        <th>
-                          <b>Asignar</b>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody class="table table-bordered">
-                      <tr *ngFor="let student of studentsPerCycle">
-                        <td>
-                          {{student.rut}}
-                        </td>
-                        <td>
-                          {{student.nombre}}
-                        </td>
-                        <td>
-                          {{student.apellidos}}
-                        </td>
-                        <td>
-                          <div class="form-check form-check-success">
-                            <label class="form-check-label" aria-label="Asignar">
-                              <input type="checkbox" class="form-check-input position-static"
-                                style="text-align: center;" [value]="student.id" id="studentLevel"
-                                (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)" #studentLevel>
-                              <i class="input-helper"></i>
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <h4 class="card">Alumnos participantes de la OCI: {{cycle.nombre}}</h4>
+            <div *ngIf="studentsPerCycle.length >=1">
+              <form class="forms-sample">
+                <div class="form-group">
+                  <div class="table-responsive">
+                    <table class="table table-striped" style="text-align: center;">
+                      <thead class="table table-bordered">
+                        <tr>
+                          <th>
+                            <b>Rut</b>
+                          </th>
+                          <th>
+                            <b>Nombre</b>
+                          </th>
+                          <th>
+                            <b>Apellidos</b>
+                          </th>
+                          <th>
+                            <b>Asignar</b>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="table table-bordered">
+                        <tr *ngFor="let student of studentsPerCycle">
+                          <td>
+                            {{student.rut}}
+                          </td>
+                          <td>
+                            {{student.nombre}}
+                          </td>
+                          <td>
+                            {{student.apellidos}}
+                          </td>
+                          <td>
+                            <div class="form-check form-check-success">
+                              <label class="form-check-label" aria-label="Asignar">
+                                <input type="checkbox" class="form-check-input position-static"
+                                  style="text-align: center;" [value]="student.id" id="studentLevel"
+                                  (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)"
+                                  #studentLevel>
+                                <i class="input-helper"></i>
+                              </label>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
+            <div *ngIf="studentsPerCycle.length == 0">
+              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ALUMNOS PARTCIPANTES EN LAS OCI</h5>
+            </div>
           </div>
         </div>
       </div>
@@ -286,48 +298,55 @@
           <div class="card-body" [formGroup]="editScorePerStudent">
             <h4 class="card">Editar puntaje de competición tipo: {{competition.tipo}} con fecha {{competition.fecha}}
             </h4>
-            <div class="table-responsive">
-              <table class="table table-striped" style="text-align: center;">
-                <thead class="table table-bordered">
-                  <tr>
-                    <th>
-                      <b>Rut</b>
-                    </th>
-                    <th>
-                      <b>Nombre</b>
-                    </th>
-                    <th>
-                      <b>Apellidos</b>
-                    </th>
-                    <th>
-                      <b>Puntaje</b>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="table table-bordered" formArrayName="studentScore">
-                  <ng-container *ngFor="let student of studentScore.controls; let i = index">
-                    <tr [formGroupName]="i">
-                      <td>
-                        {{student.controls.rut.value}}
-                      </td>
-                      <td>
-                        {{student.controls.nombre.value}}
-                      </td>
-                      <td>
-                        {{student.controls.apellidos.value}}
-                      </td>
-                      <div class="form-group" style="display: none">
-                        <input type="text" class="form-control" id="id" formControlName="id">
-                      </div>
-                      <td>
-                        <div class="scoreInput">
-                          <input type="text" class="form-control" id="fee" formControlName="puntaje">
-                        </div>
-                      </td>
+            <div *ngIf="studentScore.controls.length >=1">
+              <div class="table-responsive">
+                <table class="table table-striped" style="text-align: center;">
+                  <thead class="table table-bordered">
+                    <tr>
+                      <th>
+                        <b>Rut</b>
+                      </th>
+                      <th>
+                        <b>Nombre</b>
+                      </th>
+                      <th>
+                        <b>Apellidos</b>
+                      </th>
+                      <th>
+                        <b>Puntaje</b>
+                      </th>
                     </tr>
-                  </ng-container>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody class="table table-bordered" formArrayName="studentScore">
+                    <ng-container *ngFor="let student of studentScore.controls; let i = index">
+                      <tr [formGroupName]="i">
+                        <td>
+                          {{student.controls.rut.value}}
+                        </td>
+                        <td>
+                          {{student.controls.nombre.value}}
+                        </td>
+                        <td>
+                          {{student.controls.apellidos.value}}
+                        </td>
+                        <div class="form-group" style="display: none">
+                          <input type="text" class="form-control" id="id" formControlName="id">
+                        </div>
+                        <td>
+                          <div class="scoreInput">
+                            <input type="text" class="form-control" id="fee" formControlName="puntaje">
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="studentScore.controls.length == 0">
+              <h5>
+                NO EXISTEN AYUDANTES ASOCIADOS A LA COMPETENCIA.
+              </h5>
             </div>
           </div>
         </div>
@@ -346,51 +365,56 @@
 <!-- Modal ModalListCost starts -->
 <ng-template class="modal fade" #ModalListCost let-modal>
   <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      </div>
-      <div class="modal-body">
-          <div class="col-12 stretch-card">
-              <div class="card">
-                  <div class="card-body">
-                      <h4 class="card">Gastos de la competencia {{competition.tipo}}</h4>
-                      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
-                          style="text-align: center;">
-                          <thead class="table table-bordered">
-                              <tr>
-                                  <th>
-                                      <b>Fecha</b>
-                                  </th>
-                                  <th>
-                                      <b>Valor</b>
-                                  </th>
-                                  <th>
-                                    <b>Ver Detalles</b>
-                                </th>
-                              </tr>
-                          </thead>
-                          <tbody class="table table-bordered">
-                              <tr *ngFor="let cost of costs">
-                                  <td>
-                                      {{cost.fecha | date:"dd-MM-yyyy"}}
-                                  </td>
-                                  <td>
-                                      {{cost.valor | currency: 'CLP':"$"}}
-                                  </td>
-                                  <td>
-                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                    (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
-                                        class="mdi mdi-eye"></i></button>
-                                </td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card">Gastos de la competencia {{competition.tipo}}</h4>
+            <br>
+            <div *ngIf="costs.length >=1">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Fecha</b>
+                    </th>
+                    <th>
+                      <b>Valor</b>
+                    </th>
+                    <th>
+                      <b>Ver Detalles</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                  <tr *ngFor="let cost of costs">
+                    <td>
+                      {{cost.fecha | date:"dd-MM-yyyy"}}
+                    </td>
+                    <td>
+                      {{cost.valor | currency: 'CLP':"$"}}
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                        (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                          class="mdi mdi-eye"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="costs.length == 0">
+              <h5>NO EXISTEN GASTOS ASOCIADOS.</h5>
+            </div>
           </div>
+        </div>
       </div>
+    </div>
   </div>
 </ng-template>
 <!-- Modal ModalListCost starts -->
@@ -398,43 +422,42 @@
 <!-- Modal ModalDetailList starts -->
 <ng-template class="modal fade" #ModalDetailList let-modal>
   <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      </div>
-      <div class="modal-body">
-          <div class="col-12 stretch-card">
-              <div class="card">
-                  <div class="card-body">
-                      <h4 class="card">Detalles del gasto</h4>
-                      <table class="table table-striped"
-                          style="text-align: center;">
-                          <thead class="table table-bordered">
-                              <tr>
-                                  <th>
-                                      <b>Nombre</b>
-                                  </th>
-                                  <th>
-                                      <b>Valor</b>
-                                  </th>
-                              </tr>
-                          </thead>
-                          <tbody class="table table-bordered">
-                              <tr *ngFor="let detail of detailsPerCost">
-                                  <td>
-                                      {{detail.nombre}}
-                                  </td>
-                                  <td>
-                                      {{detail.valor | currency: 'CLP':"$"}}
-                                  </td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card">Detalles del gasto</h4>
+            <table class="table table-striped" style="text-align: center;">
+              <thead class="table table-bordered">
+                <tr>
+                  <th>
+                    <b>Nombre</b>
+                  </th>
+                  <th>
+                    <b>Valor</b>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="table table-bordered">
+                <tr *ngFor="let detail of detailsPerCost">
+                  <td>
+                    {{detail.nombre}}
+                  </td>
+                  <td>
+                    {{detail.valor | currency: 'CLP':"$"}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
       </div>
+    </div>
   </div>
 </ng-template>
 <!-- Modal ModalDetailList starts -->

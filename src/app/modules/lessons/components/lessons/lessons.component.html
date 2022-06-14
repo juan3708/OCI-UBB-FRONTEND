@@ -7,8 +7,8 @@
             (click)="openModal(ModalContent)">Registrar
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-            (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()" style="float: right; margin: 8px;"><i
-                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
+            (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()"
+            style="float: right; margin: 8px;"><i class="fa-solid fa-users-line"></i>Ver Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -50,8 +50,8 @@
                                 (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)"><i
                                     class="fa-solid fa-person-circle-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"><i
-                                    class="fa-solid fa-users"></i></button>
+                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"
+                                *ngIf="lesson.alumnos.length >=1"><i class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
                                 (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)">
                                 <i class="fa-solid fa-person-chalkboard"></i></button>
@@ -273,96 +273,106 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card">Alumnos de la clase</h4>
-                        <div class="table-responsive">
-                            <table class="table table-striped" style="text-align: center;">
-                                <thead class="table table-bordered">
-                                    <tr>
-                                        <th>
-                                            <b>Rut</b>
-                                        </th>
-                                        <th>
-                                            <b>Nombre</b>
-                                        </th>
-                                        <th>
-                                            <b>Apellidos</b>
-                                        </th>
-                                        <th>
-                                            <b>Eliminar</b>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table table-bordered">
-                                    <tr *ngFor="let student of studentsLesson">
-                                        <td>
-                                            {{student.rut}}
-                                        </td>
-                                        <td>
-                                            {{student.nombre}}
-                                        </td>
-                                        <td>
-                                            {{student.apellidos}}
-                                        </td>
-                                        <td>
-                                            <a type="button" data-dismiss="modal"
-                                                (click)="removeStudentsLessonArray(student.id)"><i
-                                                    class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div *ngIf="studentsLesson.length >=1">
+                            <div class="table-responsive">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Rut</b>
+                                            </th>
+                                            <th>
+                                                <b>Nombre</b>
+                                            </th>
+                                            <th>
+                                                <b>Apellidos</b>
+                                            </th>
+                                            <th>
+                                                <b>Eliminar</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let student of studentsLesson">
+                                            <td>
+                                                {{student.rut}}
+                                            </td>
+                                            <td>
+                                                {{student.nombre}}
+                                            </td>
+                                            <td>
+                                                {{student.apellidos}}
+                                            </td>
+                                            <td>
+                                                <a type="button" data-dismiss="modal"
+                                                    (click)="removeStudentsLessonArray(student.id)"><i
+                                                        class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div *ngIf="studentsLesson.length == 0">
+                            <h5> NO EXISTEN ALUMNOS ASOCIADOS A LA CLASE.</h5>
                         </div>
                         <br>
                         <h4 class="card">Alumnos</h4>
-                        <form class="forms-sample">
-                            <div class="form-group">
-                                <div class="table-responsive" *ngIf="students.length >= 1">
-                                    <table class="table table-striped" style="text-align: center;">
-                                        <thead class="table table-bordered">
-                                            <tr>
-                                                <th>
-                                                    <b>Rut</b>
-                                                </th>
-                                                <th>
-                                                    <b>Nombre</b>
-                                                </th>
-                                                <th>
-                                                    <b>Apellidos</b>
-                                                </th>
-                                                <th>
-                                                    <b>Asignar</b>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table table-bordered">
-                                            <tr *ngFor="let student of students">
-                                                <td>
-                                                    {{student.rut}}
-                                                </td>
-                                                <td>
-                                                    {{student.nombre}}
-                                                </td>
-                                                <td>
-                                                    {{student.apellidos}}
-                                                </td>
-                                                <td>
-                                                    <div class="form-check form-check-success">
-                                                        <label class="form-check-label" aria-label="Asignar">
-                                                            <input type="checkbox"
-                                                                class="form-check-input position-static"
-                                                                style="text-align: center;" [value]="student.id"
-                                                                id="studentLevel"
-                                                                (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
-                                                                #studentLevel>
-                                                            <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div *ngIf="students.length >=1">
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="text-align: center;">
+                                            <thead class="table table-bordered">
+                                                <tr>
+                                                    <th>
+                                                        <b>Rut</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Nombre</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Apellidos</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Asignar</b>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table table-bordered">
+                                                <tr *ngFor="let student of students">
+                                                    <td>
+                                                        {{student.rut}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.nombre}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.apellidos}}
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-check form-check-success">
+                                                            <label class="form-check-label" aria-label="Asignar">
+                                                                <input type="checkbox"
+                                                                    class="form-check-input position-static"
+                                                                    style="text-align: center;" [value]="student.id"
+                                                                    id="studentLevel"
+                                                                    (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
+                                                                    #studentLevel>
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+                        <div *ngIf="students.length ==0">
+                            <h5>NO EXISTEN ALUMNOS PARA ASOCIAR A LA CLASE.</h5>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -574,35 +584,40 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="students-tab">
-                                <div class="table-responsive">
-                                    <table class="table table-striped" style="text-align: center;">
-                                        <thead class="table table-bordered">
-                                            <tr>
-                                                <th>
-                                                    <b>Rut</b>
-                                                </th>
-                                                <th>
-                                                    <b>Nombre</b>
-                                                </th>
-                                                <th>
-                                                    <b>Apellidos</b>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table table-bordered">
-                                            <tr *ngFor="let student of studentsLesson;">
-                                                <td>
-                                                    {{student.rut}}
-                                                </td>
-                                                <td>
-                                                    {{student.nombre}}
-                                                </td>
-                                                <td>
-                                                    {{student.apellidos}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div *ngIf="studentsLesson.length >=1">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="text-align: center;">
+                                            <thead class="table table-bordered">
+                                                <tr>
+                                                    <th>
+                                                        <b>Rut</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Nombre</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Apellidos</b>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table table-bordered">
+                                                <tr *ngFor="let student of studentsLesson;">
+                                                    <td>
+                                                        {{student.rut}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.nombre}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.apellidos}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div *ngIf="studentsLesson.length == 0">
+                                    <h5>NO EXISTEN ALUMNOS ASOCIADOS A LA CLASE.</h5>
                                 </div>
                             </div>
                         </div>
@@ -690,51 +705,56 @@
                                             </div>
                                             <div class="table-responsive">
                                                 <h4 class="card-title"><b>Profesores</b></h4>
-                                                <table class="table table-striped" style="text-align: center;">
-                                                    <thead class="table table-bordered">
-                                                        <tr>
-                                                            <th>
-                                                                <b>Rut</b>
-                                                            </th>
-                                                            <th>
-                                                                <b>Nombre</b>
-                                                            </th>
-                                                            <th>
-                                                                <b>Apellidos</b>
-                                                            </th>
-                                                            <th>
-                                                                <b>Asignar</b>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="table table-bordered">
-                                                        <tr *ngFor="let teacher of teachers">
-                                                            <td>
-                                                                {{teacher.rut}}
-                                                            </td>
-                                                            <td>
-                                                                {{teacher.nombre}}
-                                                            </td>
-                                                            <td>
-                                                                {{teacher.apellidos}}
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-check form-check-success">
-                                                                    <label class="form-check-label"
-                                                                        aria-label="Asignar">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input position-static"
-                                                                            style="text-align: center;"
-                                                                            [value]="teacher.id" id="teacher"
-                                                                            (change)="addOrRemoveTeacher($event.target.checked, teacher.id)"
-                                                                            #teacher>
-                                                                        <i class="input-helper"></i>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                <div *ngIf="teachers.length >=1">
+                                                    <table class="table table-striped" style="text-align: center;">
+                                                        <thead class="table table-bordered">
+                                                            <tr>
+                                                                <th>
+                                                                    <b>Rut</b>
+                                                                </th>
+                                                                <th>
+                                                                    <b>Nombre</b>
+                                                                </th>
+                                                                <th>
+                                                                    <b>Apellidos</b>
+                                                                </th>
+                                                                <th>
+                                                                    <b>Asignar</b>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="table table-bordered">
+                                                            <tr *ngFor="let teacher of teachers">
+                                                                <td>
+                                                                    {{teacher.rut}}
+                                                                </td>
+                                                                <td>
+                                                                    {{teacher.nombre}}
+                                                                </td>
+                                                                <td>
+                                                                    {{teacher.apellidos}}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="form-check form-check-success">
+                                                                        <label class="form-check-label"
+                                                                            aria-label="Asignar">
+                                                                            <input type="checkbox"
+                                                                                class="form-check-input position-static"
+                                                                                style="text-align: center;"
+                                                                                [value]="teacher.id" id="teacher"
+                                                                                (change)="addOrRemoveTeacher($event.target.checked, teacher.id)"
+                                                                                #teacher>
+                                                                            <i class="input-helper"></i>
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div *ngIf="teachers.length == 0">
+                                                    <h5>NO EXISTEN PROFESORES PARA ASIGNAR.</h5>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -780,6 +800,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <br>
                                             <div class="table-responsive">
                                                 <h4 class="card-title"><b>Ayudantes</b></h4>
                                                 <table class="table table-striped" style="text-align: center;">
@@ -828,6 +849,9 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <div *ngIf="assistants.length == 0">
+                                                <h5>NO EXISTEN AYUDANTES PARA ASIGNAR.</h5>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -866,9 +890,8 @@
                                     *ngFor="let establishment of  establishments;let indexEstablishments = index"
                                     title="{{establishment.nombre}} TOTAL ALUMNOS: {{establishment.alumnos.length}}">
                                     <ng-template ngbPanelContent>
-                                        <div class="table-responsive"
-                                            *ngIf="establishment.alumnos.length >=1">
-                                            <h5 style="font-weight:bold;;text-align: center;">Alumnos</h5>
+                                        <div class="table-responsive" *ngIf="establishment.alumnos.length >=1">
+                                            <h5>Alumnos</h5>
                                             <table class="table table-striped" style="text-align: center;">
                                                 <thead class="table table-bordered">
                                                     <tr>
@@ -945,8 +968,7 @@
                                             </table>
                                         </div>
                                         <br>
-                                        <div
-                                            *ngIf="establishment.alumnos.length ==0">
+                                        <div *ngIf="establishment.alumnos.length ==0">
                                             <h5 style="font-weight:bold;">NO EXISTEN ASISTENCIAS ASOCIADAS.</h5>
                                         </div>
                                     </ng-template>

@@ -8,7 +8,6 @@ import { Component, OnInit } from '@angular/core';
 export class DashboardComponent implements OnInit {
 
   toggleProBanner(event) {
-    console.log("123");
     event.preventDefault();
     document.querySelector('body').classList.toggle('removeProbanner');
   }

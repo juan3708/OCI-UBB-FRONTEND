@@ -44,8 +44,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   studentsLesson = [];
   removeStudents = [];
   studentList;
-  teachers;
-  assistants;
+  teachers = [];
+  assistants = [];
   lessonTeachers = [];
   lessonAssistants = [];
   addTeachers = [];
@@ -202,19 +202,18 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
 
   }
 
-  getStudentAssistancePerCycle(){
+  getStudentAssistancePerCycle() {
     let data = {
-      ciclo_id : this.cycle.id
+      ciclo_id: this.cycle.id
     }
-    this.cycleService.getStudentAssistancePerCycle(data).subscribe((resp:any)=>{
-      console.log(resp);
-      if(resp.code == 200){
-        if(resp.Establecimientos.length >=1){
-        this.establishments = resp.Establecimientos;
-        }else{
+    this.cycleService.getStudentAssistancePerCycle(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        if (resp.Establecimientos.length >= 1) {
+          this.establishments = resp.Establecimientos;
+        } else {
           this.establishments = [];
         }
-      }else{
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta'
@@ -225,12 +224,28 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
   setLesson(lesson) {
     this.lesson = JSON.parse(JSON.stringify(lesson));
-    this.studentsLesson = lesson.alumnos;
-    this.lessonAssistants = lesson.ayudantes;
-    this.lessonTeachers = lesson.profesores;
+
+
+    if (lesson.alumnos.length >= 1) {
+      this.studentsLesson = lesson.alumnos;
+    } else {
+      this.studentsLesson = [];
+    }
+
+    if (lesson.ayudantes.length >= 1) {
+      this.lessonAssistants = lesson.ayudantes;
+    } else {
+      this.lessonAssistants = [];
+    }
+
+    if (lesson.profesores.length >= 1) {
+      this.lessonTeachers = lesson.profesores;
+    } else {
+      this.lessonTeachers = [];
+    }
   }
 
-  setStudent(student){
+  setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
 
   }
@@ -240,8 +255,17 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.lessonsService.getTeachersAndAssistants(data).subscribe((resp: any) => {
       if (resp.code == 200) {
-        this.assistants = resp.ayudantes;
-        this.teachers = resp.profesores;
+        if (resp.profesores.length >= 1) {
+          this.teachers = resp.profesores;
+        } else {
+          this.teachers = [];
+        }
+
+        if (resp.ayudantes.length >= 1) {
+          this.assistants = resp.ayudantes;
+        } else {
+          this.assistants = [];
+        }
       } else {
         this.Toast.fire({
           icon: 'error',
@@ -261,9 +285,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     if (this.studentsPerLevel.length >= 1) {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
         if (resp.code == 200) {
+          modal.dismiss();
           this.AssignStudentToLesson(resp.clase.id);
           await new Promise(f => setTimeout(f, 500));
-          modal.dismiss();
           this.Toast.fire({
             icon: 'success',
             title: 'Clase creada correctamente'

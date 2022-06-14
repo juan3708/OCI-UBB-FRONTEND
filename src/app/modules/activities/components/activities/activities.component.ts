@@ -94,7 +94,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.activities = resp.ciclo.actividades;
+      this.activities = resp.actividades;
       this.rerender();
     })
   }
@@ -129,7 +129,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.activities = resp.ciclo.actividades;
+      this.activities = resp.actividades;
       this.rerender();
     })
   }

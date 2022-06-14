@@ -62,7 +62,7 @@
                                 (click)="openModal(SelectEstableshments);getCycle(cycle.id)"><i
                                     class="mdi mdi-book-plus"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-quotas"
-                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)"><i
+                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)" *ngIf="cycle.establecimientos.length >=1"><i
                                     class="mdi mdi-school"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteCycle(cycle.id)"><i class="mdi mdi-delete"></i></button>

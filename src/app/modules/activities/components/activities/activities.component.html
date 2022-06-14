@@ -51,7 +51,7 @@
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
                                 <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalListCost);getActivity(activity.id)"><i
+                                (click)="openModal(ModalListCost);getActivity(activity.id)" *ngIf="activity.gastos.length >=1"><i
                                   class="fa-solid fa-file-invoice-dollar"></i></button>
                         </td>
                     </tr>
