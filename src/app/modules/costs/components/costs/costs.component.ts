@@ -111,7 +111,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   addDetail() {
     const detailFormGroup = this.fb.group({
       name: new FormControl(''),
-      priceDetail: new FormControl('0'),
+      priceDetail: new FormControl(''),
     });
     this.details.push(detailFormGroup);
   }

@@ -24,13 +24,15 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloNew;
   ciclo;
   noticias;
+  images;
+  image;
   selectedFiles: File[] = Array();
   fileNames: string;
   url = 'http://127.0.0.1:8000/storage/images/';
   filesNamesArray: string[] = Array();
   new;
   cycle = new CycleModel();
-  news = new NewsModel();
+  news;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -102,7 +104,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.noticias = resp.ciclo.noticias;
+      this.noticias = resp.noticias;
       this.rerender();
     });
   }
@@ -112,7 +114,8 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.noticias = resp.ciclo.noticias;
+      this.noticias = resp.noticias;
+      console.log(this.noticias);
       this.rerender();
     })
   }
@@ -127,11 +130,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.allNewsService.createNews(data).subscribe((resp: any) => {
       if (resp.code === 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Se ha creado correctamente'
-        });
         let noticia_id = resp.noticia.id;
         if (this.selectedFiles.length >= 1) {
           for (let index = 0; index < this.selectedFiles.length; index++) {
@@ -141,7 +139,19 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             this.allNewsService.chargePhotosPerNews(formData).subscribe((resp: any) => {
             })
           }
+          Swal.fire({
+            title: 'Cargando imagenes',
+            timer: 1000,
+            didOpen: async () => {
+              Swal.showLoading()
+            },
+          })
         }
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha creado correctamente'
+        });
+        modal.dismiss();
         this.listNewsPerCycle();
         this.clearForm();
       } else {
@@ -162,14 +172,36 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   newsFormEdit(form: NgForm, modal) {
+    var bool = false;
     this.allNewsService.editNews(this.news).subscribe((resp: any) => {
       if (resp.code == 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Noticia editada correctamente',
-        });
+        if (this.selectedFiles.length >= 1) {
+          let noticia_id = resp.noticia.id;
+          for (let index = 0; index < this.selectedFiles.length; index++) {
+            const formData = new FormData();
+            formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
+            formData.append('noticia_id', noticia_id.toString());
+            this.allNewsService.chargePhotosPerNews(formData).subscribe();
+            bool = true;
+          }
+        }
+        if (bool == true) {
+          Swal.fire({
+            title: 'Noticia editada correctamente. Cargando imagenes, espere porfavor',
+            timer: 2000,
+            didOpen: async () => {
+              Swal.showLoading();
+            },
+          })
+        } else {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Noticia editada correctamente',
+          });
+        }
         this.listNewsPerCycle();
+        this.clearForm();
+        modal.dismiss();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -187,12 +219,51 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  editNews(news: NewsModel) {
+  editNews(news) {
     this.news = JSON.parse(JSON.stringify(news));
+    this.images = news.adjuntos
+    console.log(this.news);
+    console.log(this.images);
+    console.log(news);
   }
 
-  setNew(noticia) {
-    this.new = noticia;
+  setImage(image) {
+    this.image = JSON.parse(JSON.stringify(image));
+  }
+
+  deleteImage(image) {
+    let data = {
+      id: image
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea eliminar esta imagen?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.allNewsService.deleteImage(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.images.splice(this.images.indexOf(image), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha eliminado correctamente',
+            });
+            this.listNewsPerCycle();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
   deleteNews(id) {

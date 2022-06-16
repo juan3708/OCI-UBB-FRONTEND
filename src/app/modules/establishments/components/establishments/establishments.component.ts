@@ -305,7 +305,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Email incorrecto'
+            title: 'Formato de email incorrecto'
           });
         }
       } else {

@@ -22,6 +22,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
   establishments
   cycles;
   student;
+  see = 0;
   studentStatistic = {
     Asistencias: Array(),
     Porcentaje: 0,
@@ -63,6 +64,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
   ngOnInit(): void {
     this.listStudents();
     this.listEstablishments();
+    this.getCycles();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
       responsive: true
@@ -83,7 +85,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
   }
 
   openModal( ModalContent ) {
-    this.modalService.open( ModalContent, { size : 'lg'} );
+    this.modalService.open( ModalContent, { size : 'xl'} );
   }
 
   studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal){
@@ -149,14 +151,17 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
     })
   }
 
-  getStudentStatistic(cycle, student) {
+  getStudentStatistic(cycle) {
     let data = {
       ciclo_id: cycle,
-      alumno_id: student
+      alumno_id: this.student.id
     }
+    console.log(data);
     this.studentsService.getStatistic(data).subscribe((resp: any)=>{
+      console.log(resp);
       if(resp.code == 200){
         this.studentStatistic = resp;
+        this.see = 1;
       }else{
         this.Toast.fire({
           icon: 'error',
@@ -169,6 +174,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
           CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
           Competencias: Array()
         };
+        this.see  = 0;
       }
     })
   }

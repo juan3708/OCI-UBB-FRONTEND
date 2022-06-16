@@ -29,7 +29,6 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   cycle = new CycleModel();
   cycles;
   student;
-  see = 0;
   studentStatistic = {
     Asistencias: Array(),
     Porcentaje: 0,
@@ -202,7 +201,6 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
     this.studentsService.getStatistic(data).subscribe((resp: any)=>{
       if(resp.code == 200){
         this.studentStatistic = resp;
-        this.see = 1;
       }else{
         this.Toast.fire({
           icon: 'error',
@@ -215,7 +213,6 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
           CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
           Competencias: Array()
         };
-        this.see  = 0;
       }
     })
   }

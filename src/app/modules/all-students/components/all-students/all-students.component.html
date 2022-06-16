@@ -37,8 +37,7 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-              (click)="openModal(ModalContentStatistics);setStudent(student);"><i
-                class="mdi mdi-eye"></i></button>
+                (click)="openModal(ModalContentStatistics);setStudent(student);"><i class="mdi mdi-eye"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="openModal(ModalContentEdit);setStudent(student)"><i class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
@@ -233,138 +232,156 @@
 <ng-template class="modal fade" #ModalContentStatistics let-modal>
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();see = 0">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="col-12 grid-margin">
       <div class="card">
-        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
-              aria-controls="student" aria-selected="true"><i class="fa-solid fa-id-card-clip"></i>
-              Información</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="assistancePerCycle-tab" data-toggle="tab" href="#assistancePerCycle" role="tab"
-              aria-controls="assistancePerCycle" aria-selected="false"><i class="fa-solid fa-rectangle-list"></i>
-              Asistencia</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="score-tab" data-toggle="tab" href="#score" role="tab" aria-controls="score"
-              aria-selected="false"><i class="fa-solid fa-square-poll-vertical"></i>
-              Puntajes</a>
-          </li>
-        </ul>
-        <!-- TAB INFORMACION ALUMNO -->
-        <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
-            <div class="col-12 grid-margin">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+        <div class="card-body">
+          <br>
+          <h4 style="text-align: center;font-weight: bold;">Estadistica del alumno</h4>
+          <p class="card-description">
+            Seleccione el ciclo para cargar la Información del alumno.
+          </p>
+          <br>
+              <select class="custom-select ciclo" id="cycle" name="cycle" #cycle>
+                <option selected [ngValue]=null >Seleccione un ciclo</option>
+                <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                  {{cycle.nombre}}</option>
+              </select>
+              <button type="button" class="btn btn-success" style="margin-left: 8px;" (click)="getStudentStatistic(cycle.value)">Buscar</button>
+        </div>
+      </div>
+      <div *ngIf="see == 1">
+        <div class="card">
+          <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
+                aria-controls="student" aria-selected="true"><i class="fa-solid fa-id-card-clip"></i>
+                Información</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="assistancePerCycle-tab" data-toggle="tab" href="#assistancePerCycle" role="tab"
+                aria-controls="assistancePerCycle" aria-selected="false"><i class="fa-solid fa-rectangle-list"></i>
+                Asistencia</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="score-tab" data-toggle="tab" href="#score" role="tab" aria-controls="score"
+                aria-selected="false"><i class="fa-solid fa-square-poll-vertical"></i>
+                Puntajes</a>
+            </li>
+          </ul>
+          <!-- TAB INFORMACION ALUMNO -->
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">RUT:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Fecha de
+                            nacimiento:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
+                              date:'dd-M-y'}}</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">RUT:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Curso:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label">{{student.curso}}</label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Fecha de
-                          nacimiento:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
-                            date:'dd-M-y'}}</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Curso:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-4 col-form-label">{{student.curso}}</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Correo
-                          electronico:</label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-9 col-form-label">{{student.email}}</label>
-                        </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Correo
+                            electronico:</label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-9 col-form-label">{{student.email}}</label>
+                          </div>
 
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
-                          apoderado:
-                        </label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
+                            apoderado:
+                          </label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident">Telefono del
+                            apoderado: </label>
+                          <div class="col-sm-9">
+                            <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident">Telefono del
-                          apoderado: </label>
-                        <div class="col-sm-9">
-                          <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
-                        <div class="col-sm-8">
-                          <label class="col-sm-8 col-form-label ">{{student.establecimiento.nombre}}</label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
+                          <div class="col-sm-8">
+                            <label class="col-sm-8 col-form-label ">{{student.establecimiento.nombre}}</label>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -372,120 +389,120 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- TAB ASISTENCIA ALUMNO -->
-          <div class="tab-pane fade" id="assistancePerCycle" role="tabpanel" aria-labelledby="assistancePerCycle-tab">
-            <div *ngIf="studentStatistic.Porcentaje !=-1">
-              <div class="card">
-                <div class="card-body">
-                  <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
-                    {{studentStatistic.Porcentaje}}%</h4>
-                  <div>
+            <!-- TAB ASISTENCIA ALUMNO -->
+            <div class="tab-pane fade" id="assistancePerCycle" role="tabpanel" aria-labelledby="assistancePerCycle-tab">
+              <div *ngIf="studentStatistic.Porcentaje !=-1">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
+                      {{studentStatistic.Porcentaje}}%</h4>
                     <div>
-                      Total clases: {{studentStatistic.Asistencias.length}}
+                      <div>
+                        Total clases: {{studentStatistic.Asistencias.length}}
+                      </div>
+                      <div>
+                        Asistencias: {{studentStatistic.CantAsistenciasEInasistencias[0].asistencias}}
+                      </div>
+                      <div>
+                        Inasistencias:
+                        {{studentStatistic.CantAsistenciasEInasistencias[0].inasistencias}}
+                      </div>
                     </div>
-                    <div>
-                      Asistencias: {{studentStatistic.CantAsistenciasEInasistencias[0].asistencias}}
-                    </div>
-                    <div>
-                      Inasistencias:
-                      {{studentStatistic.CantAsistenciasEInasistencias[0].inasistencias}}
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" style="font-size: bold;font-weight:bold;">
+                    CLASES ASOCIADAS
+                  </div>
+                  <div class="card-body text-primary">
+                    <div class="table-responsive">
+                      <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                          <tr>
+                            <th>
+                              <b>Fecha</b>
+                            </th>
+                            <th>
+                              <b>Contenido</b>
+                            </th>
+                            <th>
+                              <b>Asistencia</b>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                          <tr *ngFor="let lesson of studentStatistic.Asistencias">
+                            <td>
+                              {{lesson.fecha}}
+                            </td>
+                            <td>
+                              {{lesson.contenido}}
+                            </td>
+                            <td *ngIf="lesson.pivot.asistencia == 1" style="color: green;">
+                              PRESENTE
+                            </td>
+                            <td *ngIf="lesson.pivot.asistencia == 0" style="color: red;">
+                              AUSENTE
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-header" style="font-size: bold;font-weight:bold;">
-                  CLASES ASOCIADAS
-                </div>
-                <div class="card-body text-primary">
-                  <div class="table-responsive">
-                    <table class="table table-striped" style="text-align: center;">
-                      <thead class="table table-bordered">
-                        <tr>
-                          <th>
-                            <b>Fecha</b>
-                          </th>
-                          <th>
-                            <b>Contenido</b>
-                          </th>
-                          <th>
-                            <b>Asistencia</b>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="table table-bordered">
-                        <tr *ngFor="let lesson of studentStatistic.Asistencias">
-                          <td>
-                            {{lesson.fecha}}
-                          </td>
-                          <td>
-                            {{lesson.contenido}}
-                          </td>
-                          <td *ngIf="lesson.pivot.asistencia == 1" style="color: green;">
-                            PRESENTE
-                          </td>
-                          <td *ngIf="lesson.pivot.asistencia == 0" style="color: red;">
-                            AUSENTE
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+              <div *ngIf="studentStatistic.Porcentaje == -1" style="text-align: center;font-weight:bold;">
+                <h5>EL ALUMNO NO REGISTRA ASISTENCIAS</h5>
+              </div>
+            </div>
+            <!-- TAB PUNTAJE ALUMNO -->
+            <div class="tab-pane fade" id="score" role="tabpanel" aria-labelledby="score-tab">
+              <div *ngIf="studentStatistic.Competencias.length >=1">
+                <div class="card">
+                  <div class="card-body text-primary">
+                    <div class="table-responsive">
+                      <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                          <tr>
+                            <th>
+                              <b>Fecha</b>
+                            </th>
+                            <th>
+                              <b>Tipo</b>
+                            </th>
+                            <th>
+                              <b>Lugar</b>
+                            </th>
+                            <th>
+                              <b>Puntaje</b>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                          <tr *ngFor="let competition of studentStatistic.Competencias">
+                            <td>
+                              {{competition.fecha}}
+                            </td>
+                            <td>
+                              {{competition.tipo}}
+                            </td>
+                            <td>
+                              {{competition.lugar}}
+                            </td>
+                            <td>
+                              {{competition.pivot.puntaje}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div *ngIf="studentStatistic.Porcentaje == -1" style="text-align: center;font-weight:bold;">
-              <h5>EL ALUMNO NO REGISTRA ASISTENCIAS</h5>
-            </div>
-          </div>
-          <!-- TAB PUNTAJE ALUMNO -->
-          <div class="tab-pane fade" id="score" role="tabpanel" aria-labelledby="score-tab">
-            <div *ngIf="studentStatistic.Competencias.length >=1">
-              <div class="card">
-                <div class="card-body text-primary">
-                  <div class="table-responsive">
-                    <table class="table table-striped" style="text-align: center;">
-                      <thead class="table table-bordered">
-                        <tr>
-                          <th>
-                            <b>Fecha</b>
-                          </th>
-                          <th>
-                            <b>Tipo</b>
-                          </th>
-                          <th>
-                            <b>Lugar</b>
-                          </th>
-                          <th>
-                            <b>Puntaje</b>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="table table-bordered">
-                        <tr *ngFor="let competition of studentStatistic.Competencias">
-                          <td>
-                            {{competition.fecha}}
-                          </td>
-                          <td>
-                            {{competition.tipo}}
-                          </td>
-                          <td>
-                            {{competition.lugar}}
-                          </td>
-                          <td>
-                            {{competition.pivot.puntaje}}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              <div *ngIf="studentStatistic.Competencias.length == 0" style="text-align: center;font-weight:bold;">
+                <h5>EL ALUMNO TIENE COMPETENCIAS ASOCIADAS</h5>
               </div>
-            </div>
-            <div *ngIf="studentStatistic.Competencias.length == 0" style="text-align: center;font-weight:bold;"> ALUMNO
-              <h5>EL ALUMNO TIENE COMPETENCIAS ASOCIADAS</h5>
             </div>
           </div>
         </div>

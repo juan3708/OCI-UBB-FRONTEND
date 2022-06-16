@@ -118,11 +118,11 @@
                         <div class="sidebar">
 
                             <h3 class="sidebar-title">Buscar</h3>
-                            <div class="sidebar-item search-form">
-                                <form action="">
-                                    <input type="text" class="form-control">
-                                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                                </form>
+                            <div class="card">
+                                    <input type="text" class="form-control search-word" style="width: 200px;" #word>
+                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see search-word" (click)="listNewsForWord(word.value)"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button>
+                          
                             </div>
                             <!-- End sidebar search form-->
 
@@ -139,14 +139,19 @@
                 </div> -->
                             <!-- End sidebar categories-->
 
-                            <h3 class="sidebar-title">Recent Posts</h3>
+                            <h3 class="sidebar-title">Post Recientes</h3>
                             <div class="sidebar-item recent-posts">
-                                <div class="post-item clearfix">
-                                    <img src="assets/images/samples/300x300/3.jpg" alt="">
-                                    <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
+                                <div *ngIf="recentPost.length >=1">
+                                    <div class="post-item clearfix" *ngFor="let post of recentPost">
+                                        <div *ngIf="post.adjuntos.length >=1"><img src="{{url}}{{post.adjuntos[0].url}}"
+                                                alt=""></div>
+                                        <h4><a (click)="onSelectNews(post)">{{post.titulo}}</a></h4>
+                                        <time datetime="2020-01-01">{{post.fecha}}</time>
+                                    </div>
                                 </div>
-
+                                <div *ngIf="recentPost.length ==0">
+                                    No hay post recientes.
+                                </div>
                             </div>
                             <!-- End sidebar recent posts-->
 

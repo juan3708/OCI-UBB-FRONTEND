@@ -36,28 +36,23 @@
         </div>
 
         <div class="form">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <form role="form" class="php-email-form">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Tu nombre" required>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Tu nombre" required #name>
                     </div>
                     <div class="form-group col-md-6">
                         <input type="email" class="form-control" name="email" id="email" placeholder="Tu correo"
-                            required>
+                            required #email>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Asunto" required>
+                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Asunto" required #subject>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" name="message" rows="5" placeholder="Mensaje" required></textarea>
+                    <textarea class="form-control" name="message" rows="5" placeholder="Mensaje" required #content></textarea>
                 </div>
-                <div class="my-3">
-                    <div class="loading">Loading</div>
-                    <div class="error-message"></div>
-                    <div class="sent-message">Tu mensaje ha sido enviado. Gracias!</div>
-                </div>
-                <div class="text-center"><button type="submit">Enviar mensaje</button></div>
+                <div class="text-center"><button type="button" class="btn btn-gradient-success btn-rounded btn-sm" (click)="sendEmail(name.value, email.value, subject.value, content.value)">Enviar mensaje</button></div>
             </form>
         </div>
     </div>

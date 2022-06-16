@@ -16,4 +16,18 @@ export class HomepageService {
   getNews() {
     return this.http.get(url + '/noticia/all');
   }
+
+  getRecentPost() {
+    return this.http.get(url + '/noticia/recentpost');
+  }
+
+  getNewsLikeWord(data) {
+    const option = {headers:this.headers};
+    return this.http.post(url+'/noticia/getbyword', data, option);
+  }
+
+  sendContactEmails(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/mail/contact', data, option);
+  }
 }

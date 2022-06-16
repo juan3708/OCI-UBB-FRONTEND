@@ -40,4 +40,9 @@ export class AllNewsService {
     option.delete('Content-Type');
     return this.http.post(url+'/image/add',data,{headers: option});
   }
+
+  deleteImage(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/image/delete', data, option);
+  }
 }
