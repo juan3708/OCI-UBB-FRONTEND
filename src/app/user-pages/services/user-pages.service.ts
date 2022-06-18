@@ -27,13 +27,23 @@ export class UserPagesService {
     localStorage.setItem('access_token', token);
   }
 
-  getUserByToken(){
+  getUser(){
     let token = localStorage.getItem('access_token');
-    let user = this.helper.decodeToken(token).user;
-    return user;
+    if(token != null){
+      let user = this.helper.decodeToken(token).user;
+      return user;
+    }else{
+      return false;
+    }
   }
 
   logout(){
     localStorage.removeItem('access_token');
+  }
+
+  getRol(){
+    let token = localStorage.getItem('access_token');
+    let rol = this.helper.decodeToken(token).user.rol;
+    return rol;
   }
 }

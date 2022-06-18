@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HomepageService } from '../../services/homepage.service';
 
 @Component({
   selector: 'app-featured-homepage',
@@ -7,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FeaturedHomepageComponent implements OnInit {
 
-  constructor() { }
+  noticias;
+  url = 'http://127.0.0.1:8000/storage/images/';
+  constructor(private router:Router, private homepageService: HomepageService) { }
 
   ngOnInit(): void {
   }

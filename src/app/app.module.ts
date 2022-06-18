@@ -54,7 +54,7 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
     TodoListComponent,
     TodoComponent,
     SpinnerComponent,
-    ContentAnimateDirective
+    ContentAnimateDirective,
   ],
   imports: [
     BrowserModule,

@@ -15,7 +15,8 @@ export class SidebarComponent implements OnInit, DoCheck {
   public samplePagesCollapsed = false;
 
   userLocal;
-  
+  rolName;
+
   constructor(private userPagesService: UserPagesService) { 
     this.userLocal = {};
   }
@@ -36,11 +37,15 @@ export class SidebarComponent implements OnInit, DoCheck {
         }
       });
     });
+    if(this.userPagesService.getUser()){
+      let rol = this.userPagesService.getRol();
+      this.rolName = rol.nombre;
+    }
   }
 
   ngDoCheck(): void {
     if(localStorage.getItem('access_token')){
-      let user = this.userPagesService.getUserByToken();
+      let user = this.userPagesService.getUser();
       if(user.id != this.userLocal.id){
         this.userLocal = user;
       }
