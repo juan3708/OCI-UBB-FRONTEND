@@ -23,6 +23,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   cicloOld;
   cicloNew;
   ciclo;
+  spinnerSee = false;
   oci1 = {
     nombre: "",
     Asistencias: Array(),
@@ -178,10 +179,10 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  setStudent(student){
+  setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
     this.establishmentName = student.establecimiento.nombre;
-    
+
   }
 
   onFileSelected(event) {
@@ -194,6 +195,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       const formData = new FormData();
       formData.append('file', this.selectedFile, this.fileName);
       formData.append('ciclo_id', this.cycle.id.toString());
+      this.spinnerSee = true;
       this.StudentsCandidatesService.chargeStudentsPerCycle(formData).subscribe((resp: any) => {
         if (resp.code == 200) {
           this.Toast.fire({
@@ -201,12 +203,15 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
             title: 'Se cargaron correctamente los alumnos',
           });
           modal.dismiss();
+          this.spinnerSee = false;
           this.getCycle(this.cycle.id);
         } else {
           this.Toast.fire({
             icon: 'error',
             title: 'Error al cargar alumnos',
           });
+          this.spinnerSee = false;
+
         }
       })
     } else {

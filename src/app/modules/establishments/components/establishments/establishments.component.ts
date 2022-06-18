@@ -29,6 +29,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   student;
   cycle = new CycleModel();
   cycles;
+  spinnerSee = false;
   emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
   currentDate;
   emailsArray = [];
@@ -45,7 +46,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) { 
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
@@ -61,9 +62,9 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -143,7 +144,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     });
   }
 
-  setEstablishment(establishment){
+  setEstablishment(establishment) {
     this.establishment = JSON.parse(JSON.stringify(establishment));
   }
 
@@ -208,24 +209,24 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
-  getStudents(id){
-    let data ={
+  getStudents(id) {
+    let data = {
       ciclo_id: this.cycle.id,
       establecimiento_id: id
     }
 
-    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp:any)=>{
-      if(resp.code == 200){
-        if(resp.estudiantesConEstadisticaDeAsistencia !=undefined){
+    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        if (resp.estudiantesConEstadisticaDeAsistencia != undefined) {
           this.students = resp.estudiantesConEstadisticaDeAsistencia;
-        }else{
+        } else {
           this.students = [];
         }
       }
     })
   }
 
-  setStudent(student){
+  setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
   }
 
@@ -267,8 +268,8 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
-  sendInvitations(to, subject, content, formLink, modal) {
-    if (subject == '' || content == '' || formLink == '') {
+  sendMessages(subject, content, modal) {
+    if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
         title: 'Porfavor rellenar todo los campos con asterisco(*)'
@@ -277,62 +278,33 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       this.establishments.forEach(e => {
         this.emailsArray.push(e.email, e.email_profesor);
       });
-      if (to != '') {
-        let bool = this.emailsRegex.test(to);
-        if (bool) {
-          this.emailsArray.push(to);
-          let data = {
-            emails: this.emailsArray,
-            subject,
-            content,
-            formLink,
-            start_date: this.cycle.fecha_inicio
-          };
-          this.cycleService.sendEmails(data).subscribe((resp: any) => {
-            if (resp.code == 200) {
-              this.Toast.fire({
-                icon: 'success',
-                title: 'Invitaciones enviadas correctamente'
-              });
-              modal.dismiss();
-            } else {
-              this.Toast.fire({
-                icon: 'error',
-                title: 'Error al enviar invitaciones'
-              });
-            }
-          })
+      let data = {
+        emails: this.emailsArray,
+        subject,
+        content,
+        cycleName: this.cycle.nombre
+      };
+      this.spinnerSee = true;
+      this.establishmentsService.sendMessage(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Mensajes enviados correctamente'
+          });
+          modal.dismiss();
+          this.spinnerSee = false;
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Formato de email incorrecto'
+            title: 'Error al enviar los mensajes'
           });
+          this.spinnerSee = false;
         }
-      } else {
-        let data = {
-          emails: this.emailsArray,
-          subject,
-          content,
-          formLink,
-          start_date: this.cycle.fecha_inicio
-        };
-        this.cycleService.sendEmails(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Invitaciones enviadas correctamente'
-            });
-            modal.dismiss();
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al enviar invitaciones'
-            });
-          }
-        })
-      }
+      })
     }
   }
+
+
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

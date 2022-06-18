@@ -34,26 +34,35 @@
             </div>
 
         </div>
-
         <div class="form">
-            <form role="form" class="php-email-form">
+            <form role="form" class="php-email-form" #formSend="ngForm">
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Tu nombre" required #name>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Tu nombre" required
+                            #name ngModel>
                     </div>
                     <div class="form-group col-md-6">
                         <input type="email" class="form-control" name="email" id="email" placeholder="Tu correo"
-                            required #email>
+                            required #email ngModel>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Asunto" required #subject>
+                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Asunto" required
+                        #subject ngModel>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" name="message" rows="5" placeholder="Mensaje" required #content></textarea>
+                    <textarea class="form-control" name="content" rows="5" placeholder="Mensaje" required #content
+                        ngModel></textarea>
                 </div>
-                <div class="text-center"><button type="button" class="btn btn-gradient-success btn-rounded btn-sm" (click)="sendEmail(name.value, email.value, subject.value, content.value)">Enviar mensaje</button></div>
+                <div class="text-center"><button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
+                        (click)="sendEmail(formSend)">Enviar mensaje</button></div>
             </form>
+            <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+                <div class="spinner-border text-success" role="status">
+                </div>
+                <span>Enviando correo, espere porfavor</span>
+            </div>
+
         </div>
     </div>
 </section>

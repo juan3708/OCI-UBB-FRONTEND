@@ -146,15 +146,11 @@
       <div class="col-12 stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card" style="text-align: center">Enviar invitacion Masiva</h4>
+            <h4 class="card" style="text-align: center">Enviar mensaje</h4>
             <p class="card-description">
-              Ingrese los campos para enviar una invitacion masiva a los colegios participes de la OCI {{cycle.nombre}}
+              Ingrese los campos para enviar un mensaje a los colegios participes de la OCI {{cycle.nombre}}
             </p>
             <form class="forms-sample">
-              <div class="form-group">
-                <input type="email" class="form-control to" id="to"
-                  placeholder="Destinatarios (No incluidos en la lista de emails de establecimientos)" #to>
-              </div>
               <div class="form-group">
                 <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
               </div>
@@ -162,18 +158,21 @@
                 <textarea type="text" class="form-control content" id="content" #content rows="20"
                   placeholder="(*)"></textarea>
               </div>
-              <div class="form-group">
-                <input type="text-area" class="form-control to" id="link" placeholder="Link Formulario (*)" #link>
-              </div>
             </form>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
+      <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+        <div class="spinner-border text-success" role="status">
+        </div>
+        <span>Enviando correo, espere porfavor</span>
+      </div>
       <button type="button" class="btn btn-success"
-        (click)="sendInvitations(to.value, subject.value, content.value, link.value, modal)">Enviar</button>
+        (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
       <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+
     </div>
   </div>
 </ng-template>

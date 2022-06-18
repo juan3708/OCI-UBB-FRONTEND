@@ -8,7 +8,7 @@
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()"
-            style="float: right; margin: 8px;"><i class="fa-solid fa-users-line"></i>Ver Asistencias</button>
+            style="float: right; margin: 8px;"><i class="fa-solid fa-users-line" *ngIf="lessons.length >=1"></i>Ver Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
