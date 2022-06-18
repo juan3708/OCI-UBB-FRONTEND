@@ -9,17 +9,17 @@
         </div>
         <div class="nav-profile-text">
           <span class="font-weight-bold mb-2">{{userLocal.nombre}}</span>
-          <span class="text-secondary text-small">Administrador</span>
+          <span class="text-secondary text-small">{{rolName | titlecase}}</span>
         </div>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }" *ngIf="rolName == 'admin' || rolName == 'director'">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive">
         <span class="menu-title">Inicio</span>
         <i class="mdi mdi-home menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{'active' : students.isActive || studentscandidates.isActive || allstudents.isActive}">
+    <li class="nav-item" [ngClass]="{'active' : students.isActive || studentscandidates.isActive || allstudents.isActive}" *ngIf="rolName == 'admin'">
       <a class="nav-link" (click)="studentsCollapsed = !studentsCollapsed" [attr.aria-expanded]="studentsCollapsed" aria-controls="ui-basic">
         <span class="menu-title">Alumnos</span>
         <i class="menu-arrow"></i>
@@ -36,7 +36,7 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item" [ngClass]="{'active' : assistants.isActive || allasistants.isActive}">
+    <li class="nav-item" [ngClass]="{'active' : assistants.isActive || allasistants.isActive}" *ngIf="rolName == 'admin'">
       <a class="nav-link" (click)="assistantsCollapsed = !assistantsCollapsed" [attr.aria-expanded]="assistantsCollapsed" aria-controls="ui-basic">
         <span class="menu-title">Ayudantes</span>
         <i class="menu-arrow"></i>
@@ -52,24 +52,24 @@
       </div>
     </li>
     <li class="nav-item">
-      <a class="nav-link" routerLink="/cycle" routerLinkActive #cycle="routerLinkActive">
+      <a class="nav-link" routerLink="/cycle" routerLinkActive #cycle="routerLinkActive" *ngIf="rolName == 'admin'">
         <span class="menu-title">Ciclos</span>
         <i class="mdi mdi-sync menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': lessons.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': lessons.isActive }" *ngIf="rolName == 'admin'">
       <a class="nav-link" routerLink="/lessons" routerLinkActive #lessons="routerLinkActive">
         <span class="menu-title">Clases</span>
         <i class="mdi mdi-book-open-page-variant menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': coordinators.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': coordinators.isActive }" *ngIf="rolName == 'admin'">
       <a class="nav-link" routerLink="/coordinators" routerLinkActive #coordinators="routerLinkActive">
         <span class="menu-title">Coordinadores</span>
         <i class="mdi mdi-human-greeting menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{'active' : establishments.isActive || allestablishments.isActive}">
+    <li class="nav-item" [ngClass]="{'active' : establishments.isActive || allestablishments.isActive}" *ngIf="rolName == 'admin'">
       <a class="nav-link" (click)="establishmentsCollapsed = !establishmentsCollapsed" [attr.aria-expanded]="establishmentsCollapsed" aria-controls="ui-basic">
         <span class="menu-title">Establecimientos</span>
         <i class="menu-arrow"></i>
@@ -84,31 +84,31 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': activities.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': activities.isActive }" *ngIf="rolName == 'admin'">
       <a class="nav-link" routerLink="/activities" routerLinkActive #activities="routerLinkActive">
         <span class="menu-title">Actividades</span>
         <i class="mdi mdi-note-text menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': competencies.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': competencies.isActive }" *ngIf="rolName == 'admin'">
       <a class="nav-link" routerLink="/competencies" routerLinkActive #competencies="routerLinkActive">
         <span class="menu-title">Competencias</span>
         <i class="mdi mdi-seal menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': costs.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': costs.isActive }" *ngIf="rolName == 'admin' || rolName == 'director'">
       <a class="nav-link" routerLink="/costs" routerLinkActive #costs="routerLinkActive">
         <span class="menu-title">Gastos</span>
         <i class="mdi mdi-currency-usd menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': level.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': level.isActive }" *ngIf="rolName == 'admin'">
       <a class="nav-link" routerLink="/level" routerLinkActive #level="routerLinkActive">
         <span class="menu-title">Nivel</span>
         <i class="mdi mdi-account-convert menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{'active' : teachers.isActive || allteachers.isActive}">
+    <li class="nav-item" [ngClass]="{'active' : teachers.isActive || allteachers.isActive}" *ngIf="rolName == 'admin'">
       <a class="nav-link" (click)="teachersCollapsed = !teachersCollapsed" [attr.aria-expanded]="teachersCollapsed" aria-controls="ui-basic">
         <span class="menu-title">Profesores</span>
         <i class="menu-arrow"></i>
@@ -123,7 +123,7 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': news.isActive }">
+    <li class="nav-item" [ngClass]="{ 'active': news.isActive }" *ngIf="rolName == 'admin'" >
       <a class="nav-link" routerLink="/all-news" routerLinkActive #news="routerLinkActive">
         <span class="menu-title">Noticias</span>
         <i class="mdi mdi-newspaper menu-icon"></i>

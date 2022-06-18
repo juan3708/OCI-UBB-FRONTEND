@@ -33,8 +33,8 @@ export class NavbarComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck(): void {
-    if(localStorage.getItem('access_token')){
-      let user = this.userPagesService.getUserByToken();
+    if(this.userPagesService.getUser()){
+      let user = this.userPagesService.getUser();
       if(user.id != this.userLocal.id){
         this.userLocal = user;
       }
@@ -81,7 +81,7 @@ export class NavbarComponent implements OnInit, DoCheck {
     let data = {
       ciclo_id: id
     };
-    let user = this.userPagesService.getUserByToken();
+    let user = this.userPagesService.getUser();
     this.cycleService.getStudentsCandidatePerCycle(data).subscribe((resp: any) => {
       resp.ciclo;
       this.cycleService.cycle = resp.ciclo;
