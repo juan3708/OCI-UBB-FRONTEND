@@ -13,6 +13,8 @@ export class SidebarComponent implements OnInit, DoCheck {
   public establishmentsCollapsed = false;
   public assistantsCollapsed = false;
   public samplePagesCollapsed = false;
+  public settingsCollapsed = false;
+
 
   userLocal;
   rolName;

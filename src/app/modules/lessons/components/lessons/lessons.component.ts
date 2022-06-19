@@ -25,7 +25,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloOld;
   cicloNew;
   ciclo;
-  lessons = []
+  lessons = [];
   lessonSee;
   cycles;
   establishments =[]
