@@ -66,7 +66,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   getTeachers(id) {

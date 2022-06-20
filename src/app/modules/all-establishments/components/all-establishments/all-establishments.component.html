@@ -6,7 +6,7 @@
     <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
       (click)="openModal(ModalContent)">Registrar establecimiento</button>
     <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
-      (click)="openModal(EmailModal)"><i class="mdi mdi-email"></i></button>
+      (click)="openModal(EmailModal)" title="Enviar mensaje"><i class="mdi mdi-email"></i></button>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
       </div>
@@ -43,10 +43,10 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);setEstablishment(establishment)"><i
+                (click)="openModal(ModalContentEdit);setEstablishment(establishment)" title="Editar establecimiento"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteEstablishment(establishment.id)"><i class="mdi mdi-delete"></i></button>
+                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento"><i class="mdi mdi-delete"></i></button>
             </td>
           </tr>
         </tbody>

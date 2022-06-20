@@ -1,55 +1,106 @@
 <!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;">
     <div class="col-lg-10 grid-margin stretch-card"> -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title"><b>Ayudantes</b></h4>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                    </div>
-                    <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Ayudantes</b></h4>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
                         <option *ngFor="let cycle of cycles" [value]="cycle.id">
                             {{cycle.nombre}}</option>
                     </select> -->
-                </div>
-        
-                <div class="table-responsive">
-                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped" style="text-align: center;">
-                        <thead class="table table-bordered">
-                            <tr>
-                                <th>
-                                    <b>RUT</b>
-                                </th>
-                                <th>
-                                    <b>Nombre</b>
-                                </th>
-                                <th>
-                                    <b>Apellidos</b>
-                                </th>
-                                <th>
-                                    <b>Email</b>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="table table-bordered">
-                            <tr *ngFor="let assistant of assistants">
-                                <td>
-                                    {{assistant.rut}}
-                                </td>
-                                <td>
-                                    {{assistant.nombre}}
-                                </td>
-                                <td>
-                                    {{assistant.apellidos}}
-                                </td>
-                                <td>
-                                    {{assistant.email}}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        </div>
+
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>RUT</b>
+                        </th>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Apellidos</b>
+                        </th>
+                        <th>
+                            <b>Email</b>
+                        </th>
+                        <th>
+                            <b>Clases asociadas</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let assistant of assistants">
+                        <td>
+                            {{assistant.rut}}
+                        </td>
+                        <td>
+                            {{assistant.nombre}}
+                        </td>
+                        <td>
+                            {{assistant.apellidos}}
+                        </td>
+                        <td>
+                            {{assistant.email}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                (click)="openModal(LessonsSee);setAssistant(assistant)" title="Clases asociadas"><i
+                                    class="mdi mdi-eye"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div>
+</div> -->
+
+<!-- Modal LessonsSee starts -->
+<ng-template class="modal fade" #LessonsSee let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card">Clases asociadas</h4>
+                        <table class="table table-striped" style="text-align: center;">
+                            <thead class="table table-bordered">
+                                <tr>
+                                    <th>
+                                        <b>Fecha</b>
+                                    </th>
+                                    <th>
+                                        <b>Contenido</b>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="table table-bordered">
+                                <tr *ngFor="let lesson of assistant.clases">
+                                    <td>
+                                        {{lesson.fecha}}
+                                    </td>
+                                    <td>
+                                        {{lesson.contenido}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    <!-- </div>
-</div> -->
-
+    </div>
+</ng-template>
+<!-- Modal LessonsSee starts -->

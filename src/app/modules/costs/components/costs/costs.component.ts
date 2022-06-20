@@ -121,7 +121,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.ids.push(this.details.value[i].id);
     }
     this.details.removeAt(i);
-
   }
 
   listCosts() {
@@ -281,6 +280,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               text: resp.message
             });
           }
+          this.total = 0;
         }
       });
     } else {

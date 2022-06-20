@@ -80,7 +80,7 @@
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': competencies.isActive }"
-      *ngIf="rolName == 'admin' || rolName == 'coordinador'">
+      *ngIf="rolName == 'admin' || rolName == 'coordinador' || rolName == 'director'">
       <a class="nav-link" routerLink="/competencies" routerLinkActive #competencies="routerLinkActive">
         <span class="menu-title">Competencias</span>
         <i class="mdi mdi-seal menu-icon"></i>
@@ -107,7 +107,7 @@
         <i class="mdi mdi-school menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': news.isActive }" *ngIf="rolName == 'admin' || rolName == 'coordinador'|| rolName == 'director'">
+    <li class="nav-item" [ngClass]="{ 'active': news.isActive }" *ngIf="rolName == 'admin' || rolName == 'coordinador'">
       <a class="nav-link" routerLink="/all-news" routerLinkActive #news="routerLinkActive">
         <span class="menu-title">Noticias</span>
         <i class="mdi mdi-newspaper menu-icon"></i>

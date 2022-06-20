@@ -45,19 +45,20 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);setCompetition(competition)"><i
+                (click)="openModal(ModalContentEdit);setCompetition(competition)" title="Editar competencia"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteCompetition(competition.id)"><i class="mdi mdi-delete"></i></button>
+                (click)="deleteCompetition(competition.id)" title="Eliminar competencia"><i
+                  class="mdi mdi-delete"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalAddStudents);setCompetition(competition)"><i
+                (click)="openModal(ModalAddStudents);setCompetition(competition)" title="Asignar Alumnos"><i
                   class="fa-solid fa-person-circle-plus"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalEditScores);getCompetition(competition.id)" *ngIf="competition.alumnos.length >=1"><i
-                  class="fa-solid fa-medal"></i></button>
+                (click)="openModal(ModalEditScores);getCompetition(competition.id)"
+                *ngIf="competition.alumnos.length >=1" title="Editar puntaje"><i class="fa-solid fa-medal"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalListCost);getCompetition(competition.id)" *ngIf="competition.gastos.length >=1"><i
-                  class="fa-solid fa-file-invoice-dollar"></i></button>
+                (click)="openModal(ModalListCost);getCompetition(competition.id)" *ngIf="competition.gastos.length >=1"
+                title="Gastos"><i class="fa-solid fa-file-invoice-dollar"></i></button>
 
             </td>
           </tr>
@@ -375,8 +376,12 @@
         <div class="card">
           <div class="card-body">
             <h4 class="card">Gastos de la competencia {{competition.tipo}}</h4>
+            <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+              (click)="openModal(ModalCostCreate);clearForm();costsFormCreate.patchValue({ 'competitionType': competition.tipo });"
+              style="float: right; margin: 8px;">Crear
+              gasto</button>
             <br>
-            <div *ngIf="costs.length >=1">
+
               <table class="table table-striped" style="text-align: center;">
                 <thead class="table table-bordered">
                   <tr>
@@ -407,10 +412,6 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <div *ngIf="costs.length == 0">
-              <h5>NO EXISTEN GASTOS ASOCIADOS.</h5>
-            </div>
           </div>
         </div>
       </div>
@@ -461,3 +462,68 @@
   </div>
 </ng-template>
 <!-- Modal ModalDetailList starts -->
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalCostCreate let-modal>
+  <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+              (click)="modal.dismiss();clearForm()">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <div class="col-12 stretch-card">
+              <div class="card">
+                  <div class="card-body" [formGroup]="costsFormCreate">
+                      <h4 class="card-title">Crear Gasto de la competencia: {{competition.tipo}}</h4>
+                      <p class="card-description">
+                          Ingrese los campos para la creacion del gasto.
+                      </p>
+                      <div class="form-group">
+                          <label for="date">Fecha</label>
+                          <input style="width: 50%;" type="date" class="form-control" id="date"
+                              placeholder="aaaa-mm-dd" formControlName="date">
+                      </div>
+                      <div class="form-group">
+                          <label for="name">Tipo de competencia</label>
+                          <input type="text" class="form-control" placeholder="Nombre"  id="competitionType" formControlName="competitionType">
+                      </div>
+                      <div>
+                          <button type="button" class="btn btn-info" (click)="addDetail()">Agregar detalle</button>
+                      </div>
+                      <br>
+                      <ng-container formArrayName="details">
+                          <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
+                              <div [formGroupName]="i">
+                                  <div>
+                                      <label for="name">Nombre</label>
+                                      <input type="text" class="form-control" id="name" placeholder="Nombre"
+                                          formControlName="name">
+                                  </div>
+                                  <div>
+                                      <label for="priceDetail">Valor</label>
+                                      <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                          formControlName="priceDetail">
+                                  </div>
+                                  <br>
+                                  <div class="form-group">
+                                      <button type="button" class="btn btn-danger" (click)="removeDetail(i)">Eliminar
+                                          detalle</button>
+                                  </div>
+                              </div>
+                          </ng-container>
+                      </ng-container>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-success"
+              (click)="createCosts(costsFormCreate.value, modal)">Crear</button>
+          <button type="button" class="btn btn-light" data-dismiss="modal"
+              (click)="modal.close();clearForm()">Cancelar</button>
+      </div>
+  </div>
+</ng-template>
+<!-- Modal Create Ends -->

@@ -155,7 +155,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   addOrRemoveStudent(event, student) {
