@@ -33,7 +33,8 @@ const routes: Routes = [
   { path: 'all-teachers', loadChildren: () => import('./modules/all-teachers/all-teachers-routing.module').then(m => m.AllTeachersRoutingModule), canActivate:[AuthGuard], data:{role:['admin']} },
   { path: 'all-students', loadChildren: () => import('./modules/all-students/all-students-routing.module').then(m => m.AllStudentsRoutingModule), canActivate:[AuthGuard], data:{role:['admin']} },
   { path: 'all-news', loadChildren: () => import('./modules/all-news/all-news-routing.module').then(m => m.AllNewsRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador']} },
-  { path: 'studentscandidates', loadChildren: () => import('./modules/students-candidates/students-candidates-routing.module').then(m => m.StudentsCandidatesRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador', 'director']} }
+  { path: 'studentscandidates', loadChildren: () => import('./modules/students-candidates/students-candidates-routing.module').then(m => m.StudentsCandidatesRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador', 'director']} },
+  { path: 'users', loadChildren: () => import('./modules/users/users-routing.module').then(m => m.UsersRoutingModule), canActivate:[AuthGuard], data:{role:['admin']} }
 ];
 
 @NgModule({

@@ -37,6 +37,7 @@ import { AllTeachersModule } from './modules/all-teachers/all-teachers.module';
 import { StudentsCandidatesModule } from './modules/students-candidates/students-candidates.module';
 import { AllStudentsModule } from './modules/all-students/all-students.module';
 import { AllNewsModule } from './modules/all-news/all-news.module';
+import { UsersModule } from './modules/users/users.module';
 
 
 
@@ -54,7 +55,7 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
     TodoListComponent,
     TodoComponent,
     SpinnerComponent,
-    ContentAnimateDirective,
+    ContentAnimateDirective
   ],
   imports: [
     BrowserModule,
@@ -84,7 +85,8 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
     AllStudentsModule,
     StudentsCandidatesModule,
     DataTablesModule,
-    AllNewsModule
+    AllNewsModule,
+    UsersModule
   ],
   providers: [ThemeService],
   bootstrap: [AppComponent]
