@@ -55,13 +55,13 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalContentDetails);setCost(cost)"><i
+                                (click)="openModal(ModalContentDetails);setCost(cost)" title="Ver detalles"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setCost(cost)"><i
+                                (click)="openModal(ModalContentEdit);setCost(cost)" title="Editar gastos"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteCost(cost.id);setCost(cost)"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteCost(cost.id);setCost(cost)" title="Eliminar gastos"><i class="mdi mdi-delete"></i></button>
                         </td>
                     </tr>
                 </tbody>

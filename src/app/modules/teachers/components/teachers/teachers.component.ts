@@ -25,7 +25,7 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   ciclo;
   spinner = new SpinnerComponent()
   teachers;
-  teacher = new TeacherModel();
+  teacher;
   cycles;
   cycle = new CycleModel();
   dtOptions: DataTables.Settings = {};

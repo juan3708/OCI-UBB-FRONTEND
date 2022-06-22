@@ -4,11 +4,11 @@
     <div class="card-body">
         <h4 class="card-title"><b>Clases</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Registrar
+            (click)="openModal(ModalContent)" title="Registrar Clase">Registrar
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()"
-            style="float: right; margin: 8px;" *ngIf="lessons.length >=1"><i class="fa-solid fa-users-line" ></i>Ver Asistencias</button>
+            style="float: right; margin: 8px;" *ngIf="lessons.length >=1" title="Ver Asistencia"><i class="fa-solid fa-users-line" ></i>Ver Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -44,22 +44,22 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalSeeLesson);setLesson(lesson)"><i
+                                (click)="openModal(ModalSeeLesson);setLesson(lesson)" title="Información de la clase"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)"><i
+                                (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)" title="Ingresar estudiantes"><i
                                     class="fa-solid fa-person-circle-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
                                 (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"
-                                *ngIf="lesson.alumnos.length >=1"><i class="fa-solid fa-users"></i></button>
+                                *ngIf="lesson.alumnos.length >=1" title="Registrar asistencia"><i class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)">
-                                <i class="fa-solid fa-person-chalkboard"></i></button>
+                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)" title="Asignar profesor y/o ayudantes">
+                                <i class="fa-solid fa-person-chalkboard" ></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setLesson(lesson)"><i
+                                (click)="openModal(ModalContentEdit);setLesson(lesson)" title="Editar clase"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteLesson(lesson.id);"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteLesson(lesson.id);" title="Eliminar clase"><i class="mdi mdi-delete" ></i></button>
 
 
                         </td>
@@ -77,7 +77,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
-                (click)="modal.dismiss();clearForm()">
+                (click)="modal.dismiss();clearForm()" title="Cerrar">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -174,7 +174,7 @@
                                             </td>
                                             <td>
                                                 <a type="button" data-dismiss="modal"
-                                                    (click)="removeStudentsPerLevelArray(student.id)"><i
+                                                    (click)="removeStudentsPerLevelArray(student.id)" ><i
                                                         class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
                                             </td>
                                         </tr>
@@ -250,7 +250,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="concatStudentsArrays(modal)"
-                *ngIf="students.length >= 1 || studentsPerLevel.length >=1">Asignar</button>
+                *ngIf="students.length >= 1 || studentsPerLevel.length >=1" >Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
@@ -378,7 +378,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addOrRemoveStudentPerLesson(modal)">Guardar</button>
+            <button type="button" class="btn btn-success" (click)="addOrRemoveStudentPerLesson(modal)" >Guardar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
@@ -467,9 +467,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="editAssistancePerStudent(modal)">Asignar</button>
+            <button type="button" class="btn btn-success" (click)="editAssistancePerStudent(modal)" title="Asignar">Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
-                (click)="modal.close();studentsAdd=[]">Cancelar</button>
+                (click)="modal.close();studentsAdd=[]" >Cancelar</button>
         </div>
     </div>
 </ng-template>
@@ -479,7 +479,7 @@
 <ng-template class="modal fade" #ModalContentEdit let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()" >
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -563,20 +563,20 @@
                                         <thead class="table table-bordered">
                                             <tr>
                                                 <th>
-                                                    <b>Contenido</b>
+                                                    <b>Fecha</b>
                                                 </th>
                                                 <th>
-                                                    <b>Fecha</b>
+                                                    <b>Contenido</b>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody class="table table-bordered">
                                             <tr>
                                                 <td>
-                                                    {{lesson.contenido}}
+                                                    {{lesson.fecha}}
                                                 </td>
                                                 <td>
-                                                    {{lesson.fecha}}
+                                                    {{lesson.contenido}}
                                                 </td>
                                             </tr>
                                         </tbody>

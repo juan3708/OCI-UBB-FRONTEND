@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'establishments', loadChildren: () => import('./modules/establishments/establishments-routing.module').then(m => m.EstablishmentsRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador']} },
   { path: 'cycle', loadChildren: () => import('./modules/cycle/cycle-routing.module').then(m => m.CycleRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador','director']} },
   { path: 'activities', loadChildren: () => import('./modules/activities/activities-routing.module').then(m => m.ActivitiesRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador']} },
-  { path: 'competencies', loadChildren: () => import('./modules/competencies/competencies-routing.module').then(m => m.CompetenciesRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador']} },
+  { path: 'competencies', loadChildren: () => import('./modules/competencies/competencies-routing.module').then(m => m.CompetenciesRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador','director']} },
   { path: 'costs', loadChildren: () => import('./modules/costs/costs-routing.module').then(m => m.CostsRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador', 'director']} },
   { path: 'level', loadChildren: () => import('./modules/level/level-routing.module').then(m => m.LevelRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador']} },
   { path: 'lessons', loadChildren: () => import('./modules/lessons/lessons-routing.module').then(m => m.LessonsRoutingModule), canActivate:[AuthGuard], data:{role:['admin', 'coordinador', 'profesor', 'ayudante']} },

@@ -46,13 +46,15 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setActivity(activity)"><i
+                                (click)="openModal(ModalContentEdit);setActivity(activity)" title="Editar actividad"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
-                                <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalListCost);getActivity(activity.id)" *ngIf="activity.gastos.length >=1"><i
-                                  class="fa-solid fa-file-invoice-dollar"></i></button>
+                                (click)="deleteActivity(activity.id)" title="Editar actividad"><i
+                                    class="mdi mdi-delete"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalListCost);getActivity(activity.id)"
+                                *ngIf="activity.gastos.length >=1" title="Gastos"><i
+                                    class="fa-solid fa-file-invoice-dollar"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -166,6 +168,10 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card">Gastos de la competencia {{activity.nombre}}</h4>
+                        <button type="button" style="float: right; margin: 8px;"
+                            class="btn btn-gradient-info btn-rounded btn-sm"
+                            (click)="openModal(ModalCostCreate);clearForm();costsFormCreate.patchValue({ 'activityName': activity.nombre });" style="float: right; margin: 8px;">Crear
+                            gasto</button>
                         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
                             style="text-align: center;">
                             <thead class="table table-bordered">
@@ -177,8 +183,8 @@
                                         <b>Valor</b>
                                     </th>
                                     <th>
-                                      <b>Ver Detalles</b>
-                                  </th>
+                                        <b>Ver Detalles</b>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="table table-bordered">
@@ -190,10 +196,11 @@
                                         {{cost.valor | currency: 'CLP':"$"}}
                                     </td>
                                     <td>
-                                      <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                      (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
-                                          class="mdi mdi-eye"></i></button>
-                                  </td>
+                                        <button type="button"
+                                            class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                            (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                                                class="mdi mdi-eye"></i></button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -202,11 +209,11 @@
             </div>
         </div>
     </div>
-  </ng-template>
-  <!-- Modal ModalListCost starts -->
-  
-  <!-- Modal ModalDetailList starts -->
-  <ng-template class="modal fade" #ModalDetailList let-modal>
+</ng-template>
+<!-- Modal ModalListCost starts -->
+
+<!-- Modal ModalDetailList starts -->
+<ng-template class="modal fade" #ModalDetailList let-modal>
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
@@ -218,8 +225,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card">Detalles del gasto</h4>
-                        <table class="table table-striped"
-                            style="text-align: center;">
+                        <table class="table table-striped" style="text-align: center;">
                             <thead class="table table-bordered">
                                 <tr>
                                     <th>
@@ -246,5 +252,70 @@
             </div>
         </div>
     </div>
-  </ng-template>
-  <!-- Modal ModalDetailList starts -->
+</ng-template>
+<!-- Modal ModalDetailList starts -->
+
+<!-- Modal Create starts -->
+<ng-template class="modal fade" #ModalCostCreate let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body" [formGroup]="costsFormCreate">
+                        <h4 class="card-title">Crear Gasto de actividad: {{activity.nombre}}</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la creacion del gasto.
+                        </p>
+                        <div class="form-group">
+                            <label for="date">Fecha</label>
+                            <input style="width: 50%;" type="date" class="form-control" id="date"
+                                placeholder="aaaa-mm-dd" formControlName="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nombre de la actividad</label>
+                            <input type="text" class="form-control" placeholder="Nombre"  id="activityName" formControlName="activityName">
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-info" (click)="addDetail()">Agregar detalle</button>
+                        </div>
+                        <br>
+                        <ng-container formArrayName="details">
+                            <ng-container *ngFor=" let detailFormGroup of details.controls; let i = index">
+                                <div [formGroupName]="i">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Nombre"
+                                            formControlName="name">
+                                    </div>
+                                    <div>
+                                        <label for="priceDetail">Valor</label>
+                                        <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                            formControlName="priceDetail">
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-danger" (click)="removeDetail(i)">Eliminar
+                                            detalle</button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="createCosts(costsFormCreate.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Create Ends -->

@@ -55,18 +55,15 @@
                             {{cycle.coordinador.nombre}} {{cycle.coordinador.apellido}}
                         </td>
                         <td>
-                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
-                                (click)="openModal(ModalContentEdit);setCycle(cycle)"><i
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm "
+                                (click)="openModal(ModalContentEdit);setCycle(cycle)" title="Editar ciclo"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-select"
-                                (click)="openModal(SelectEstableshments);getCycle(cycle.id)"><i
+                                (click)="openModal(SelectEstableshments);getCycle(cycle.id)" title="Asignar Establecimientos"><i
                                     class="mdi mdi-book-plus"></i></button>
-                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-quotas"
-                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)" *ngIf="cycle.establecimientos.length >=1"><i
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
+                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)" *ngIf="cycle.establecimientos.length >=1" title="Editar cupos de establecimiento"><i
                                     class="mdi mdi-school"></i></button>
-                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteCycle(cycle.id)"><i class="mdi mdi-delete"></i></button>
-
                         </td>
                     </tr>
                 </tbody>

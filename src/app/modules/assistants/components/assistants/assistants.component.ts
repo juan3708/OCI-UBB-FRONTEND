@@ -27,7 +27,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
   currentDate;
   cycles;
   cycle = new CycleModel();
-  assistant = new AssistantModel();
+  assistant;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -147,7 +147,6 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
 
   setAssistant(assistant){
     this.assistant = JSON.parse(JSON.stringify(assistant));
-    
   }
 
   assistantFormCreate(rut, name, surname, email, modal) {

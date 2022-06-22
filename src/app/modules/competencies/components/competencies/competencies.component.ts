@@ -10,6 +10,7 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { CostsService } from '../../../costs/services/costs.service';
 
 @Component({
   selector: 'app-competencies',
@@ -34,6 +35,10 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   studentsAdd = [];
   students = [];
   costs = [];
+
+  ids = [];
+  total = 0;
+
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -51,7 +56,15 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   editScorePerStudent = this.fb.group({
     studentScore: this.fb.array([])
   });
-  constructor(private CompetenciesService: CompetenciesService, private cycleService: CycleService, private modalService: NgbModal, private fb: FormBuilder) {
+
+  costsFormCreate = this.fb.group({
+    date: new FormControl(''),
+    price: new FormControl(''),
+    competitionType: this.competition.tipo,
+    details: this.fb.array([])
+  });
+
+  constructor(private CompetenciesService: CompetenciesService, private cycleService: CycleService, private modalService: NgbModal, private costsService: CostsService,private fb: FormBuilder) {
       this.cicloOld = {};
   }
 
@@ -99,6 +112,25 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   get studentScore() {
     return this.editScorePerStudent.controls["studentScore"] as FormArray;
+  }
+
+  get details() {
+    return this.costsFormCreate.controls["details"] as FormArray;
+  }
+
+  addDetail() {
+    const detailFormGroup = this.fb.group({
+      name: new FormControl(''),
+      priceDetail: new FormControl(''),
+    });
+    this.details.push(detailFormGroup);
+  }
+
+  removeDetail(i: number) {
+    if (this.details.value[i] != undefined) {
+      this.ids.push(this.details.value[i].id);
+    }
+    this.details.removeAt(i);
   }
 
   listcycles() {
@@ -426,10 +458,85 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     });
   }
 
+  createCosts(form, modal) {
+    if (this.details.length > 0) {
+      for (let index = 0; index < this.details.length; index++) {
+        if (this.details.value[index].name != '') {
+          this.total += Number(this.details.value[index].priceDetail);
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Ingrese un nombre al detalle'
+          });
+          return;
+        }
+      }
+      let data = {
+        valor: this.total,
+        fecha: form.date,
+        ciclo_id: this.cycle.id,
+        competencia_id: this.competition.id
+      }
+      this.costsService.createCosts(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          modal.dismiss();
+          let gastos_id = resp.gastos.id;
+          for (let index = 0; index < this.details.length; index++) {
+            let dataDetail = {
+              valor: this.details.value[index].priceDetail,
+              nombre: this.details.value[index].name,
+              gastos_id: gastos_id
+            };
+            this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
+              if (resp.code != 200) {
+                this.Toast.fire({
+                  icon: 'error',
+                  title: 'Error al crear detalle'
+                });
+                return;
+              }
+            })
+          }
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se ha creado correctamente'
+          });
+          this.getCompetition(this.competition.id);
+          this.clearForm();
+        } else {
+          if (resp.code == 400) {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Ingrese correctamente los valores'
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al crear un gasto',
+              text: resp.message
+            });
+          }
+          this.total = 0;
+        }
+      });
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Ingrese un detalle porfavor'
+      });
+    }
+  }
+
+
   clearForm() {
     this.studentsAdd = [];
     this.studentScore.controls.splice(0, this.studentScore.length);
     this.editScorePerStudent.reset();
+
+    this.details.controls.splice(0, this.details.length);
+    this.costsFormCreate.reset();
+    this.ids = [];
+    this.total = 0;
   }
 
   ngOnDestroy(): void {

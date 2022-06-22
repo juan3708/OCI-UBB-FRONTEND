@@ -10,6 +10,7 @@ import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-establishments',
@@ -27,6 +28,8 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   establishment = new EstablishmentModel();
   students = [];
   student;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  fileName = -1;
   cycle = new CycleModel();
   cycles;
   spinnerSee = false;
@@ -46,7 +49,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) {
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal, private router: Router) {
     this.cicloOld = {};
   }
 
@@ -304,7 +307,37 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     }
   }
 
+  exportPdf() {
+    let data = {
+      data: this.students,
+      nombreEstablecimiento: this.establishment.nombre
+    }
+    this.establishmentsService.exportPDF(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        window.location.assign(this.urlDownload + this.fileName);
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+      }
+    })
+  }
 
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.establishmentsService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
+  }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
