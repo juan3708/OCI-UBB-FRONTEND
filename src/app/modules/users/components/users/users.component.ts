@@ -125,36 +125,33 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
             console.log(resp);
             if(resp.code == 200){
               modal.dismiss();
+              this.listUsers();
             }
           });
         }else{
           if(rol == this.ADMIN){
-            this.usersService.register(userData).subscribe((resp: any)=>{
-              if(resp.code == 200){
-                modal.dismiss();
-              }
-            });
+              modal.dismiss();
+              this.listUsers();
           }else{
             if(rol == this.COORDINADOR){
-              this.usersService.register(userData).subscribe((resp: any)=>{
+              this.coordinatorsService.createCoordinator(userData).subscribe((resp: any)=>{
                 if(resp.code == 200){
                   modal.dismiss();
+                  this.listUsers();
                 }
               });
             }else{
               if(rol == this.AYUDANTE){
-                this.usersService.register(userData).subscribe((resp: any)=>{
+                this.assistantsService.createAssistant(userData).subscribe((resp: any)=>{
                   if(resp.code == 200){
                     modal.dismiss();
+                    this.listUsers();
                   }
                 });
               }else{
                 if(rol == this.DIRECTOR){
-                  this.usersService.register(userData).subscribe((resp: any)=>{
-                    if(resp.code == 200){
-                      modal.dismiss();
-                    }
-                  });
+                  modal.dismiss();
+                  this.listUsers();
                 }
               }
             }

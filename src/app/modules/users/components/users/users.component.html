@@ -35,6 +35,9 @@
                                 <b>Correo</b>
                             </th>
                             <th>
+                                <b>Rol</b>
+                            </th>
+                            <th>
                                 <b>Acción</b>
                             </th>
                         </tr>
@@ -45,16 +48,19 @@
                                 {{user.rut}}
                             </td>
                             <td>
-                                {{user.nombre}}
+                                {{user.nombre | titlecase}}
                             </td>
                             <td>
-                                {{user.apellidos}}
+                                {{user.apellidos | titlecase}}
                             </td>
                             <td>
-                                {{user.fecha_creacion}}
+                                {{user.fecha_creacion | date:"dd-MM-yyyy"}}
                             </td>
                             <td>
                                 {{user.email}}
+                            </td>
+                            <td>
+                                {{user.rol.nombre | titlecase}} 
                             </td>
                             <td>
                                 <!-- <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
