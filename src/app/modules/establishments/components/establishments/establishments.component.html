@@ -128,7 +128,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="establishmentFormEdit(f, modal)">Editar</button>
+      <button type="submit" class="btn btn-success" (keypress.enter)="establishmentFormEdit(f, modal)" (click)="establishmentFormEdit(f, modal)">Editar</button>
       <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
     </div>
   </div>
@@ -183,7 +183,8 @@
 <ng-template class="modal fade" #ModalContentSeeStudents let-modal>
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();deletePdf()">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();deletePdf()">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -196,7 +197,13 @@
               NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
             </div>
             <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-              (click)="exportPdf()" style="float: right; margin: 8px;">Exportar a PDF <i class="fa-solid fa-file-pdf"></i></button>
+              (click)="exportPdf()" style="float: right; margin: 8px;">Exportar a PDF <i
+                class="fa-solid fa-file-pdf"></i></button>
+            <div class="d-flex justify-content-center" *ngIf="spinnerSee == true" style="float: right;">
+              <div class="spinner-border text-success" role="status">
+              </div>
+              <span>Generando documento, espere porfavor.</span>
+            </div>
             <div *ngIf="students.length >= 1">
               <div class="table-responsive">
                 <table class="table table-striped" style="text-align: center;">

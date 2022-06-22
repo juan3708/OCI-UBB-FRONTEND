@@ -93,13 +93,14 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
   listEstablishmentsPerCycle() {
     this.cycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
+      console.log(resp);
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'xl' });
+    this.modalService.open(ModalContent, { size: 'xl', keyboard: false});
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
@@ -309,9 +310,13 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
   exportPdf() {
     let data = {
-      data: this.students,
-      nombreEstablecimiento: this.establishment.nombre
+      students: this.students,
+      nombreCiclo: this.cycle.nombre,
+      nombreEstablecimiento: this.establishment.nombre,
+      email: this.establishment.email,
+      emailProfesor: this.establishment.email_profesor
     }
+    this.spinnerSee = true;
     this.establishmentsService.exportPDF(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.fileName = resp.fileName;
@@ -319,12 +324,15 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
           icon: 'success',
           title: 'Se ha exportado correctamente'
         });
+        this.spinnerSee = false;
         window.location.assign(this.urlDownload + this.fileName);
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al exportar el archivo'
         });
+        this.spinnerSee = false;
       }
     })
   }
@@ -337,6 +345,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       this.establishmentsService.deletePDF(data).subscribe((resp: any) => { });
       this.fileName = -1;
     }
+    console.log('holi')
   }
 
   ngOnDestroy(): void {

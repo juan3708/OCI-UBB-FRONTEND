@@ -115,7 +115,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.noticias = resp.noticias;
-      console.log(this.noticias);
       this.rerender();
     })
   }
@@ -222,9 +221,6 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   editNews(news) {
     this.news = JSON.parse(JSON.stringify(news));
     this.images = news.adjuntos
-    console.log(this.news);
-    console.log(this.images);
-    console.log(news);
   }
 
   setImage(image) {
