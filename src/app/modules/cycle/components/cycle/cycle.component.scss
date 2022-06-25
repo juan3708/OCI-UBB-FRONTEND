@@ -1,9 +1,79 @@
 .btn-edit{
-    background: rgb(235,225,8);
-    background: linear-gradient(90deg, rgba(235,225,8,1) 0%, rgba(235,225,8,1) 100%);
+    background: rgb(199, 21, 169);
+    background: linear-gradient(90deg, rgb(199, 21, 169) 0%, rgb(228, 25, 194) 100%);
 }
 
-.btn-select{
+.btn-see{
     background: rgb(16,201,24) !important;
     background: linear-gradient(90deg, rgba(16,201,24,1) 0%, rgba(50,223,59,1) 100%) !important;
+  }
+.label-ident{
+    color: #3674a7!important;
+    font-weight: 300;
+}
+
+.col-form-label{
+  font-size: 16px;
+}
+
+.label-etbls{
+  padding-right: 10px;
+}
+
+.fa-id-card-clip{
+  font-size: 16px;
+  color: #b66dff;
+}
+
+.fa-rectangle-list{
+  font-size: 16px;
+  color: #b66dff;
+}
+
+.fa-square-poll-vertical{
+  font-size: 16px;
+  color: #b66dff;
+}
+
+.mdi-currency-usd{
+    font-size: 16px;
+    color: #b66dff;
+}
+
+.label-result{
+  font-weight: bold;
+}
+
+.positive{
+  color:lime;
+}
+
+.negative{
+  color:red;
+}
+
+.col-sm-9, .col-sm-6, .col-sm-4, .col-sm-5, .col-12, .col-sm-3{
+  padding-right: 0px !important;
+}
+
+.col-sm-3{
+  padding-left: 0px !important;
+}
+
+// .col-sm-9{
+//   width: 80% !important;
+// }
+
+h5{
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+.thGastos{
+  text-align: center;
+  border: transparent;
+}
+.withOutCss{
+  font-weight: normal !important;
+  text-align: left !important;
 }

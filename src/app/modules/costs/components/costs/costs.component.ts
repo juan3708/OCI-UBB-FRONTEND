@@ -9,7 +9,6 @@ import { CycleModel } from '../../../../../models/cycle.model';
 import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
 
 @Component({
@@ -27,6 +26,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   detail = new DetailsModel();
   detailsList;
   costs;
+  totalCost = 0;
   cost = new CostsModel();
   currentDate;
   students = [];
@@ -177,6 +177,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.costs = resp.gastos;
+      this.totalCost = resp.totalGastos;
       this.competencies = resp.ciclo.competencias;
       this.activities = resp.ciclo.actividades;
       this.rerender();
@@ -234,6 +235,13 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           return;
         }
       }
+      if((this.total + Number(this.totalCost))> Number(this.cycle.presupuesto)){
+        this.Toast.fire({
+          icon: 'error',
+          title: 'No se puede crear el gasto: El valor total se excede del presupuesto'
+        });
+        this.total = 0;
+      }else{
       let data = {
         valor: this.total,
         fecha: form.date,
@@ -283,6 +291,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           this.total = 0;
         }
       });
+    }
     } else {
       this.Toast.fire({
         icon: 'error',
@@ -556,6 +565,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'xl' });
   }
+
+  
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

@@ -22,11 +22,32 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   cycles;
   coordinators;
   cyclesEdit: FormGroup;
-  cycle = new CycleModel;
+  cycle;
   establishmentsCycle: EstablishmentModel[] = [];
   establishmentsPerCycle;
   establishmentsPerCycleId = [];
   establishments;
+
+  //VARIABLES ESTADISTICA OCI.
+  cantEstablecimientos = 0;
+  cantidadAlumnosInscritos = 0;
+  cantidadAlumnosParticipantes = 0;
+  cicloAnterior;
+  competencias = [];
+  diferenciaAlumnosInscritos = 0;
+  diferenciaAlumnosParticipantes = 0;
+  diferenciaEstablecimientos = 0;
+  establecimientoMaxInscritos;
+  establecimientoMaxParticipantes;
+  establecimientoMinInscritos;
+  establecimientoMinParticipantes;
+  establecimientos = [];
+  gastos;
+  totalGastos = 0;
+  prespuestoRestante = 0;
+  student;
+
+
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
 
@@ -154,7 +175,54 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  setCycle(cycle){
+  getStatisticPerCycle(id, modal) {
+    let data = {
+      ciclo_id: id
+    }
+
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.CycleService.getStatisticsPerCycle(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
+        console.log(resp, this.cycle);
+        this.cantEstablecimientos = Number(resp.cantEstablecimientos);
+        this.cantidadAlumnosInscritos = Number(resp.cantidadAlumnosInscritos);
+        this.cantidadAlumnosParticipantes = Number(resp.cantidadAlumnosParticipantes);
+        this.cicloAnterior = resp.cicloAnterior;
+        this.competencias = resp.competencias;
+        this.diferenciaAlumnosInscritos = Number(resp.diferenciaAlumnosInscritos);
+        this.diferenciaAlumnosParticipantes = Number(resp.diferenciaAlumnosParticipantes);
+        this.diferenciaEstablecimientos = Number(resp.diferenciaEstablecimientos);
+        this.establecimientoMaxInscritos = resp.establecimientoMaxInscritos;
+        this.establecimientoMaxParticipantes = resp.establecimientoMaxParticipantes;
+        this.establecimientoMinInscritos = resp.establecimientoMinInscritos;
+        this.establecimientoMinParticipantes = resp.establecimientoMinParticipantes;
+        this.establecimientos = resp.establecimientos;
+        this.gastos = resp.gastos;
+        this.totalGastos = resp.totalGastos;
+        this.prespuestoRestante = Number(this.cycle.presupuesto) - Number(this.totalGastos);
+        Swal.close()
+        this.modalService.open(modal, { size: 'xl' });
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error cargar la información',
+        });
+      }
+    })
+  }
+
+  setCycle(cycle) {
     this.cycle = JSON.parse(JSON.stringify(cycle));
   }
 
@@ -167,7 +235,13 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.establishmentsFee.push(establishmentsFeeForm);
     })
-    this.editFeeEstablishment.setControl('establishmentsFee',this.establishmentsFee);
+    this.editFeeEstablishment.setControl('establishmentsFee', this.establishmentsFee);
+  }
+
+  setStudent(student) {
+    this.student = JSON.parse(JSON.stringify(student));
+    console.log(this.student);
+
   }
 
   deleteCycle(id) {
@@ -198,7 +272,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
             this.Toast.fire({
               icon: 'error',
               title
-              : 'Error al eliminar el ciclo',
+                : 'Error al eliminar el ciclo',
               text: resp.id
             });
           }
@@ -249,34 +323,35 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Seleccione establecimientos porfavor'
       });
     } else {
-      if(this.establishmentsPerCycleId.length == 0 ){
+      if (this.establishmentsPerCycleId.length == 0) {
         this.Toast.fire({
           icon: 'info',
           title: 'No se efectuaron mas cambios'
         });
         modal.dismiss();
         this.clearForm();
-    }else{
-      let data = {
-        ciclo_id: this.cycle.id,
-        establecimientos_id: this.establishmentsPerCycleId
-      };
-      this.CycleService.chargeEstablishments(data).subscribe((resp: any) => {
-        if (resp.code == 200) {
-          modal.dismiss();
-          this.Toast.fire({
-            icon: 'success',
-            title: 'Se asignaron correctamente los establecimientos'
-          });
-          this.clearForm();
-        } else {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'Error al asignar los establecimientos'
-          });
-        }
-      })
-    }
+      } else {
+        let data = {
+          ciclo_id: this.cycle.id,
+          establecimientos_id: this.establishmentsPerCycleId
+        };
+        this.CycleService.chargeEstablishments(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            modal.dismiss();
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se asignaron correctamente los establecimientos'
+            });
+            this.clearForm();
+            this.listCycles();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al asignar los establecimientos'
+            });
+          }
+        })
+      }
     }
   }
 

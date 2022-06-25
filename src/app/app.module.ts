@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import es from '@angular/common/locales/es';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -40,6 +41,7 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
 import { UsersModule } from './modules/users/users.module';
 
 
+registerLocaleData(es);
 
 
 
@@ -88,7 +90,7 @@ import { UsersModule } from './modules/users/users.module';
     AllNewsModule,
     UsersModule
   ],
-  providers: [ThemeService],
+  providers: [ThemeService, {provide: LOCALE_ID, useValue: 'es-CL'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

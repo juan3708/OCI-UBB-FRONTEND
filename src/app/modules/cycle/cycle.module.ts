@@ -5,6 +5,7 @@ import { CycleRoutingModule } from './cycle-routing.module';
 import { CycleComponent } from './components/cycle/cycle.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { DataTablesModule } from 'angular-datatables';
     CycleRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    DataTablesModule
+    DataTablesModule,
+    NgbModule
   ]
 })
 export class CycleModule { }

@@ -156,6 +156,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
       ciclo_id: cycle,
       alumno_id: this.student.id
     }
+    this.see = 0;
     console.log(data);
     this.studentsService.getStatistic(data).subscribe((resp: any)=>{
       console.log(resp);

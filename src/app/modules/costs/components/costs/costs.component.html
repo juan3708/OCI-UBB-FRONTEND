@@ -3,6 +3,8 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title"><b>Gastos</b></h4>
+        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto: {{cycle.presupuesto | currency: 'CLP':"$"}}</h5>
+        <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado: {{totalCost | currency: 'CLP':"$"}}</h5>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent);clearForm()">Crear
             gasto</button>
@@ -183,7 +185,7 @@
                                     <div>
                                         <label for="priceDetail">Valor</label>
                                         <input type="number" class="form-control" id="priceDetail" placeholder="$"
-                                            formControlName="priceDetail">
+                                            formControlName="priceDetail" >
                                     </div>
                                     <br>
                                     <div class="form-group">

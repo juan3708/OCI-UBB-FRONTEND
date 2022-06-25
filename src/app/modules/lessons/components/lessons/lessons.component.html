@@ -8,7 +8,8 @@
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()"
-            style="float: right; margin: 8px;" *ngIf="lessons.length >=1" title="Ver Asistencia"><i class="fa-solid fa-users-line" ></i>Ver Asistencias</button>
+            style="float: right; margin: 8px;" *ngIf="lessons.length >=1" title="Ver Asistencia"><i
+                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -47,19 +48,22 @@
                                 (click)="openModal(ModalSeeLesson);setLesson(lesson)" title="Información de la clase"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)" title="Ingresar estudiantes"><i
-                                    class="fa-solid fa-person-circle-plus"></i></button>
+                                (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)"
+                                title="Ingresar estudiantes"><i class="fa-solid fa-person-circle-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
                                 (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"
-                                *ngIf="lesson.alumnos.length >=1" title="Registrar asistencia"><i class="fa-solid fa-users"></i></button>
+                                *ngIf="lesson.alumnos.length >=1" title="Registrar asistencia"><i
+                                    class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)" title="Asignar profesor y/o ayudantes">
-                                <i class="fa-solid fa-person-chalkboard" ></i></button>
+                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)"
+                                title="Asignar profesor y/o ayudantes">
+                                <i class="fa-solid fa-person-chalkboard"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                                 (click)="openModal(ModalContentEdit);setLesson(lesson)" title="Editar clase"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteLesson(lesson.id);" title="Eliminar clase"><i class="mdi mdi-delete" ></i></button>
+                                (click)="deleteLesson(lesson.id);" title="Eliminar clase"><i
+                                    class="mdi mdi-delete"></i></button>
 
 
                         </td>
@@ -174,7 +178,7 @@
                                             </td>
                                             <td>
                                                 <a type="button" data-dismiss="modal"
-                                                    (click)="removeStudentsPerLevelArray(student.id)" ><i
+                                                    (click)="removeStudentsPerLevelArray(student.id)"><i
                                                         class="mdi mdi-account-minus" style="font-size: 20px;"></i></a>
                                             </td>
                                         </tr>
@@ -250,7 +254,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="concatStudentsArrays(modal)"
-                *ngIf="students.length >= 1 || studentsPerLevel.length >=1" >Asignar</button>
+                *ngIf="students.length >= 1 || studentsPerLevel.length >=1">Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
@@ -378,7 +382,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addOrRemoveStudentPerLesson(modal)" >Guardar</button>
+            <button type="button" class="btn btn-success" (click)="addOrRemoveStudentPerLesson(modal)">Guardar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
@@ -467,9 +471,10 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="editAssistancePerStudent(modal)" title="Asignar">Asignar</button>
+            <button type="button" class="btn btn-success" (click)="editAssistancePerStudent(modal)"
+                title="Asignar">Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
-                (click)="modal.close();studentsAdd=[]" >Cancelar</button>
+                (click)="modal.close();studentsAdd=[]">Cancelar</button>
         </div>
     </div>
 </ng-template>
@@ -479,7 +484,7 @@
 <ng-template class="modal fade" #ModalContentEdit let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()" >
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -888,7 +893,7 @@
                             <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
                                 <ngb-panel id="collapse-{{indexEstablishments}}"
                                     *ngFor="let establishment of  establishments;let indexEstablishments = index"
-                                    title="{{establishment.nombre}} TOTAL ALUMNOS: {{establishment.alumnos.length}}">
+                                    title="{{establishment.nombre}} - TOTAL ALUMNOS: {{establishment.alumnos.length}}">
                                     <ng-template ngbPanelContent>
                                         <div class="table-responsive" *ngIf="establishment.alumnos.length >=1">
                                             <h5>Alumnos</h5>
@@ -986,52 +991,47 @@
 <!-- Modal LessonPerStudent starts -->
 <ng-template class="modal fade" #ModalContentLessonPerStudent let-modal>
     <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="col-12 stretch-card">
-                <div class="card">
-                    <div class="card-header" style="font-weight:bold;">
-                        CLASES ASOCIADAS
-                    </div>
-                    <div class="card-body text-primary">
-                        <div class="table-responsive">
-                            <table class="table table-striped" style="text-align: center;">
-                                <thead class="table table-bordered">
-                                    <tr>
-                                        <th>
-                                            <b>Fecha</b>
-                                        </th>
-                                        <th>
-                                            <b>Contenido</b>
-                                        </th>
-                                        <th>
-                                            <b>Asistencia</b>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table table-bordered">
-                                    <tr *ngFor="let student of student.Asistencias">
-                                        <td>
-                                            {{student.fecha}}
-                                        </td>
-                                        <td>
-                                            {{student.contenido}}
-                                        </td>
-                                        <td *ngIf="student.pivot.asistencia == 1" style="color: green;">
-                                            PRESENTE
-                                        </td>
-                                        <td *ngIf="student.pivot.asistencia == 0" style="color: red;">
-                                            AUSENTE
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        <div class="card">
+            <div class="card-header" style="font-weight:bold;">
+                CLASES ASOCIADAS
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="float: right;"
+                    (click)="modal.dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="card-body text-primary">
+                <div class="table-responsive">
+                    <table class="table table-striped" style="text-align: center;">
+                        <thead class="table table-bordered">
+                            <tr>
+                                <th>
+                                    <b>Fecha</b>
+                                </th>
+                                <th>
+                                    <b>Contenido</b>
+                                </th>
+                                <th>
+                                    <b>Asistencia</b>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="table table-bordered">
+                            <tr *ngFor="let student of student.Asistencias">
+                                <td>
+                                    {{student.fecha}}
+                                </td>
+                                <td>
+                                    {{student.contenido}}
+                                </td>
+                                <td *ngIf="student.pivot.asistencia == 1" style="color: green;font-weight: bold;">
+                                    PRESENTE
+                                </td>
+                                <td *ngIf="student.pivot.asistencia == 0" style="color: red;font-weight: bold">
+                                    AUSENTE
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -29,12 +29,19 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   cycle = new CycleModel();
   cycles;
   student;
-  studentStatistic = {
+  studentActualStatistic = {
     Asistencias: Array(),
     Porcentaje: 0,
     CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
     Competencias: Array()
   };
+  studentSearchStatistic = {
+    Asistencias: Array(),
+    Porcentaje: 0,
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+    Competencias: Array()
+  };
+  see = 0;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -53,7 +60,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
   ngOnInit(): void {
     // this.listStudents();
     // this.listEstablishments();
-    //this.listCycles();
+    this.listCycles();
     // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
@@ -193,26 +200,43 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
     this.student = JSON.parse(JSON.stringify(student));
   }
 
-  getStudentStatistic(id) {
+  getStudentStatistic(id,op) {
     let data = {
       ciclo_id: this.cycle.id,
       alumno_id: id
     }
+    this.see = 0;
     this.studentsService.getStatistic(data).subscribe((resp: any)=>{
       if(resp.code == 200){
-        this.studentStatistic = resp;
+        if(op == 1){
+          this.studentActualStatistic = resp;
+        }else{
+          this.studentSearchStatistic = resp;
+          this.see = 1;
+        }
       }else{
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta',
           text: resp.message
         });
-        this.studentStatistic = {
-          Asistencias: Array(),
-          Porcentaje: 0,
-          CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
-          Competencias: Array()
-        };
+        if(op == 1){
+          this.studentActualStatistic = {
+            Asistencias: Array(),
+            Porcentaje: 0,
+            CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+            Competencias: Array()
+          };
+        }else{
+          this.studentSearchStatistic = {
+            Asistencias: Array(),
+            Porcentaje: 0,
+            CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+            Competencias: Array()
+          };
+          this.see = 0
+        }
+
       }
     })
   }

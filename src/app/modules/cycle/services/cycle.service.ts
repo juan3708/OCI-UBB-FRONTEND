@@ -119,4 +119,9 @@ export class CycleService {
     return this.http.post(url+'/ciclo/getstudentassistancepercycle', data, option);
   }
 
+  getStatisticsPerCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstatisticspercycle', data, option);
+  }
+
 }
