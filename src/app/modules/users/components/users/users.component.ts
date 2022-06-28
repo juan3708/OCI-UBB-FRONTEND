@@ -17,16 +17,17 @@ import { UsersService } from '../../services/users.service';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   users;
   roles;
-  ADMIN=1;
-  COORDINADOR=2;
-  PROFESOR=3;
-  AYUDANTE=4;
-  DIRECTOR=5;
+  check;
+  ADMIN = 1;
+  COORDINADOR = 2;
+  PROFESOR = 3;
+  AYUDANTE = 4;
+  DIRECTOR = 5;
   isTeacher;
   faculty = '';
   modality = '';
@@ -62,13 +63,13 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
@@ -90,15 +91,58 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onChangeRol(rol){
-    if(rol == this.PROFESOR){
+  onChangeRol(rol) {
+    if (rol == this.PROFESOR) {
       this.isTeacher = true;
-    }else{
+    } else {
       this.isTeacher = false;
     }
   }
 
-  userFormCreate(rut, name, surname, email, rol, modal){
+  changeStatus(event,status, id) {
+    let data = {
+      user_id: id,
+      activo: status
+    }
+    event.preventDefault();
+    Swal.fire({
+      title: '¿Está seguro que desea cambiar el estado a este usuario?',
+      icon: 'info',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usersService.changeStatus(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: resp.message
+            });
+            this.listUsers();
+          } else {
+            if (resp.code == 401) {
+              this.Toast.fire({
+                icon: 'error',
+                title: resp.message
+              });
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al realizar la acción',
+              });
+            }
+          }
+        });
+      }else{
+
+      }
+    });
+  }
+
+  userFormCreate(rut, name, surname, email, rol, modal) {
     let userData = {
       rut,
       nombre: name,
@@ -108,12 +152,23 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
       fecha_creacion: formatDate(new Date(), 'yyyy-MM-dd', 'en'),
       rol_id: rol
     };
-    console.log(userData);
-    this.usersService.register(userData).subscribe((resp:any)=>{
-      if(resp.code == 200){
-        if(rol == this.PROFESOR){
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.usersService.register(userData).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        if (rol == this.PROFESOR) {
           let data = {
-            rut, 
+            rut,
             nombre: name,
             apellidos: surname,
             email,
@@ -121,35 +176,34 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
             modalidad: this.modality
           }
           console.log(data);
-          this.teachersService.createTeacher(data).subscribe((resp: any)=>{
-            console.log(resp);
-            if(resp.code == 200){
+          this.teachersService.createTeacher(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
               modal.dismiss();
               this.listUsers();
             }
           });
-        }else{
-          if(rol == this.ADMIN){
-              modal.dismiss();
-              this.listUsers();
-          }else{
-            if(rol == this.COORDINADOR){
-              this.coordinatorsService.createCoordinator(userData).subscribe((resp: any)=>{
-                if(resp.code == 200){
+        } else {
+          if (rol == this.ADMIN) {
+            modal.dismiss();
+            this.listUsers();
+          } else {
+            if (rol == this.COORDINADOR) {
+              this.coordinatorsService.createCoordinator(userData).subscribe((resp: any) => {
+                if (resp.code == 200) {
                   modal.dismiss();
                   this.listUsers();
                 }
               });
-            }else{
-              if(rol == this.AYUDANTE){
-                this.assistantsService.createAssistant(userData).subscribe((resp: any)=>{
-                  if(resp.code == 200){
+            } else {
+              if (rol == this.AYUDANTE) {
+                this.assistantsService.createAssistant(userData).subscribe((resp: any) => {
+                  if (resp.code == 200) {
                     modal.dismiss();
                     this.listUsers();
                   }
                 });
-              }else{
-                if(rol == this.DIRECTOR){
+              } else {
+                if (rol == this.DIRECTOR) {
                   modal.dismiss();
                   this.listUsers();
                 }
@@ -157,17 +211,20 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }
         }
+        Swal.close();
         this.Toast.fire({
           icon: 'success',
           title: 'Se ha creado correctamente el usuario'
         });
-      }else{
+      } else {
         if (resp.code == 400) {
+          Swal.close();
           this.Toast.fire({
             icon: 'error',
             title: 'Ingrese correctamente los valores'
           });
         } else {
+          Swal.close();
           this.Toast.fire({
             icon: 'error',
             title: 'Error al crear el usuario',

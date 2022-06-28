@@ -200,27 +200,40 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
     this.student = JSON.parse(JSON.stringify(student));
   }
 
-  getStudentStatistic(id,op) {
+  getStudentStatistic(op) {
     let data = {
       ciclo_id: this.cycle.id,
-      alumno_id: id
+      alumno_id: this.student.id
     }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.see = 0;
     this.studentsService.getStatistic(data).subscribe((resp: any)=>{
       if(resp.code == 200){
-        if(op == 1){
+        if(op == 0){
           this.studentActualStatistic = resp;
         }else{
           this.studentSearchStatistic = resp;
           this.see = 1;
         }
+        Swal.close()
       }else{
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta',
           text: resp.message
         });
-        if(op == 1){
+        if(op == 0){
           this.studentActualStatistic = {
             Asistencias: Array(),
             Porcentaje: 0,
@@ -236,7 +249,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
           };
           this.see = 0
         }
-
+        Swal.close()
       }
     })
   }

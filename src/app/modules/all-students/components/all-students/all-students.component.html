@@ -3,7 +3,7 @@
 <div class="card">
   <div class="card-body">
     <h4 class="card-title"><b>Mantenedor Alumnos
-    </b></h4>
+      </b></h4>
     <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
       (click)="openModal(ModalContent)">Registrar alumno</button>
     <div class="table-responsive">
@@ -38,9 +38,11 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                (click)="openModal(ModalContentStatistics);setStudent(student);" title="Estadistica del alumno"><i class="mdi mdi-eye"></i></button>
+                (click)="openModal(ModalContentStatistics);setStudent(student);" title="Estadistica del alumno"><i
+                  class="mdi mdi-eye"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);setStudent(student)" title="Editar alumno"><i class="mdi mdi-grease-pencil"></i></button>
+                (click)="openModal(ModalContentEdit);setStudent(student)" title="Editar alumno"><i
+                  class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                 (click)="deleteStudent(student.id)" title="Eliminar alumno"><i class="mdi mdi-delete"></i></button>
             </td>
@@ -240,18 +242,20 @@
     <div class="col-12 grid-margin">
       <div class="card">
         <div class="card-body">
-          <br>
           <h4 style="text-align: center;font-weight: bold;">Estadistica del alumno</h4>
           <p class="card-description">
             Seleccione el ciclo para cargar la Información del alumno.
           </p>
-          <br>
-              <select class="custom-select ciclo" id="cycle" name="cycle" #cycle>
-                <option selected [ngValue]=null >Seleccione un ciclo</option>
-                <option *ngFor="let cycle of cycles" [value]="cycle.id">
-                  {{cycle.nombre}}</option>
-              </select>
-              <button type="button" class="btn btn-success" style="margin-left: 8px;" (click)="getStudentStatistic(cycle.value)">Buscar</button>
+          <div class="input-group mb-3">
+            <select class="custom-select ciclo" id="cycle" name="cycle" #cycle>
+              <option selected [ngValue]=null>Seleccione un ciclo</option>
+              <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                {{cycle.nombre}}</option>
+            </select>
+            <button type="button" class="btn btn-success" style="margin-left: 8px;"
+              (click)="getStudentStatistic(cycle.value)">Buscar</button>
+          </div>
+
         </div>
       </div>
       <div *ngIf="see == 1">

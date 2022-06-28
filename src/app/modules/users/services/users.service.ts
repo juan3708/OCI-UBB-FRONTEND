@@ -25,4 +25,10 @@ export class UsersService {
   getAllUsers(){
     return this.http.get(url+'/usuario/all')
   }
+
+  changeStatus(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/usuario/changestatus', data, option);
+  }
+  
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CompetenciesModel } from '../../../../../models/competencies.model';
 import { CompetenciesService } from '../../services/competencies.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -19,7 +19,7 @@ import { CostsService } from '../../../costs/services/costs.service';
 })
 
 export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   cicloOld;
@@ -31,6 +31,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   detailsPerCost;
   currentDate;
   competencies;
+  totalCost;
   studentsPerCycle = [];
   studentsAdd = [];
   students = [];
@@ -64,8 +65,8 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     details: this.fb.array([])
   });
 
-  constructor(private CompetenciesService: CompetenciesService, private cycleService: CycleService, private modalService: NgbModal, private costsService: CostsService,private fb: FormBuilder) {
-      this.cicloOld = {};
+  constructor(private CompetenciesService: CompetenciesService, private cycleService: CycleService, private modalService: NgbModal, private costsService: CostsService, private fb: FormBuilder) {
+    this.cicloOld = {};
   }
 
   ngOnInit(): void {
@@ -80,12 +81,12 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
-   
+
       }
     }
   }
@@ -106,7 +107,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     }
   }
 
-  getDetailsPerCost(cost){
+  getDetailsPerCost(cost) {
     this.detailsPerCost = cost.detalles;
   }
 
@@ -154,8 +155,8 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     let data = {
       fecha_termino: this.currentDate
     };
-    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.competencies = resp.ciclo.competencias;
         this.studentsPerCycle = resp.alumnosParticipantes;
@@ -176,12 +177,13 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.competencies = resp.competencias;
-      if(resp.alumnosParticipantes.length >=1){
-      this.studentsPerCycle = resp.alumnosParticipantes;
-      }else{
+      if (resp.alumnosParticipantes.length >= 1) {
+        this.studentsPerCycle = resp.alumnosParticipantes;
+
+      } else {
         this.studentsPerCycle = [];
       }
-      this.deleteStudentCompetitionArray();
+      this.totalCost = resp.totalGastos;
       this.rerender();
     })
   }
@@ -229,52 +231,66 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     });
   }
 
-  getCompetition(id) {
+  getCompetition(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.CompetenciesService.getCompetitionById(data).subscribe((resp: any) => {
       this.competition = resp.competencia
-      if(resp.competencia.alumnos.length >=1){
+      if (resp.competencia.alumnos.length >= 1) {
         this.students = resp.competencia.alumnos;
-        }else{
-          this.students = [];
-        }
-        if( resp.gastos.length >=1){
-          this.costs = resp.gastos;
-          }else{
-            this.costs = [];
-          }
-      this.deleteStudentCompetitionArray();
+      } else {
+        this.students = [];
+      }
+      if (resp.gastos.length >= 1) {
+        this.costs = resp.gastos;
+      } else {
+        this.costs = [];
+      }
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
+      if (resp.alumnosSinCompetencia.length >= 1) {
+        this.studentsPerCycle = resp.alumnosSinCompetencia;
+      } else {
+        this.studentsPerCycle = [];
+      }
       if (this.students.length >= 1) {
         this.setEditFeeForm();
       }
     });
   }
 
-  setCompetition(competition){
+  setCompetition(competition) {
     this.competition = JSON.parse(JSON.stringify(competition));
     this.students = competition.alumnos;
-    if(competition.alumnos.length >=1){
+    if (competition.alumnos.length >= 1) {
       this.students = competition.alumnos;
-      }else{
-        this.students = [];
-      }
-    this.deleteStudentCompetitionArray();
+    } else {
+      this.students = [];
+    }
+    if (competition.alumnosSinCompetencia.length >= 1) {
+      this.studentsPerCycle = competition.alumnosSinCompetencia;
+    } else {
+      this.studentsPerCycle = [];
+    }
     if (this.students.length >= 1) {
       this.setEditFeeForm();
     }
 
-  }
-
-  deleteStudentCompetitionArray() {
-    this.students.forEach((s) => {
-      this.studentsPerCycle.forEach((sp,index) => {
-        if (s.id == sp.id) {
-          this.studentsPerCycle.splice(index, 1);
-        }
-      })
-    });
   }
 
   addOrRemoveStudentAddArray(event, student) {
@@ -343,7 +359,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
-            this.getCycle(this.cycle.id);            
+            this.getCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -471,54 +487,63 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
           return;
         }
       }
-      let data = {
-        valor: this.total,
-        fecha: form.date,
-        ciclo_id: this.cycle.id,
-        competencia_id: this.competition.id
-      }
-      this.costsService.createCosts(data).subscribe((resp: any) => {
-        if (resp.code == 200) {
-          modal.dismiss();
-          let gastos_id = resp.gastos.id;
-          for (let index = 0; index < this.details.length; index++) {
-            let dataDetail = {
-              valor: this.details.value[index].priceDetail,
-              nombre: this.details.value[index].name,
-              gastos_id: gastos_id
-            };
-            this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
-              if (resp.code != 200) {
-                this.Toast.fire({
-                  icon: 'error',
-                  title: 'Error al crear detalle'
-                });
-                return;
-              }
-            })
-          }
-          this.Toast.fire({
-            icon: 'success',
-            title: 'Se ha creado correctamente'
-          });
-          this.getCompetition(this.competition.id);
-          this.clearForm();
-        } else {
-          if (resp.code == 400) {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Ingrese correctamente los valores'
-            });
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al crear un gasto',
-              text: resp.message
-            });
-          }
-          this.total = 0;
+      if ((this.total + Number(this.totalCost)) > Number(this.cycle.presupuesto)) {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'No se puede crear el gasto: El valor total se excede del presupuesto'
+        });
+        this.total = 0;
+      } else {
+        let data = {
+          valor: this.total,
+          fecha: form.date,
+          ciclo_id: this.cycle.id,
+          competencia_id: this.competition.id
         }
-      });
+        this.costsService.createCosts(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            modal.dismiss();
+            let gastos_id = resp.gastos.id;
+            for (let index = 0; index < this.details.length; index++) {
+              let dataDetail = {
+                valor: this.details.value[index].priceDetail,
+                nombre: this.details.value[index].name,
+                gastos_id: gastos_id
+              };
+              this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al crear detalle'
+                  });
+                  return;
+                }
+              })
+            }
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha creado correctamente'
+            });
+            this.totalCost = this.total + Number(this.totalCost);
+            this.getCompetition(this.competition.id, null);
+            this.clearForm();
+          } else {
+            if (resp.code == 400) {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Ingrese correctamente los valores'
+              });
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al crear un gasto',
+                text: resp.message
+              });
+            }
+            this.total = 0;
+          }
+        });
+      }
     } else {
       this.Toast.fire({
         icon: 'error',

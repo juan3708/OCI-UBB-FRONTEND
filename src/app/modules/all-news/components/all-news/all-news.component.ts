@@ -131,6 +131,18 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       if (resp.code === 200) {
         let noticia_id = resp.noticia.id;
         if (this.selectedFiles.length >= 1) {
+          Swal.fire({
+            title: 'Espere porfavor...',
+            didOpen: () => {
+              Swal.showLoading()
+            },
+            willClose: () => {
+              Swal.hideLoading()
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false
+          });
           for (let index = 0; index < this.selectedFiles.length; index++) {
             const formData = new FormData();
             formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
@@ -138,13 +150,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             this.allNewsService.chargePhotosPerNews(formData).subscribe((resp: any) => {
             })
           }
-          Swal.fire({
-            title: 'Cargando imagenes',
-            timer: 1000,
-            didOpen: async () => {
-              Swal.showLoading()
-            },
-          })
+          Swal.close();
         }
         this.Toast.fire({
           icon: 'success',

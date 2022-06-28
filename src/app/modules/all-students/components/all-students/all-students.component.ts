@@ -1,4 +1,4 @@
-import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { StudentModel } from 'src/models/student.model';
@@ -14,8 +14,8 @@ import { CycleService } from '../../../cycle/services/cycle.service';
   templateUrl: './all-students.component.html',
   styleUrls: ['./all-students.component.scss']
 })
-export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
-  @ViewChild(DataTableDirective, {static: false})
+export class AllStudentsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   students;
@@ -42,20 +42,20 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private cycleService:CycleService,private modalService: NgbModal) { }
+  constructor(private studentsService: StudentsService, private cycleService: CycleService, private modalService: NgbModal) { }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
@@ -71,46 +71,46 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
     };
   }
 
-  listStudents(){
-    this.studentsService.getStudents().subscribe((resp:any)=>{
-      this.students=resp.alumnos;
+  listStudents() {
+    this.studentsService.getStudents().subscribe((resp: any) => {
+      this.students = resp.alumnos;
       this.rerender()
     });
   }
 
-  listEstablishments(){
-    this.studentsService.getEstablishments().subscribe((resp:any)=>{
-      this.establishments=resp.establecimientos;
+  listEstablishments() {
+    this.studentsService.getEstablishments().subscribe((resp: any) => {
+      this.establishments = resp.establecimientos;
     });
   }
 
-  openModal( ModalContent ) {
-    this.modalService.open( ModalContent, { size : 'xl'} );
+  openModal(ModalContent) {
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
-  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal){
+  studentFormCreate(rut, name, surname, phoneNumber, email, dateOfBirth, grade, address, parentNumber, parent, establishment, modal) {
     let data = {
       rut,
       nombre: name,
       apellidos: surname,
-      telefono: phoneNumber, 
+      telefono: phoneNumber,
       email,
       fecha_nacimiento: dateOfBirth,
       curso: grade,
-      direccion: address, 
+      direccion: address,
       telefono_apoderado: parentNumber,
       nombre_apoderado: parent,
       establecimiento_id: establishment
     };
-    this.studentsService.createStudent(data).subscribe((resp: any) =>{
-      if(resp.code==200){        
+    this.studentsService.createStudent(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno creado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -136,16 +136,16 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
     });
   }
 
-  setStudent(student){
+  setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
-    
+
   }
 
-  getCycles(){
-    this.cycleService.getCycles().subscribe((resp:any)=>{
-      if(resp.code == 200){
+  getCycles() {
+    this.cycleService.getCycles().subscribe((resp: any) => {
+      if (resp.code == 200) {
         this.cycles = resp.ciclos;
-      }else{
+      } else {
         this.cycles = [];
       }
     })
@@ -157,13 +157,24 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
       alumno_id: this.student.id
     }
     this.see = 0;
-    console.log(data);
-    this.studentsService.getStatistic(data).subscribe((resp: any)=>{
-      console.log(resp);
-      if(resp.code == 200){
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.studentsService.getStatistic(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
         this.studentStatistic = resp;
         this.see = 1;
-      }else{
+        Swal.close();
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta',
@@ -175,22 +186,23 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
           CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
           Competencias: Array()
         };
-        this.see  = 0;
+        Swal.close();
+        this.see = 0;
       }
     })
   }
 
-  studentFormEdit(form: NgForm, modal){
-    this.studentsService.editStudent(this.student).subscribe((resp: any)=> {
+  studentFormEdit(form: NgForm, modal) {
+    this.studentsService.editStudent(this.student).subscribe((resp: any) => {
 
-      if(resp.code == 200){
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Alumno editado correctamente'
         });
         this.listStudents();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -233,7 +245,7 @@ export class AllStudentsComponent implements OnInit,OnDestroy,AfterViewInit {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el alumno',
-              text: resp.id 
+              text: resp.id
             });
           }
         });

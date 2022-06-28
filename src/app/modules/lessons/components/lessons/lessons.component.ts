@@ -28,7 +28,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   lessons = [];
   lessonSee;
   cycles;
-  establishments =[]
+  establishments = []
   bool;
   currentDate;
   lesson = new LessonModel();
@@ -186,10 +186,22 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  getLesson(id) {
+  getLesson(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.lessonsService.getLessonById(data).subscribe((resp: any) => {
       this.lesson = resp.clase;
       this.studentsLesson = resp.clase.alumnos;
@@ -197,15 +209,31 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.lessonTeachers = resp.clase.profesores;
       this.students = resp.alumnosSinClase;
       this.getLevelById(this.lesson.nivel_id);
-      this.rerender();
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
+
     });
 
   }
 
-  getStudentAssistancePerCycle() {
+  getStudentAssistancePerCycle(ModalContent) {
     let data = {
       ciclo_id: this.cycle.id
     }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.cycleService.getStudentAssistancePerCycle(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         if (resp.Establecimientos.length >= 1) {
@@ -213,12 +241,16 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         } else {
           this.establishments = [];
         }
+        Swal.close();
+        this.modalService.open(ModalContent, { size: 'xl' });
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta'
         });
         this.establishments = [];
+        Swal.close();
       }
     })
   }
@@ -249,10 +281,22 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.student = JSON.parse(JSON.stringify(student));
 
   }
-  getTeachersAndAssistants(id) {
+  getTeachersAndAssistants(id,ModalContent) {
     let data = {
       clase_id: id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.lessonsService.getTeachersAndAssistants(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         if (resp.profesores.length >= 1) {
@@ -266,11 +310,15 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         } else {
           this.assistants = [];
         }
+        Swal.close();
+        this.modalService.open(ModalContent, { size: 'xl' });
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta'
         });
+        Swal.close();
       }
     })
   }
@@ -366,7 +414,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   async deleteLesson(id) {
-    this.getLesson(id);
+    this.getLesson(id, null);
     await new Promise(f => setTimeout(f, 800));
     if (this.studentsLesson.length >= 1) {
       this.studentsId = this.studentsLesson.map((s: any) => {
@@ -517,9 +565,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  async chargeAssistance(lesson) {
-    this.getLesson(lesson);
-    await new Promise(f => setTimeout(f, 800));
+  async chargeAssistance(lesson,ModalContent ) {
+    this.getLesson(lesson, ModalContent);
     this.studentsAssistance = this.studentsLesson.map((s: any) => {
       let assistance = {
         alumno_id: s.id,
@@ -530,6 +577,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.studentsId = this.studentsAssistance.map((s: any) => {
       return s.alumno_id;
     });
+
   }
 
   editAssistancePerStudent(modal) {

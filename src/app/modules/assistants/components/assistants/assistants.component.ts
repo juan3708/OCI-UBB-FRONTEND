@@ -112,22 +112,31 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
     let data = {
       ciclo_id: this.cycle.id
     }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.assistantsService.getAssistantsPerCycle(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.assistants = resp.ayudantes;
-        Swal.fire({
-          title: 'Espere porfavor',
-          timer: 600,
-          didOpen: async () => {
-            Swal.showLoading()
-          },
-        })
         this.rerender();
+        Swal.close()
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
         });
+        Swal.close()
+
       }
     });
   }

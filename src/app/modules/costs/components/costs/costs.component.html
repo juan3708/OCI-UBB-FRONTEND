@@ -3,8 +3,14 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title"><b>Gastos</b></h4>
-        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto: {{cycle.presupuesto | currency: 'CLP':"$"}}</h5>
-        <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado: {{totalCost | currency: 'CLP':"$"}}</h5>
+        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto: {{cycle.presupuesto |
+            currency: 'CLP':"$"}}</h5>
+        <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado: {{totalCost | currency: 'CLP':"$"}}
+        </h5>
+        <button type="button" style="float: right; margin: 8px;"
+            class="btn btn-gradient-info btn-rounded btn-sm export-pdf"
+            (click)="exportPdf();openModal(ModalListCostPerDate)" style="float: right; margin: 8px;"
+            *ngIf="costs.length != 0">Exportar a PDF <i class="fa-solid fa-file-pdf"></i></button>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent);clearForm()">Crear
             gasto</button>
@@ -63,7 +69,8 @@
                                 (click)="openModal(ModalContentEdit);setCost(cost)" title="Editar gastos"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteCost(cost.id);setCost(cost)" title="Eliminar gastos"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteCost(cost.id);setCost(cost)" title="Eliminar gastos"><i
+                                    class="mdi mdi-delete"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -185,7 +192,7 @@
                                     <div>
                                         <label for="priceDetail">Valor</label>
                                         <input type="number" class="form-control" id="priceDetail" placeholder="$"
-                                            formControlName="priceDetail" >
+                                            formControlName="priceDetail">
                                     </div>
                                     <br>
                                     <div class="form-group">
@@ -412,6 +419,144 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal ListStudentPerDatesAndCycle starts -->
+
+<!-- Modal ListStudentPerDatesAndCycle starts -->
+<ng-template class="modal fade" #ModalListCostPerDate let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Exportar gastos</h4>
+                        <p class="card-description">
+                            Seleccione el rango de fecha para exportar gastos.
+                        </p>
+                        <form class="forms-sample"
+                            style="float: left; display: flex; justify-content: rigth;flex-wrap: wrap;">
+                            <div class="form-group">
+                                <label for="start_date" style="display: inline-block; margin-bottom: 8px;">Fecha
+                                    inicio</label>
+                                <input type="date" class="form-control" id="start_date" max={{cycle.fecha_termino}}
+                                    min={{cycle.fecha_inicio}}
+                                    style="width: 150px;display:flex; justify-content:flex-start;" #start_date>
+                            </div>
+                            <div class="form-group">
+                                <label for="finish_date" style="display: inline-block; margin-bottom: 8px">Fecha
+                                    final</label>
+                                <input type="date" class="form-control" id="finish_date" max={{cycle.fecha_termino}}
+                                    min={{cycle.fecha_inicio}}
+                                    style="width: 150px; display:flex; justify-content:flex-start;margin-left: 8px;"
+                                    #finish_date>
+                            </div>
+                            <label style="display: inline-block; margin-bottom: 8px"></label>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                (click)="getCostPerDateAndCycle(start_date.value, finish_date.value)"
+                                style="height: 40px;margin-left: 4px;margin-top: 16px;"> <i
+                                    class="fa-solid fa-magnifying-glass"></i></button>
+                        </form>
+                        <div *ngIf="contentSee == 1">
+                            <div>
+                                <div *ngIf="costsExport.length == 0" style="text-align: center;font-weight:bold;">
+                                    NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
+                                </div>
+                                <br>
+                                <div *ngIf="costsExport.length >= 1">
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" style="text-align: center;"
+                                                style="background-color: transparent;border: transparent;">
+                                                <thead class="table table-bordered"
+                                                    style="background-color: transparent;border: transparent;">
+                                                    <tr>
+                                                        <th class="thGastos">
+                                                            <h5 style="font-weight: bold;">Total Gastado: {{total | currency: 'CLP':"$"}}</h5>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <br>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div *ngFor="let cost of costsExport">
+                                            <div class="table-responsive">
+                                                <thead class="table table-bordered">
+                                                    <tr>
+                                                        <th style="border: transparent;">Fecha: {{cost.fecha|
+                                                            date:"dd-MM-yyyy"}}</th>
+                                                        <th *ngIf="cost.actividad == null&&cost.competencia == null"
+                                                            class="thGastos">
+                                                            No asociado.
+                                                        </th>
+                                                        <th *ngIf="cost.actividad &&cost.competencia" class="thGastos">
+                                                            Asociado con la Actividad: {{cost.actividad.nombre}} y
+                                                            Competencia:
+                                                            {{cost.competencia.tipo}}
+                                                        </th>
+                                                        <th *ngIf="cost.actividad && cost.competencia == null"
+                                                            class="thGastos">
+                                                            Asociado con la Actividad: {{cost.actividad.nombre}}
+                                                        </th>
+                                                        <th *ngIf="cost.competencia && cost.actividad == null"
+                                                            class="thGastos">
+                                                            Asociado con la Competencia: {{cost.competencia.tipo}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <table class="table table-striped" style="text-align: center;"
+                                                    style="background-color: transparent;">
+
+                                                    <thead class="table table-bordered">
+                                                        <tr>
+
+                                                            <th>
+                                                                <b>Nombre Detalle</b>
+                                                            </th>
+                                                            <th>
+                                                                <b>Valor</b>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table table-bordered">
+                                                        <tr *ngFor="let detail of cost.detalles">
+                                                            <td>
+                                                                {{detail.nombre}}
+                                                            </td>
+                                                            <td>
+                                                                {{detail.valor | currency: 'CLP':"$"}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <td style="font-weight: bold;text-align: right;">TOTAL:</td>
+                                                    <td style="border: 1px solid #ebedf2;">{{cost.valor | currency:
+                                                        'CLP':"$" }}
+                                                    </td>
+                                                    <br>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="exportPdf()">Exportar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
         </div>
     </div>
 </ng-template>

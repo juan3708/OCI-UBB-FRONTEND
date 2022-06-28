@@ -92,22 +92,30 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
     let data = {
       ciclo_id: this.cycle.id
     }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.teachersService.getTeachersPerCycle(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.teachers = resp.profesores;
-        Swal.fire({
-          title: 'Espere porfavor',
-          timer: 600,
-          didOpen: async () => {
-            Swal.showLoading()
-          },
-        })
         this.rerender();
+        Swal.close()
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
         });
+        Swal.close()
+
       }
     });
   }

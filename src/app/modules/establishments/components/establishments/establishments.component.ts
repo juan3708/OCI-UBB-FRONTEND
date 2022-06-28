@@ -213,19 +213,32 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
-  getStudents(id) {
+  getStudents(id,ModalContent) {
     let data = {
       ciclo_id: this.cycle.id,
       establecimiento_id: id
     }
-
-    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         if (resp.estudiantesConEstadisticaDeAsistencia != undefined) {
           this.students = resp.estudiantesConEstadisticaDeAsistencia;
         } else {
           this.students = [];
         }
+        Swal.close();
+    this.modalService.open(ModalContent, { size: 'xl', keyboard: false});
+
       }
     })
   }
@@ -345,7 +358,6 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       this.establishmentsService.deletePDF(data).subscribe((resp: any) => { });
       this.fileName = -1;
     }
-    console.log('holi')
   }
 
   ngOnDestroy(): void {

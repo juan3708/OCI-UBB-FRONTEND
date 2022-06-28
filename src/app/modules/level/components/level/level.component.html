@@ -39,7 +39,7 @@
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteLevel(level.id)" title="Eliminar nivel"><i class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalAddStudentLevel);getLevel(level.id)" title="Asignar alumnos"><i
+                                (click)="getLevel(level.id,ModalAddStudentLevel)" title="Asignar alumnos"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalStudentPerLevel);setLevel(level)"

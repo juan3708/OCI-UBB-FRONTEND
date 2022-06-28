@@ -52,8 +52,7 @@
                                 (click)="deleteActivity(activity.id)" title="Editar actividad"><i
                                     class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalListCost);getActivity(activity.id)"
-                                *ngIf="activity.gastos.length >=1" title="Gastos"><i
+                                (click)="getActivity(activity.id,ModalListCost)" title="Gastos"><i
                                     class="fa-solid fa-file-invoice-dollar"></i></button>
                         </td>
                     </tr>
@@ -168,42 +167,55 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card">Gastos de la competencia {{activity.nombre}}</h4>
+                        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto:
+                            {{cycle.presupuesto |
+                            currency: 'CLP':"$"}}</h5>
+                        <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado en las OCI:
+                            {{totalCost | currency: 'CLP':"$"}}
+                        </h5>
                         <button type="button" style="float: right; margin: 8px;"
                             class="btn btn-gradient-info btn-rounded btn-sm"
-                            (click)="openModal(ModalCostCreate);clearForm();costsFormCreate.patchValue({ 'activityName': activity.nombre });" style="float: right; margin: 8px;">Crear
+                            (click)="openModal(ModalCostCreate);clearForm();costsFormCreate.patchValue({ 'activityName': activity.nombre });"
+                            style="float: right; margin: 8px;">Crear
                             gasto</button>
-                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
-                            style="text-align: center;">
-                            <thead class="table table-bordered">
-                                <tr>
-                                    <th>
-                                        <b>Fecha</b>
-                                    </th>
-                                    <th>
-                                        <b>Valor</b>
-                                    </th>
-                                    <th>
-                                        <b>Ver Detalles</b>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="table table-bordered">
-                                <tr *ngFor="let cost of costs">
-                                    <td>
-                                        {{cost.fecha | date:"dd-MM-yyyy"}}
-                                    </td>
-                                    <td>
-                                        {{cost.valor | currency: 'CLP':"$"}}
-                                    </td>
-                                    <td>
-                                        <button type="button"
-                                            class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                            (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
-                                                class="mdi mdi-eye"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div *ngIf="costs.length >=1">
+                            <table class="table table-striped" style="text-align: center;">
+                                <thead class="table table-bordered">
+                                    <tr>
+                                        <th>
+                                            <b>Fecha</b>
+                                        </th>
+                                        <th>
+                                            <b>Valor</b>
+                                        </th>
+                                        <th>
+                                            <b>Ver Detalles</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table table-bordered">
+                                    <tr *ngFor="let cost of costs">
+                                        <td>
+                                            {{cost.fecha | date:"dd-MM-yyyy"}}
+                                        </td>
+                                        <td>
+                                            {{cost.valor | currency: 'CLP':"$"}}
+                                        </td>
+                                        <td>
+                                            <button type="button"
+                                                class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                                (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                                                    class="mdi mdi-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="costs.length == 0">
+                            <br>
+                            <br>
+                            <h3>NO EXISTEN GASTOS ASOCIADOS.</h3>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -268,7 +280,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="costsFormCreate">
-                        <h4 class="card-title">Crear Gasto de actividad: {{activity.nombre}}</h4>
+                        <h4 class="card">Crear Gasto de actividad: {{activity.nombre}}</h4>
                         <p class="card-description">
                             Ingrese los campos para la creacion del gasto.
                         </p>
@@ -277,10 +289,11 @@
                             <input style="width: 50%;" type="date" class="form-control" id="date"
                                 placeholder="aaaa-mm-dd" formControlName="date">
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="name">Nombre de la actividad</label>
-                            <input type="text" class="form-control" placeholder="Nombre"  id="activityName" formControlName="activityName">
-                        </div>
+                            <input type="text" class="form-control" placeholder="Nombre" id="activityName"
+                                formControlName="activityName">
+                        </div> -->
                         <div>
                             <button type="button" class="btn btn-info" (click)="addDetail()">Agregar detalle</button>
                         </div>

@@ -24,7 +24,8 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   ciclo;
   activities;
   detailsPerCost;
-  costs;
+  totalCost;
+  costs = [];
   cycles;
   cycle = new CycleModel();
   currentDate;
@@ -55,7 +56,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   });
 
 
-  constructor(private activitiesService: ActivitiesService, private cycleService: CycleService, private costsService: CostsService ,private modalService: NgbModal, private fb: FormBuilder) {
+  constructor(private activitiesService: ActivitiesService, private cycleService: CycleService, private costsService: CostsService, private modalService: NgbModal, private fb: FormBuilder) {
     this.cicloOld = {};
   }
 
@@ -163,6 +164,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.activities = resp.actividades;
+      this.totalCost = resp.totalGastos;
       this.rerender();
     })
   }
@@ -203,13 +205,29 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     })
   }
 
-  getActivity(id) {
+  getActivity(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.activitiesService.getActivityById(data).subscribe((resp: any) => {
       this.activity = resp.actividad;
       this.costs = resp.gastos;
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
     })
   }
 
@@ -294,60 +312,70 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
           return;
         }
       }
-      let data = {
-        valor: this.total,
-        fecha: form.date,
-        ciclo_id: this.cycle.id,
-        actividad_id: this.activity.id
-      }
-      this.costsService.createCosts(data).subscribe((resp: any) => {
-        if (resp.code == 200) {
-          modal.dismiss();
-          let gastos_id = resp.gastos.id;
-          for (let index = 0; index < this.details.length; index++) {
-            let dataDetail = {
-              valor: this.details.value[index].priceDetail,
-              nombre: this.details.value[index].name,
-              gastos_id: gastos_id
-            };
-            this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
-              if (resp.code != 200) {
-                this.Toast.fire({
-                  icon: 'error',
-                  title: 'Error al crear detalle'
-                });
-                return;
-              }
-            })
-          }
-          this.Toast.fire({
-            icon: 'success',
-            title: 'Se ha creado correctamente'
-          });
-          this.getActivity(this.activity.id);
-          this.clearForm();
-        } else {
-          if (resp.code == 400) {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Ingrese correctamente los valores'
-            });
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al crear un gasto',
-              text: resp.message
-            });
-          }
-          this.total = 0;
+      if ((this.total + Number(this.totalCost)) > Number(this.cycle.presupuesto)) {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'No se puede crear el gasto: El valor total se excede del presupuesto'
+        });
+        this.total = 0;
+      } else {
+        let data = {
+          valor: this.total,
+          fecha: form.date,
+          ciclo_id: this.cycle.id,
+          actividad_id: this.activity.id
         }
-      });
+        this.costsService.createCosts(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            modal.dismiss();
+            let gastos_id = resp.gastos.id;
+            for (let index = 0; index < this.details.length; index++) {
+              let dataDetail = {
+                valor: this.details.value[index].priceDetail,
+                nombre: this.details.value[index].name,
+                gastos_id: gastos_id
+              };
+              this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al crear detalle'
+                  });
+                  return;
+                }
+              })
+            }
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha creado correctamente'
+            });
+            this.totalCost = this.total + Number(this.totalCost);
+            this.getActivity(this.activity.id, null);
+            this.clearForm();
+          } else {
+            if (resp.code == 400) {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Ingrese correctamente los valores'
+              });
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al crear un gasto',
+                text: resp.message
+              });
+            }
+            this.total = 0;
+          }
+        });
+      }
     } else {
       this.Toast.fire({
         icon: 'error',
         title: 'Ingrese un detalle porfavor'
       });
     }
+
   }
 
   clearForm() {

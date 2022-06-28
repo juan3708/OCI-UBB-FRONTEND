@@ -7,9 +7,9 @@
             (click)="openModal(ModalContent)" title="Registrar Clase">Registrar
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-            (click)="openModal(ModalListStudentsAssistance);getStudentAssistancePerCycle()"
-            style="float: right; margin: 8px;" *ngIf="lessons.length >=1" title="Ver Asistencia"><i
-                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
+            (click)="getStudentAssistancePerCycle(ModalListStudentsAssistance)" style="float: right; margin: 8px;"
+            *ngIf="lessons.length >=1" title="Ver Asistencia"><i class="fa-solid fa-users-line"></i>Ver
+            Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -48,14 +48,13 @@
                                 (click)="openModal(ModalSeeLesson);setLesson(lesson)" title="Información de la clase"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalAddOrRemoveStudent);getLesson(lesson.id)"
-                                title="Ingresar estudiantes"><i class="fa-solid fa-person-circle-plus"></i></button>
+                                (click)="getLesson(lesson.id,ModalAddOrRemoveStudent)" title="Ingresar estudiantes"><i
+                                    class="fa-solid fa-person-circle-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalContentList);chargeAssistance(lesson.id)"
-                                *ngIf="lesson.alumnos.length >=1" title="Registrar asistencia"><i
-                                    class="fa-solid fa-users"></i></button>
+                                (click)="chargeAssistance(lesson.id,ModalContentList)" *ngIf="lesson.alumnos.length >=1"
+                                title="Registrar asistencia"><i class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="openModal(ModalAssignTeacherAndAssistants);setLesson(lesson);getTeachersAndAssistants(lesson.id)"
+                                (click)="setLesson(lesson);getTeachersAndAssistants(lesson.id,ModalAssignTeacherAndAssistants)"
                                 title="Asignar profesor y/o ayudantes">
                                 <i class="fa-solid fa-person-chalkboard"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
@@ -460,6 +459,7 @@
                                                             </div>
                                                         </label>
                                                     </div>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

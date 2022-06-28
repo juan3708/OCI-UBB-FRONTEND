@@ -158,10 +158,22 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     let data = {
       alumno_id: id
     }
-
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
       this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
       this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
+      Swal.close()
     })
   }
 
@@ -205,6 +217,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
           modal.dismiss();
           this.spinnerSee = false;
           this.getCycle(this.cycle.id);
+          this.resetFile();
         } else {
           this.Toast.fire({
             icon: 'error',
@@ -278,6 +291,40 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
         }
       })
     }
+  }
+
+  deleteStudent(id) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      alumno_id: id
+    };
+    Swal.fire({
+      title: '¿Está seguro que desea eliminar la postulación del alumno?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cycleService.deleteStudents(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Postulación eliminada correctamente'
+            });
+            this.getCycle(this.cycle.id);
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al eliminar la postulación',
+            });
+          }
+        });
+      }
+    });
   }
 
   removeStudent(id, indexEstablishments, indexStudent) {

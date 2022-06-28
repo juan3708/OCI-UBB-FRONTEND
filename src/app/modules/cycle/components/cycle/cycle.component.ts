@@ -22,11 +22,12 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   cycles;
   coordinators;
   cyclesEdit: FormGroup;
+  cycleModel = new CycleModel();
   cycle;
   establishmentsCycle: EstablishmentModel[] = [];
-  establishmentsPerCycle;
+  establishmentsPerCycle = [];
   establishmentsPerCycleId = [];
-  establishments;
+  establishments = [];
 
   //VARIABLES ESTADISTICA OCI.
   cantEstablecimientos = 0;
@@ -163,15 +164,33 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  getCycle(id) {
+  getCycle(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.CycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
+      this.cycleModel = resp.ciclo;
       this.establishmentsPerCycle = resp.ciclo.establecimientos;
       this.establishments = resp.establecimientosSinCiclo
       this.setEditFeeForm();
+      Swal.close();
+      if(ModalContent != null){
+      this.modalService.open(ModalContent, { size: 'xl' });
+      }
+
     })
   }
 
@@ -194,7 +213,6 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.CycleService.getStatisticsPerCycle(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
-        console.log(resp, this.cycle);
         this.cantEstablecimientos = Number(resp.cantEstablecimientos);
         this.cantidadAlumnosInscritos = Number(resp.cantidadAlumnosInscritos);
         this.cantidadAlumnosParticipantes = Number(resp.cantidadAlumnosParticipantes);
@@ -218,6 +236,8 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
           icon: 'error',
           title: 'Error cargar la información',
         });
+        Swal.close()
+
       }
     })
   }
@@ -317,7 +337,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addEstablishmentsPerCycle(modal) {
-    if (this.establishmentsPerCycleId.length < 1 && this.establishmentsPerCycle < 1) {
+    if (this.establishmentsPerCycleId.length < 1 && this.establishmentsPerCycle.length < 1) {
       this.Toast.fire({
         icon: 'error',
         title: 'Seleccione establecimientos porfavor'
@@ -378,7 +398,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
-            this.getCycle(this.cycle.id);
+            this.getCycle(this.cycle.id, null);
           } else {
             this.Toast.fire({
               icon: 'error',

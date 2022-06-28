@@ -51,4 +51,9 @@ export class CostsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/detalle/delete', data, option);
   }
+
+  getCostPerDateAndCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url + '/gastos/getcostperdateandcycle', data, option);
+  }
 }

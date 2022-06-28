@@ -57,6 +57,9 @@
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalContentStatistics);setStudent(student);getLastCyclesPerStudent(student.id)"
                                 title="Ver estadisticas de los ultimos dos ciclos"><i class="mdi mdi-eye"></i></button>
+                            <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="deleteStudent(student.id)" title="Eliminar alumno"><i
+                                    class="mdi mdi-delete"></i></button>
 
                         </td>
                     </tr>
@@ -106,7 +109,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+                                                    <label
+                                                        class="col-sm-4 col-form-label label-result">{{student.nombre}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -114,7 +118,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                                                    <label
+                                                        class="col-sm-4 col-form-label label-result">{{student.apellidos}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,7 +129,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">RUT:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                                                    <label
+                                                        class="col-sm-5 col-form-label label-result">{{student.rut}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -133,7 +139,8 @@
                                                 <label class="col-sm-3 col-form-label label-ident">Fecha de
                                                     nacimiento:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
+                                                    <label
+                                                        class="col-sm-5 col-form-label label-result">{{student.fecha_nacimiento|
                                                         date:'dd-M-y'}}</label>
                                                 </div>
                                             </div>
@@ -144,7 +151,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Curso:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-4 col-form-label">{{student.curso}}</label>
+                                                    <label
+                                                        class="col-sm-4 col-form-label label-result">{{student.curso}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,7 +161,8 @@
                                                 <label class="col-sm-3 col-form-label label-ident">Correo
                                                     electronico:</label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-9 col-form-label">{{student.email}}</label>
+                                                    <label
+                                                        class="col-sm-9 col-form-label label-result">{{student.email}}</label>
                                                 </div>
 
                                             </div>
@@ -164,7 +173,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
+                                                    <label
+                                                        class="col-sm-9 col-form-label label-result">{{student.telefono}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,7 +182,8 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
                                                 <div class="col-sm-9">
-                                                    <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                                                    <label
+                                                        class="col-sm-9 col-form-label label-result">{{student.direccion}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -185,7 +196,7 @@
                                                 </label>
                                                 <div class="col-sm-9">
                                                     <label
-                                                        class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                                                        class="col-sm-9 col-form-label label-result">{{student.nombre_apoderado}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,7 +206,7 @@
                                                     apoderado: </label>
                                                 <div class="col-sm-9">
                                                     <label
-                                                        class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                                                        class="col-sm-9 col-form-label label-result">{{student.telefono_apoderado}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -207,7 +218,7 @@
                                                     class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
                                                 <div class="col-sm-8">
                                                     <label
-                                                        class="col-sm-8 col-form-label ">{{establishmentName}}</label>
+                                                        class="col-sm-8 col-form-label label-result">{{establishmentName}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,22 +247,32 @@
                             <div class="tab-pane fade show active" id="first" role="tabpanel"
                                 aria-labelledby="first-tab">
                                 <div *ngIf="oci1.PorcentajeAsistencia !=-1">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
-                                                {{oci1.PorcentajeAsistencia}}</h4>
-                                            <div>
-                                                <div>
-                                                    Cantidad de clases asociadas al alumno: {{oci1.Asistencias.length}}
-                                                </div>
-                                                <div>
-                                                    Asistencias: {{oci1.CantAsistenciasEInasistencias[0].asistencias}}
-                                                </div>
-                                                <div>
-                                                    Inasistencias:
-                                                    {{oci1.CantAsistenciasEInasistencias[0].inasistencias}}
-                                                </div>
-                                            </div>
+                                    <div class="card-body">
+                                        <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
+                                            {{oci1.PorcentajeAsistencia}}%</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" style="text-align: center;"
+                                                style="background-color: transparent;border: transparent;">
+                                                <thead class="table table-bordered"
+                                                    style="background-color: transparent;border: transparent;">
+                                                    <tr>
+                                                        <th class="thGastos">
+                                                            <h5> Total clases: {{oci1.Asistencias.length}}
+                                                            </h5>
+                                                        </th>
+                                                        <th class="thGastos">
+                                                            <h5>Asistencias:
+                                                                {{oci1.CantAsistenciasEInasistencias[0].asistencias}}
+                                                            </h5>
+                                                        </th>
+                                                        <th class="thGastos">
+                                                            <h5>
+                                                                Inasistencias:{{oci1.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                            </h5>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
                                         </div>
                                     </div>
                                     <div class="card">
@@ -303,22 +324,32 @@
                             <!-- SECOND TAB -->
                             <div class="tab-pane fade" id="second" role="tabpanel" aria-labelledby="second-tab">
                                 <div *ngIf="oci2.PorcentajeAsistencia !=-1">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
-                                                {{oci2.PorcentajeAsistencia}}</h4>
-                                            <div>
-                                                <div>
-                                                    Cantidad de clases asociadas al alumno: {{oci2.Asistencias.length}}
-                                                </div>
-                                                <div>
-                                                    Asistencias: {{oci2.CantAsistenciasEInasistencias[0].asistencias}}
-                                                </div>
-                                                <div>
-                                                    Inasistencias:
-                                                    {{oci2.CantAsistenciasEInasistencias[0].inasistencias}}
-                                                </div>
-                                            </div>
+                                    <div class="card-body">
+                                        <h4 style="text-align: center;font-weight:bold;">PORCENTAJE DE ASISTENCIA:
+                                            {{oci2.PorcentajeAsistencia}}%</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" style="text-align: center;"
+                                                style="background-color: transparent;border: transparent;">
+                                                <thead class="table table-bordered"
+                                                    style="background-color: transparent;border: transparent;">
+                                                    <tr>
+                                                        <th class="thGastos">
+                                                            <h5> Total clases: {{oci2.Asistencias.length}}
+                                                            </h5>
+                                                        </th>
+                                                        <th class="thGastos">
+                                                            <h5>Asistencias:
+                                                                {{oci2.CantAsistenciasEInasistencias[0].asistencias}}
+                                                            </h5>
+                                                        </th>
+                                                        <th class="thGastos">
+                                                            <h5>
+                                                                Inasistencias:{{oci2.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                            </h5>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
                                         </div>
                                     </div>
                                     <div class="card">
@@ -389,6 +420,10 @@
                                 aria-labelledby="firstScore-tab">
                                 <div *ngIf="oci1.Competencias.length >=1">
                                     <div class="card">
+                                        <h4 style="  font-weight: bold !important; text-align: center !important;">
+                                            Competencias
+                                            asociadas al
+                                            estudiante.</h4>
                                         <div class="card-body text-primary">
                                             <div class="table-responsive">
                                                 <table class="table table-striped" style="text-align: center;">
@@ -437,6 +472,10 @@
                                 aria-labelledby="secondScore-tab">
                                 <div *ngIf="oci2.Competencias.length >=1">
                                     <div class="card">
+                                        <h4 style="  font-weight: bold !important; text-align: center !important;">
+                                            Competencias
+                                            asociadas al
+                                            estudiante.</h4>
                                         <div class="card-body text-primary">
                                             <div class="table-responsive">
                                                 <table class="table table-striped" style="text-align: center;">

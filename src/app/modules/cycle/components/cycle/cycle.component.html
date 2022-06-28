@@ -62,10 +62,10 @@
                                 (click)="openModal(ModalContentEdit);setCycle(cycle)" title="Editar ciclo"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
-                                (click)="openModal(SelectEstableshments);getCycle(cycle.id)"
+                                (click)="getCycle(cycle.id,SelectEstableshments)"
                                 title="Asignar Establecimientos"><i class="mdi mdi-book-plus"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
-                                (click)="openModal(EditQuotasPerEstableshment);getCycle(cycle.id)"
+                                (click)="getCycle(cycle.id,EditQuotasPerEstableshment)"
                                 *ngIf="cycle.establecimientos.length >=1" title="Editar cupos de establecimiento"><i
                                     class="mdi mdi-school"></i></button>
                         </td>
@@ -224,7 +224,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Seleccionar establecimientos que participaran de las {{cycle.nombre}}
+                        <h4 class="card-title">Seleccionar establecimientos que participaran de las {{cycleModel.nombre}}
                         </h4>
                         <p class="card-description">
                             Seleccione los establecimientos que participaran de las OCI.
@@ -904,7 +904,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <div *ngIf="gastos.length == 0">
                             <h5>NO EXISTEN GASTOS ASOCIADOS.</h5>

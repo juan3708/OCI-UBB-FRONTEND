@@ -41,6 +41,17 @@ export class UserPagesService {
     localStorage.removeItem('access_token');
   }
 
+  resetPassword(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/usuario/resetpassword', data, option);
+  }
+
+  changePassword(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/usuario/changepassword', data, option);
+  }
+ 
+
   getRol(){
     let token = localStorage.getItem('access_token');
     let rol = this.helper.decodeToken(token).user.rol;

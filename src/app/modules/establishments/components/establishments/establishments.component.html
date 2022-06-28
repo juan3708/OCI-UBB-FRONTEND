@@ -46,7 +46,7 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                (click)="openModal(ModalContentSeeStudents);getStudents(establishment.id);setEstablishment(establishment)"
+                (click)="getStudents(establishment.id,ModalContentSeeStudents);setEstablishment(establishment)"
                 title="Asistencia de alumnos"><i class="mdi mdi-eye"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="openModal(ModalContentEdit);setEstablishment(establishment)" title="Editar establecimientos"><i
@@ -196,9 +196,9 @@
             <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
               NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
             </div>
-            <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm export-pdf"
               (click)="exportPdf()" style="float: right; margin: 8px;">Exportar a PDF <i
-                class="fa-solid fa-file-pdf"></i></button>
+                class="fa-solid fa-file-pdf" *ngIf="students.length != 0"></i></button>
             <div class="d-flex justify-content-center" *ngIf="spinnerSee == true" style="float: right;">
               <div class="spinner-border text-success" role="status">
               </div>
