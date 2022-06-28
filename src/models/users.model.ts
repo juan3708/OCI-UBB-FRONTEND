@@ -7,4 +7,6 @@ export class UserModel{
     email:string;
     fecha_creacion:Date;
     rol_id:number;
+    activo:number;
+    admin:number;
 }

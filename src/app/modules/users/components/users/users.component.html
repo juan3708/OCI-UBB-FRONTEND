@@ -50,17 +50,14 @@
                         <td>
                             <div id="app" class="checkbox-div">
                                 <label class="checker">
-                                    <input class="checkbox" type="checkbox"
-                                        id="changeStatus" name="changeStatus"
+                                    <input class="checkbox" type="checkbox" id="changeStatus" name="changeStatus"
                                         (click)="changeStatus($event,$event.target.checked ? 1: 0, user.id)"
                                         [checked]="user.activo == 1">
                                     <div class="check-bg"></div>
                                     <div class="checkmark">
                                         <svg viewBox="0 0 100 100">
-                                            <path d="M20,55 L40,75 L77,27" fill="none"
-                                                stroke="#FFF" stroke-width="15"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round" />
+                                            <path d="M20,55 L40,75 L77,27" fill="none" stroke="#FFF" stroke-width="15"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
                                 </label>
@@ -85,14 +82,12 @@
                             {{user.rol.nombre | titlecase}}
                         </td>
                         <td>
-                            <!-- <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                    (click)="openModal(ModalContentEdit);setActivity(activity)"><i
-                                        class="mdi mdi-grease-pencil"></i></button>
-                                <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                    (click)="deleteActivity(activity.id)"><i class="mdi mdi-delete"></i></button>
-                                    <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                    (click)="openModal(ModalListCost);getActivity(activity.id)" *ngIf="activity.gastos.length >=1"><i
-                                      class="fa-solid fa-file-invoice-dollar"></i></button> -->
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);setUser(user)" *ngIf="user.admin == 0"
+                                title="Editar usuario"><i class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
+                                (click)="openModal(EmailModal);setUser(user)"><i class="mdi mdi-email"
+                                    title="Enviar mensaje"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -178,143 +173,109 @@
 </ng-template>
 
 <!-- Modal starts Edit -->
-<!-- <ng-template class="modal fade" #ModalContentEdit let-modal>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="col-12 stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Editar actividad</h4>
-                            <p class="card-description">
-                                Ingrese los campos para la modificacion de la actividad.
-                            </p>
-                            <form class="forms-sample" #f="ngForm">
-                                <div class="form-group">
-                                    <label for="name">Nombre</label>
-                                    <input type="text" class="form-control" placeholder="Nombre"
-                                        [(ngModel)]="activity.nombre" name="name" #name="ngModel">
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Editar usuario</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la modificacion del usuario.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" class="form-control"
+                                    placeholder="Ingrese su rut sin puntos y con guion. Ej: 12345678-9"
+                                    [(ngModel)]="user.rut" name="rut" #rut="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="user.nombre"
+                                    name="name" #name="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Apellidos</label>
+                                <input type="text" class="form-control" placeholder="Apellidos"
+                                    [(ngModel)]="user.apellidos" name="surname" #surname="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <input type="email" class="form-control" id="email"
+                                    placeholder="Ingrese su correo. Ej: correo@email.cl"  [(ngModel)]="user.email" name="email" #email="ngModel">
+                            </div>
+                            <div class="form-group" *ngIf="user.admin == 0">
+                                <label for="rol">Rol</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="rol" name="rol" [(ngModel)]="user.rol_id"
+                                        #rol="ngModel" (change)="onChangeRol($event.target.value)">
+                                        <option selected>Seleccione un rol</option>
+                                        <option *ngFor="let rol of roles" [value]="rol.id">
+                                            {{rol.nombre}}</option>
+                                    </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="description">Descripcion</label>
-                                    <input type="text" class="form-control" placeholder="descripcion"
-                                        [(ngModel)]="activity.descripcion" name="description" #description="ngModel">
-                                </div>
-                                <div class="form-group">
-                                    <label for="date">Fecha</label>
-                                    <input style="width: 50%;" type="date" class="form-control" id="date"
-                                        [(ngModel)]="activity.fecha" name="date" #date="ngModel">
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" (click)="activityFormEdit(f, modal)">Editar</button>
-                <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
-                    (click)="modal.close()">Cancelar</button>
-            </div>
         </div>
-    </ng-template> -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="userFormEdit(f, modal)">Editar</button>
+            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
 <!-- Modal Edit ends -->
 
-<!-- Modal ModalListCost starts -->
-<!-- <ng-template class="modal fade" #ModalListCost let-modal>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="col-12 stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card">Gastos de la competencia {{activity.nombre}}</h4>
-                            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
-                                style="text-align: center;">
-                                <thead class="table table-bordered">
-                                    <tr>
-                                        <th>
-                                            <b>Fecha</b>
-                                        </th>
-                                        <th>
-                                            <b>Valor</b>
-                                        </th>
-                                        <th>
-                                          <b>Ver Detalles</b>
-                                      </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table table-bordered">
-                                    <tr *ngFor="let cost of costs">
-                                        <td>
-                                            {{cost.fecha | date:"dd-MM-yyyy"}}
-                                        </td>
-                                        <td>
-                                            {{cost.valor | currency: 'CLP':"$"}}
-                                        </td>
-                                        <td>
-                                          <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                          (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
-                                              class="mdi mdi-eye"></i></button>
-                                      </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+<!-- Modal Mail starts -->
+<ng-template class="modal fade" #EmailModal let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card" style="text-align: center">Enviar mensaje</h4>
+              <p class="card-description">
+                Ingrese los campos para enviar un mensaje al usuario: {{user.nombre}} {{user.apellidos}}
+              </p>
+              <form class="forms-sample">
+                <div class="form-group">
+                  <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
                 </div>
-            </div>
-        </div>
-      </ng-template> -->
-<!-- Modal ModalListCost starts -->
-
-<!-- Modal ModalDetailList starts -->
-<!-- <ng-template class="modal fade" #ModalDetailList let-modal>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="col-12 stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card">Detalles del gasto</h4>
-                            <table class="table table-striped"
-                                style="text-align: center;">
-                                <thead class="table table-bordered">
-                                    <tr>
-                                        <th>
-                                            <b>Nombre</b>
-                                        </th>
-                                        <th>
-                                            <b>Valor</b>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table table-bordered">
-                                    <tr *ngFor="let detail of detailsPerCost">
-                                        <td>
-                                            {{detail.nombre}}
-                                        </td>
-                                        <td>
-                                            {{detail.valor | currency: 'CLP':"$"}}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                  <textarea type="text" class="form-control content" id="content" #content rows="20"
+                    placeholder="(*)"></textarea>
                 </div>
+              </form>
             </div>
+          </div>
         </div>
-      </ng-template> -->
-<!-- Modal ModalDetailList starts -->
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+          <div class="spinner-border text-success" role="status">
+          </div>
+          <span>Enviando correo, espere porfavor</span>
+        </div>
+        <button type="button" class="btn btn-success"
+          (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+      </div>
+    </div>
+  </ng-template>
+  <!-- Modal Mail Ends -->

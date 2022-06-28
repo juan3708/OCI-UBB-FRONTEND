@@ -10,6 +10,7 @@ import { TeachersService } from 'src/app/modules/teachers/services/teachers.serv
 import { UserModel } from 'src/models/users.model';
 import Swal from 'sweetalert2';
 import { UsersService } from '../../services/users.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
@@ -31,6 +32,7 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
   isTeacher;
   faculty = '';
   modality = '';
+  spinnerSee = false;
   user = new UserModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -89,6 +91,10 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersService.getRole().subscribe((resp: any) => {
       this.roles = resp.roles;
     });
+  }
+
+  setUser(user){
+    this.user = JSON.parse(JSON.stringify(user));
   }
 
   onChangeRol(rol) {
@@ -175,7 +181,6 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
             facultad: this.faculty,
             modalidad: this.modality
           }
-          console.log(data);
           this.teachersService.createTeacher(data).subscribe((resp: any) => {
             if (resp.code == 200) {
               modal.dismiss();
@@ -233,6 +238,66 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
+  }
+
+  userFormEdit(form: NgForm, modal) {
+    this.usersService.edit(this.user).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        modal.dismiss();
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Usuario editado correctamente'
+        });
+        this.listUsers();
+      } else {
+        if (resp.code == 400) {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Ingrese correctamente los valores',
+          });
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al editar al Usuario',
+            text: resp.message
+          });
+        }
+      }
+    })
+  }
+
+  sendMessages(subject, content, modal) {
+    if (subject == '' || content == '') {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+      });
+    } else {
+      let data = {
+        emails: this.user.email,
+        subject,
+        content,
+        cycleName: 'Mensajeria OCI - UBB'
+      };
+      this.spinnerSee = true;
+      this.usersService.sendMessage(data).subscribe((resp: any) => {
+        console.log(resp);
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Mensaje enviado correctamente'
+          });
+          modal.dismiss();
+          this.spinnerSee = false;
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al enviar el mensaje'
+          });
+          this.spinnerSee = false;
+        }
+      })
+    }
   }
 
   ngOnDestroy(): void {

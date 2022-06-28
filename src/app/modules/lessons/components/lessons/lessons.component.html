@@ -880,7 +880,7 @@
 <ng-template class="modal fade" #ModalListStudentsAssistance let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();deletePdf()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -888,98 +888,126 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Asistencias totales de la OCI: {{cycle.nombre}}</h4>
-                        <form class="forms-sample" #f="ngForm">
-                            <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
-                                <ngb-panel id="collapse-{{indexEstablishments}}"
-                                    *ngFor="let establishment of  establishments;let indexEstablishments = index"
-                                    title="{{establishment.nombre}} - TOTAL ALUMNOS: {{establishment.alumnos.length}}">
-                                    <ng-template ngbPanelContent>
-                                        <div class="table-responsive" *ngIf="establishment.alumnos.length >=1">
-                                            <h5>Alumnos</h5>
-                                            <table class="table table-striped" style="text-align: center;">
-                                                <thead class="table table-bordered">
-                                                    <tr>
-                                                        <th>
-                                                            <b>Rut</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Nombre</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Apellidos</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Porcentaje de asistencia</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Asistencias</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Inasistencias</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Total Clases</b>
-                                                        </th>
-                                                        <th>
-                                                            <b>Ver clases</b>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="table table-bordered">
-                                                    <tr *ngFor="let student of establishment.alumnos">
-                                                        <td>
-                                                            {{student.rut}}
-                                                        </td>
-                                                        <td>
-                                                            {{student.nombre}}
-                                                        </td>
-                                                        <td>
-                                                            {{student.apellidos}}
-                                                        </td>
-                                                        <td *ngIf="student.PorcentajeAsistencia <=30"
-                                                            style="color: red;">
-                                                            {{student.PorcentajeAsistencia}}%
-                                                        </td>
-                                                        <td *ngIf="student.PorcentajeAsistencia >30 && student.PorcentajeAsistencia<=50"
-                                                            style="color: yellow;">
-                                                            {{student.PorcentajeAsistencia}}%
-                                                        </td>
-                                                        <td *ngIf="student.PorcentajeAsistencia >50 && student.PorcentajeAsistencia <=70"
-                                                            style="color: yellowgreen;">
-                                                            {{student.PorcentajeAsistencia}}%
-                                                        </td>
-                                                        <td *ngIf="student.PorcentajeAsistencia >70"
-                                                            style="color: green;">
-                                                            {{student.PorcentajeAsistencia}}%
-                                                        </td>
-                                                        <td>
-                                                            {{student.CantAsistenciasEInasistencias[0].asistencias}}
-                                                        </td>
-                                                        <td>
-                                                            {{student.CantAsistenciasEInasistencias[0].inasistencias}}
-                                                        </td>
-                                                        <td>
-                                                            {{student.Asistencias.length}}
-                                                        </td>
-                                                        <td>
-                                                            <button type="button"
-                                                                class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                                                (click)="openModal(ModalContentLessonPerStudent);setStudent(student)"><i
-                                                                    class="fa-solid fa-person-chalkboard"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <br>
-                                        <div *ngIf="establishment.alumnos.length ==0">
-                                            <h5 style="font-weight:bold;">NO EXISTEN ASISTENCIAS ASOCIADAS.</h5>
-                                        </div>
-                                    </ng-template>
-                                </ngb-panel>
-                            </ngb-accordion>
-                        </form>
+                        <h4 class="card">Asistencias general de la OCI: {{cycle.nombre}}</h4>
+                        <button type="button" style="float: right; margin: 8px;"
+                            class="btn btn-gradient-info btn-rounded btn-sm export-pdf" (click)="exportPdf()"
+                            style="float: right; margin: 8px;">Exportar a PDF <i
+                                class="fa-solid fa-file-pdf"></i></button>
+                        <div class="d-flex justify-content-center" *ngIf="spinnerSee == true"
+                            style="float: right;padding-top: 10px;">
+                            <div class="spinner-border text-success" role="status">
+                            </div>
+                            <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere
+                                porfavor.</span>
+                        </div>
+                        <div class="table-responsive">
+                            <thead class="table table-bordered">
+                                <tr>
+                                    <th style="border: transparent;">Establecimiento totales: {{establishments.length}}
+                                    </th>
+
+                                    <th class="thGastos">
+                                        Total alumnos: {{totalStudents}}
+                                    </th>
+
+                                    <th class="thGastos">
+                                        Establecimiento con menos estudiantes: {{establishmentMinStudent.nombre}} con
+                                        {{establishmentMinStudent.alumnos.length}} alumnos
+                                    </th>
+                                    <th class="thGastos">
+                                        Establecimiento con mas estudiantes: {{establishmentMaxStudent.nombre}} con
+                                        {{establishmentMaxStudent.alumnos.length}} alumnos
+                                    </th>
+                                </tr>
+                            </thead>
+                        </div>
+                        <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
+                            <ngb-panel id="collapse-{{indexEstablishments}}"
+                                *ngFor="let establishment of  establishments;let indexEstablishments = index"
+                                title="{{establishment.nombre}} - TOTAL ALUMNOS: {{establishment.alumnos.length}}">
+                                <ng-template ngbPanelContent>
+                                    <div class="table-responsive" *ngIf="establishment.alumnos.length >=1">
+                                        <h5>Alumnos</h5>
+                                        <table class="table table-striped" style="text-align: center;">
+                                            <thead class="table table-bordered">
+                                                <tr>
+                                                    <th>
+                                                        <b>Rut</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Nombre</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Apellidos</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Porcentaje de asistencia</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Asistencias</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Inasistencias</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Total Clases</b>
+                                                    </th>
+                                                    <th>
+                                                        <b>Ver clases</b>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table table-bordered">
+                                                <tr *ngFor="let student of establishment.alumnos">
+                                                    <td>
+                                                        {{student.rut}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.nombre}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.apellidos}}
+                                                    </td>
+                                                    <td *ngIf="student.PorcentajeAsistencia <=30" style="color: red;">
+                                                        {{student.PorcentajeAsistencia}}%
+                                                    </td>
+                                                    <td *ngIf="student.PorcentajeAsistencia >30 && student.PorcentajeAsistencia<=50"
+                                                        style="color: yellow;">
+                                                        {{student.PorcentajeAsistencia}}%
+                                                    </td>
+                                                    <td *ngIf="student.PorcentajeAsistencia >50 && student.PorcentajeAsistencia <=70"
+                                                        style="color: yellowgreen;">
+                                                        {{student.PorcentajeAsistencia}}%
+                                                    </td>
+                                                    <td *ngIf="student.PorcentajeAsistencia >70" style="color: green;">
+                                                        {{student.PorcentajeAsistencia}}%
+                                                    </td>
+                                                    <td>
+                                                        {{student.CantAsistenciasEInasistencias[0].asistencias}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.CantAsistenciasEInasistencias[0].inasistencias}}
+                                                    </td>
+                                                    <td>
+                                                        {{student.Asistencias.length}}
+                                                    </td>
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                                            (click)="openModal(ModalContentLessonPerStudent);setStudent(student)"><i
+                                                                class="fa-solid fa-person-chalkboard"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    <div *ngIf="establishment.alumnos.length ==0">
+                                        <h5 style="font-weight:bold;">NO EXISTEN ASISTENCIAS ASOCIADAS.</h5>
+                                    </div>
+                                </ng-template>
+                            </ngb-panel>
+                        </ngb-accordion>
                     </div>
                 </div>
             </div>

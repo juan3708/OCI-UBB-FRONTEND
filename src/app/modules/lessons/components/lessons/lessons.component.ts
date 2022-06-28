@@ -12,6 +12,7 @@ import { EstablishmentsService } from '../../../establishments/services/establis
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { DataTableDirective } from 'angular-datatables';
+import { UsersService } from '../../../users/services/users.service';
 
 @Component({
   selector: 'app-lessons',
@@ -29,8 +30,14 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   lessonSee;
   cycles;
   establishments = []
+  establishmentMaxStudent;
+  establishmentMinStudent;
   bool;
   currentDate;
+  totalStudents = 0;
+  fileName = -1;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  spinnerSee = false;
   lesson = new LessonModel();
   cycle = new CycleModel();
   level = new LevelModel();
@@ -66,7 +73,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) {
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private usersService: UsersService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
@@ -238,8 +245,15 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       if (resp.code == 200) {
         if (resp.Establecimientos.length >= 1) {
           this.establishments = resp.Establecimientos;
+          this.establishmentMaxStudent = resp.EstablecimientoConMasAlumnos;
+          this.establishmentMinStudent = resp.EstablecimientoConMenosAlumnos;
+          this.totalStudents = resp.TotalAlumnos;
         } else {
           this.establishments = [];
+          this.establishmentMaxStudent = [];
+          this.establishmentMinStudent = [];
+
+
         }
         Swal.close();
         this.modalService.open(ModalContent, { size: 'xl' });
@@ -934,6 +948,45 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
+  exportPdf() {
+    let data = {
+      establecimientos: this.establishments,
+      establecimientoConMenosEstudiantes: this.establishmentMinStudent,
+      establecimientoConMasEstudiantes: this.establishmentMaxStudent,
+      totalAlumnos: this.totalStudents,
+      totalEstablecimientos: this.establishments.length,
+      nombreCiclo: this.cycle.nombre
+    }
+    this.spinnerSee = true;
+    this.usersService.exportGeneralAssistanceToPDF(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
+
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
+      }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
+  }
 
 
   clearForm() {

@@ -10,6 +10,7 @@ import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { DataTableDirective } from 'angular-datatables';
+import { UsersService } from '../../../users/services/users.service';
 
 @Component({
   selector: 'app-costs',
@@ -30,6 +31,11 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   total;
   totalCost = 0;
   cost = new CostsModel();
+  start_date;
+  finish_date;
+  spinnerSee = false;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  fileName = -1;
   currentDate;
   students = [];
   contentSee = 0;
@@ -61,7 +67,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   });
 
 
-  constructor(private costsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) {
+  constructor(private costsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private usersService: UsersService,private fb: FormBuilder) {
     this.cicloOld = {};
   }
 
@@ -585,6 +591,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         title: 'Debe ingresar ambas fechas'
       });
     } else {
+      this.start_date = start_date;
+      this.finish_date = finish_date;
       Swal.fire({
         title: 'Espere porfavor...',
         didOpen: () => {
@@ -621,7 +629,44 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
   exportPdf() {
+    let data = {
+      nombreCiclo: this.cycle.nombre,
+      fecha_inicio: this.start_date,
+      fecha_final: this.finish_date,
+      gastos: this.costsExport,
+      totalGastado: this.total,
+      presupuestoCiclo: this.cycle.presupuesto
+    }
+    console.log(data);
+    this.spinnerSee = true;
+    this.usersService.exportCosts(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
 
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
+      }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
   }
 
   clearForm() {

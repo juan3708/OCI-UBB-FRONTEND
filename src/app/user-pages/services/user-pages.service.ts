@@ -50,6 +50,11 @@ export class UserPagesService {
     const option = { headers: this.headers };
     return this.http.post(url+'/usuario/changepassword', data, option);
   }
+
+  changeEmail(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/usuario/changeemail', data, option);
+  }
  
 
   getRol(){

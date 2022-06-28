@@ -101,7 +101,7 @@ input[type="number"] {
   }
 
   &:after {
-    background: white;
+    background: rgb(224, 224, 224);
   }
 
   &:before {
@@ -158,4 +158,13 @@ body {
 h5{
   font-weight: bold !important;
   text-align: center !important;
+}
+
+.export-pdf {
+  background-image: linear-gradient(to right, #D31027 0%, #EA384D  51%, #D31027  100%);
+}
+
+.thGastos{
+  text-align: center;
+  border: transparent;
 }

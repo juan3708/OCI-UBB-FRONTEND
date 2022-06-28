@@ -11,6 +11,7 @@ import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
 import { Router } from '@angular/router';
+import { UsersService } from '../../../users/services/users.service';
 
 @Component({
   selector: 'app-establishments',
@@ -49,7 +50,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal, private router: Router) {
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal, private router: Router, private usersService:UsersService) {
     this.cicloOld = {};
   }
 
@@ -100,7 +101,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'xl', keyboard: false});
+    this.modalService.open(ModalContent, { size: 'xl', keyboard: false });
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
@@ -213,7 +214,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
-  getStudents(id,ModalContent) {
+  getStudents(id, ModalContent) {
     let data = {
       ciclo_id: this.cycle.id,
       establecimiento_id: id
@@ -229,7 +230,8 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       allowOutsideClick: false,
       allowEscapeKey: false,
       allowEnterKey: false
-    });    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
+    });
+    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         if (resp.estudiantesConEstadisticaDeAsistencia != undefined) {
           this.students = resp.estudiantesConEstadisticaDeAsistencia;
@@ -237,7 +239,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
           this.students = [];
         }
         Swal.close();
-    this.modalService.open(ModalContent, { size: 'xl', keyboard: false});
+        this.modalService.open(ModalContent, { size: 'xl', keyboard: false });
 
       }
     })
@@ -330,7 +332,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       emailProfesor: this.establishment.email_profesor
     }
     this.spinnerSee = true;
-    this.establishmentsService.exportPDF(data).subscribe((resp: any) => {
+    this.usersService.exportAssistancePerEstablishmentToPDF(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.fileName = resp.fileName;
         this.Toast.fire({
@@ -355,7 +357,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       let data = {
         fileName: this.fileName
       }
-      this.establishmentsService.deletePDF(data).subscribe((resp: any) => { });
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
       this.fileName = -1;
     }
   }

@@ -46,13 +46,5 @@ export class EstablishmentsService {
     return this.http.post(url +'/mail/messages', data, option);
   }
 
-  exportPDF(data){
-    const option = { headers: this.headers };
-    return this.http.post(url +'/pdf/assistanceperestablishment',data,option);
-  }
 
-  deletePDF(data){
-    const option = { headers: this.headers };
-    return this.http.post(url +'/pdf/delete',data,option);
-  }
 }
