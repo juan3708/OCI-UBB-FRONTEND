@@ -19,7 +19,7 @@
       </form>
     </div> -->
     <ul class="navbar-nav navbar-nav-right">
-      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id">
+      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" *ngIf="cycles.length >=1">
         <option *ngFor="let cycle of cycles" [value]="cycle.id">
           {{cycle.nombre}}</option>
       </select>

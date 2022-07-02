@@ -628,7 +628,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     }
   }
 
-  exportPdf() {
+  exportPdf(modal) {
     let data = {
       nombreCiclo: this.cycle.nombre,
       fecha_inicio: this.start_date,
@@ -637,7 +637,6 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       totalGastado: this.total,
       presupuestoCiclo: this.cycle.presupuesto
     }
-    console.log(data);
     this.spinnerSee = true;
     this.usersService.exportCosts(data).subscribe((resp: any) => {
       if (resp.code == 200) {
@@ -648,7 +647,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         });
         this.spinnerSee = false;
         window.location.assign(this.urlDownload + this.fileName);
-
+        modal.dismiss();
       } else {
         this.Toast.fire({
           icon: 'error',
@@ -667,6 +666,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.usersService.deletePDF(data).subscribe((resp: any) => { });
       this.fileName = -1;
     }
+    this.costsExport = [];
+    this.contentSee == 0;
   }
 
   clearForm() {

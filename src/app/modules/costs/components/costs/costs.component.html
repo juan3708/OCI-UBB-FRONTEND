@@ -47,7 +47,7 @@
                             {{cost.fecha | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
-                            {{cost.valor | currency: 'CLP':"$"}}
+                            {{cost.valor | currency: 'CLP'}}
                         </td>
                         <td *ngIf="cost.actividad == null&&cost.competencia == null">
                             No aplica
@@ -562,7 +562,7 @@
                 <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere
                     porfavor.</span>
             </div>
-            <button type="button" class="btn btn-success" (click)="exportPdf()">Exportar</button>
+            <button type="button" class="btn btn-success" (click)="exportPdf(modal)">Exportar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();deletePdf()">Cancelar</button>
         </div>

@@ -9,6 +9,7 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { EstablishmentModel } from '../../../../../models/establishment.model';
 import { DataTableDirective } from 'angular-datatables';
+import { UsersService } from '../../../users/services/users.service';
 
 @Component({
   selector: 'app-cycle',
@@ -19,15 +20,21 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
-  cycles;
+  cycles = [];
+  lengthCycles = 0;
   coordinators;
   cyclesEdit: FormGroup;
   cycleModel = new CycleModel();
   cycle;
+  spinnerSee = false;
+  fileName = -1
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
   establishmentsCycle: EstablishmentModel[] = [];
   establishmentsPerCycle = [];
   establishmentsPerCycleId = [];
   establishments = [];
+  emailsArray = [];
+  emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
 
   //VARIABLES ESTADISTICA OCI.
   cantEstablecimientos = 0;
@@ -65,11 +72,23 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   });
 
+  Toast2 = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
   editFeeEstablishment = this.fb.group({
     establishmentsFee: this.fb.array([])
   });
 
-  constructor(private CycleService: CycleService, private establishmentsService: EstablishmentsService, private fb: FormBuilder, private modalService: NgbModal) { }
+  constructor(private cycleService: CycleService, private establishmentsService: EstablishmentsService, private usersService: UsersService,private fb: FormBuilder, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
@@ -105,8 +124,9 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   listCycles() {
-    this.CycleService.getCycles().subscribe((resp: any) => {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
+      this.lengthCycles = this.cycles.length;
       this.rerender();
     });
   }
@@ -119,8 +139,14 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   listCoordinators() {
-    this.CycleService.getCoordinators().subscribe((resp: any) => {
+    this.cycleService.getCoordinators().subscribe((resp: any) => {
       this.coordinators = resp.coordinadores;
+      if(this.coordinators.length == 0){
+        this.Toast2.fire({
+          icon: 'info',
+          title: 'No existen coordinadores en el sistema, por favor crear uno'
+        });
+      }
     });
   }
 
@@ -139,14 +165,18 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       coordinador_id: coordinator
     };
 
-    this.CycleService.createCycle(data).subscribe((resp: any) => {
+    this.cycleService.createCycle(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Ciclo creado correctamente'
         });
-        this.listCycles();
+        await new Promise(f => setTimeout(f, 1000));
+        Swal.fire('Se recargara el sistema para mejor funcionamiento');
+        await new Promise(f => setTimeout(f, 1000));
+        window.location.reload();
+
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -180,7 +210,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       allowEscapeKey: false,
       allowEnterKey: false
     });
-    this.CycleService.getCycleById(data).subscribe((resp: any) => {
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.cycleModel = resp.ciclo;
       this.establishmentsPerCycle = resp.ciclo.establecimientos;
@@ -211,7 +241,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       allowEscapeKey: false,
       allowEnterKey: false
     });
-    this.CycleService.getStatisticsPerCycle(data).subscribe(async (resp: any) => {
+    this.cycleService.getStatisticsPerCycle(data).subscribe(async (resp: any) => {
       if (resp.code == 200) {
         this.cantEstablecimientos = Number(resp.cantEstablecimientos);
         this.cantidadAlumnosInscritos = Number(resp.cantidadAlumnosInscritos);
@@ -279,7 +309,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.CycleService.deleteCycle(data).subscribe((resp: any) => {
+        this.cycleService.deleteCycle(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
@@ -302,7 +332,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cycleFormEdit(form: NgForm, modal) {
-    this.CycleService.editCycle(this.cycle).subscribe((resp: any) => {
+    this.cycleService.editCycle(this.cycle).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -355,7 +385,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
           ciclo_id: this.cycle.id,
           establecimientos_id: this.establishmentsPerCycleId
         };
-        this.CycleService.chargeEstablishments(data).subscribe((resp: any) => {
+        this.cycleService.chargeEstablishments(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             modal.dismiss();
             this.Toast.fire({
@@ -391,7 +421,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.CycleService.deleteEstablishments(data).subscribe((resp: any) => {
+        this.cycleService.deleteEstablishments(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.establishmentsPerCycle.splice(this.establishmentsPerCycle.indexOf(establishment), 1);
             this.Toast.fire({
@@ -424,7 +454,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
       cupos: cupos
     };
 
-    this.CycleService.updateEstablishments(data).subscribe((resp: any) => {
+    this.cycleService.updateEstablishments(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
@@ -439,6 +469,134 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     })
+  }
+
+  sendInvitations(to, subject, content, formLink, modal) {
+    if (subject == '' || content == '') {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+      });
+    } else {
+      this.establishments.forEach(e => {
+        this.emailsArray.push(e.email, e.email_profesor);
+      });
+      if (to != '') {
+        let bool = this.emailsRegex.test(to);
+        if (bool) {
+          this.emailsArray.push(to);
+          let data = {
+            emails: this.emailsArray,
+            subject,
+            content,
+            formLink,
+            start_date: this.cycle.fecha_inicio
+          };
+          this.spinnerSee = true;
+          this.cycleService.sendEmails(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
+              this.Toast.fire({
+                icon: 'success',
+                title: 'Mensajes enviados correctamente'
+              });
+              this.spinnerSee = false;
+              modal.dismiss();
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al enviar los mensajes'
+              });
+              this.spinnerSee = false;
+
+            }
+          })
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Formato de email incorrecto'
+          });
+        }
+      } else {
+        let data = {
+          emails: this.emailsArray,
+          subject,
+          content,
+          formLink,
+          start_date: this.cycle.fecha_inicio
+        };
+        this.spinnerSee = true;
+        this.cycleService.sendEmails(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Mensajes enviados correctamente'
+            });
+            this.spinnerSee = false;
+            modal.dismiss();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al enviar los mensajes'
+            });
+            this.spinnerSee = false;
+
+          }
+        })
+      }
+    }
+  }
+
+  exportPdf(){
+    let data = {
+      cantEstablecimientos: this.cantEstablecimientos,
+      cantidadAlumnosInscritos: this.cantidadAlumnosInscritos,
+      cantidadAlumnosParticipantes: this.cantidadAlumnosParticipantes,
+      cicloAnterior: this.cicloAnterior,
+      competencias: this.competencias,
+      diferenciaAlumnosInscritos: this.diferenciaAlumnosInscritos,
+      diferenciaAlumnosParticipantes: this.diferenciaAlumnosParticipantes,
+      diferenciaEstablecimientos: this.diferenciaEstablecimientos,
+      establecimientoMaxInscritos: this.establecimientoMaxInscritos,
+      establecimientoMaxParticipantes: this.establecimientoMaxParticipantes,
+      establecimientoMinInscritos: this.establecimientoMinInscritos,
+      establecimientoMinParticipantes: this.establecimientoMinParticipantes,
+      establecimientos: this.establecimientos,
+      gastos: this.gastos,
+      totalGastos: this.totalGastos,
+      prespuestoRestante: this.prespuestoRestante,
+      ciclo: this.cycle
+    }
+    console.log(data);
+    this.spinnerSee = true;
+    this.usersService.exportGeneralStatisticToPDF(data).subscribe((resp: any) => {
+      console.log(resp);
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
+
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
+      }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
   }
 
   clearForm() {

@@ -10,6 +10,7 @@ import { CycleModel } from 'src/models/cycle.model';
 import { NewsModel } from 'src/models/news.model';
 import Swal from 'sweetalert2';
 import { AllNewsService } from '../../services/all-news.service';
+import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
 
 @Component({
   selector: 'app-all-news',
@@ -26,6 +27,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   noticias;
   images;
   image;
+  user;
   selectedFiles: File[] = Array();
   fileNames: string;
   url = 'http://127.0.0.1:8000/storage/images/';
@@ -57,8 +59,9 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private allNewsService: AllNewsService, private modalService: NgbModal, private cycleService: CycleService) {
+  constructor(private allNewsService: AllNewsService, private userPageService:UserPagesService,private modalService: NgbModal, private cycleService: CycleService) {
     this.cicloOld = {};
+    this.user = userPageService.getUser();
   }
 
   ngOnInit(): void {
@@ -125,7 +128,8 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       entrada: lead,
       cuerpo: body,
       fecha: formatDate(new Date(), 'yyyy-MM-dd', 'en'),
-      ciclo_id: this.cycle.id
+      ciclo_id: this.cycle.id,
+      user_id: this.user.id
     };
     this.allNewsService.createNews(data).subscribe((resp: any) => {
       if (resp.code === 200) {

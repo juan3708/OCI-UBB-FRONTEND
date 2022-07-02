@@ -171,8 +171,19 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       allowEnterKey: false
     });
     this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
+      if(resp.CiclosConAsistenciaYCompetencias.length >1){
       this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
       this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
+      }else{
+        this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
+        this.oci2 = {
+          nombre: "",
+          Asistencias: Array(),
+          PorcentajeAsistencia: 0,
+          CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+          Competencias: Array()
+        };
+      }
       Swal.close()
     })
   }

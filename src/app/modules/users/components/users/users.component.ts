@@ -156,7 +156,8 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
       password: rut.substring(0, 6),
       email,
       fecha_creacion: formatDate(new Date(), 'yyyy-MM-dd', 'en'),
-      rol_id: rol
+      rol_id: rol,
+      admin: 0
     };
     Swal.fire({
       title: 'Espere porfavor...',

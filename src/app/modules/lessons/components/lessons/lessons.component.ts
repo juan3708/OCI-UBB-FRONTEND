@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { DataTableDirective } from 'angular-datatables';
 import { UsersService } from '../../../users/services/users.service';
+import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
 
 @Component({
   selector: 'app-lessons',
@@ -26,6 +27,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloOld;
   cicloNew;
   ciclo;
+  user;
   lessons = [];
   lessonSee;
   cycles;
@@ -52,6 +54,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   removeStudents = [];
   studentList;
   teachers = [];
+  teacher;
+  assistant;
   assistants = [];
   lessonTeachers = [];
   lessonAssistants = [];
@@ -73,7 +77,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private usersService: UsersService, private modalService: NgbModal) {
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private usersService: UsersService, private usersPagesService: UserPagesService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
@@ -93,7 +97,14 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.cicloNew = this.cycleService.cycle;
       if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
-        this.getCycle(this.cicloNew.id);
+        this.user = this.usersPagesService.getUser();
+        if (this.user.rol.nombre == 'profesor') {
+          this.listLessonsPerTeacher(this.user.rut, this.cicloNew.id);
+        } else if (this.user.rol.nombre == 'ayudante') {
+          this.listLessonsPerAssistants(this.user.rut, this.cicloNew.id);
+        } else {
+          this.getCycle(this.cicloNew.id);
+        }
       }
     }
   }
@@ -129,6 +140,33 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.lessons = resp.clases;
       this.rerender();
 
+    })
+  }
+
+  listLessonsPerTeacher(rut, ciclo_id) {
+    let data = {
+      rut_profesor: rut,
+      ciclo_id: ciclo_id
+    };
+    this.lessonsService.getLessonsPerCycleAndTeacher(data).subscribe((resp: any) => {
+      this.lessons = resp.clases;
+      this.teacher = resp.profesor;
+      this.levels = resp.ciclo.niveles;
+      this.cycle = resp.ciclo;
+      this.rerender();
+    })
+  }
+
+  listLessonsPerAssistants(rut, ciclo_id) {
+    let data = {
+      rut_ayudante: rut,
+      ciclo_id: ciclo_id
+    };
+    this.lessonsService.getLessonsPerCycleAndAssistant(data).subscribe((resp: any) => {
+      this.lessons = resp.clases;
+      this.levels = resp.ciclo.niveles;
+      this.cycle = resp.ciclo;
+      this.rerender();
     })
   }
 
@@ -295,7 +333,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.student = JSON.parse(JSON.stringify(student));
 
   }
-  getTeachersAndAssistants(id,ModalContent) {
+  getTeachersAndAssistants(id, ModalContent) {
     let data = {
       clase_id: id
     };
@@ -344,17 +382,30 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       ciclo_id: this.cycle.id,
       nivel_id: level
     };
-    if (this.studentsPerLevel.length >= 1) {
+    console.log(data);
+    if (this.studentsId.length >= 1) {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        console.log(resp);
         if (resp.code == 200) {
-          modal.dismiss();
           this.AssignStudentToLesson(resp.clase.id);
           await new Promise(f => setTimeout(f, 500));
           this.Toast.fire({
             icon: 'success',
             title: 'Clase creada correctamente'
           });
-          this.listLessonsPerCycle();
+          if (this.user.rol.nombre == 'profesor') {
+            let data = {
+              profesores_id: this.teacher.id,
+              clase_id: resp.clase.id
+            }
+            this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
+              console.log(resp1);
+            });
+            this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+          } else {
+            this.listLessonsPerCycle();
+          }
+          modal.dismiss();
           this.clearForm();
 
         } else {
@@ -374,12 +425,25 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       })
     } else {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        console.log(resp);
         if (resp.code == 200) {
           this.Toast.fire({
             icon: 'success',
             title: 'Clase creada correctamente'
           });
-          this.listLessonsPerCycle();
+          if (this.user.rol.nombre == 'profesor') {
+            let data = {
+              profesores_id: this.teacher.id,
+              clase_id: resp.clase.id
+            }
+            this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
+              console.log(resp1);
+            });
+            this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+          } else {
+            this.listLessonsPerCycle();
+          }
+          modal.dismiss();
           this.clearForm();
 
         } else {
@@ -409,7 +473,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
           icon: 'success',
           title: 'Clase editada correctamente'
         });
-        this.listLessonsPerCycle();
+        if(this.user.rol.nombre == 'profesor'){
+          this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+        }else{
+          this.listLessonsPerCycle();
+        }
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -426,19 +494,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       }
     })
   }
-
-  async deleteLesson(id) {
-    this.getLesson(id, null);
-    await new Promise(f => setTimeout(f, 800));
-    if (this.studentsLesson.length >= 1) {
-      this.studentsId = this.studentsLesson.map((s: any) => {
-        return s.id;
-      });
-    }
+  deleteLesson(id) {
     let data = {
-      clase_id: id,
-      alumnos_id: this.studentsId
-
+      clase_id: id
     };
     Swal.fire({
       title: '¿Esta seguro que desea eliminar esta clase?',
@@ -457,7 +515,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               icon: 'success',
               title: 'Clase eliminada correctamente'
             });
-            this.listLessonsPerCycle();
+            if(this.user.rol.nombre == 'profesor'){
+              this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+            }else{
+              this.listLessonsPerCycle();
+            }
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -495,6 +557,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
     }
+    console.log(this.studentsAdd);
   }
 
   addOrRemoveTeacher(event, teacher) {
@@ -549,7 +612,10 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   concatStudentsArrays(modal) {
-    if (this.studentsPerLevel.length >= 1) {
+    console.log(this.studentsPerLevel);
+    console.log(this.studentsAdd);
+
+    if (this.studentsPerLevel.length >= 1 || this.studentsAdd.length >= 1) {
       this.studentsId = this.studentsPerLevel.map((s: any) => {
         return s.id;
       });
@@ -579,7 +645,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  async chargeAssistance(lesson,ModalContent ) {
+  async chargeAssistance(lesson, ModalContent) {
     this.getLesson(lesson, ModalContent);
     this.studentsAssistance = this.studentsLesson.map((s: any) => {
       let assistance = {

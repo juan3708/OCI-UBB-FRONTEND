@@ -6,6 +6,9 @@
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Crear
             ciclo</button>
+        <button type="button" style="float: right; margin: 8px;"
+            class="btn btn-gradient-info btn-rounded btn-sm sendMails" (click)="openModal(EmailModal)"
+            title="Enviar mensaje"><i class="mdi mdi-email"></i></button>
         <div class="table-responsive">
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
                 style="text-align: center;">
@@ -62,8 +65,8 @@
                                 (click)="openModal(ModalContentEdit);setCycle(cycle)" title="Editar ciclo"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
-                                (click)="getCycle(cycle.id,SelectEstableshments)"
-                                title="Asignar Establecimientos"><i class="mdi mdi-book-plus"></i></button>
+                                (click)="getCycle(cycle.id,SelectEstableshments)" title="Asignar Establecimientos"><i
+                                    class="mdi mdi-book-plus"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
                                 (click)="getCycle(cycle.id,EditQuotasPerEstableshment)"
                                 *ngIf="cycle.establecimientos.length >=1" title="Editar cupos de establecimiento"><i
@@ -224,7 +227,8 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Seleccionar establecimientos que participaran de las {{cycleModel.nombre}}
+                        <h4 class="card-title">Seleccionar establecimientos que participaran de las
+                            {{cycleModel.nombre}}
                         </h4>
                         <p class="card-description">
                             Seleccione los establecimientos que participaran de las OCI.
@@ -409,10 +413,22 @@
                     </li>
                 </ul>
                 <!-- TAB INFORMACION ALUMNO -->
+                <div>
+                    <button type="button" style="float: right;width: 150px;margin: 8px"
+                        class="btn btn-gradient-info btn-rounded btn-sm export-pdf" (click)="exportPdf()">Exportar a PDF
+                        <i class="fa-solid fa-file-pdf"></i></button>
+                    <div class="d-flex justify-content-center" *ngIf="spinnerSee == true"
+                        style="float: right;padding-top: 10px;">
+                        <div class="spinner-border text-success" role="status">
+                        </div>
+                        <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere porfavor.</span>
+                    </div>
+                </div>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
                         <div class="col-12 grid-margin">
                             <div class="card">
+                                <h5 style="font-weight: bold;text-align: center;">Estadistica del ciclo</h5>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -453,7 +469,7 @@
                                                     termino:</label>
                                                 <div class="col-sm-9">
                                                     <label
-                                                        class="col-sm-5 col-form-label label-result">{{cycle.fecha_inicio
+                                                        class="col-sm-5 col-form-label label-result">{{cycle.fecha_termino
                                                         |
                                                         date:"dd-MM-yyyy" }}</label>
                                                 </div>
@@ -966,3 +982,58 @@
     </div>
 </ng-template>
 <!-- Modal LessonPerStudent Ends -->
+
+<!-- Modal Mail starts -->
+<ng-template class="modal fade" #EmailModal let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card" style="text-align: center">Enviar mensaje</h4>
+                        <p class="card-description">
+                            Ingrese los campos para enviar un mensaje a los establecimientos.
+                            Si desea enviar una invitacion masiva, llene el campo formulario con un formulario Google.
+                        </p>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <input type="email" class="form-control to" id="to"
+                                    placeholder="Destinatarios (No incluidos en la lista de emails de establecimientos)"
+                                    #to>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)"
+                                    size="6" #subject>
+                            </div>
+                            <div class="form-group">
+                                <textarea type="text" class="form-control content" id="content" #content rows="20"
+                                    placeholder="(*)"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <input type="text-area" class="form-control to" id="link"
+                                    placeholder="Link Formulario, solo si es una invitación" #link>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+                <div class="spinner-border text-success" role="status">
+                </div>
+                <span>Enviando correo, espere porfavor</span>
+            </div>
+            <button type="button" class="btn btn-success"
+                (click)="sendInvitations(to.value, subject.value, content.value, link.value, modal)">Enviar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Mail Ends -->

@@ -1,5 +1,6 @@
 import { Component, DoCheck, OnInit } from '@angular/core';
 import { UserPagesService } from 'src/app/user-pages/services/user-pages.service';
+import { CycleService } from '../../modules/cycle/services/cycle.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,18 +9,17 @@ import { UserPagesService } from 'src/app/user-pages/services/user-pages.service
 })
 export class SidebarComponent implements OnInit, DoCheck {
   public uiBasicCollapsed = false;
-  public studentsCollapsed = false;
-  public teachersCollapsed = false;
-  public establishmentsCollapsed = false;
-  public assistantsCollapsed = false;
   public samplePagesCollapsed = false;
   public settingsCollapsed = false;
+  public cyclesCollapsed = false;
+  public lessonsCollapsed = false;
 
 
   userLocal;
   rolName;
+  ciclo;
 
-  constructor(private userPagesService: UserPagesService) { 
+  constructor(private userPagesService: UserPagesService, private cycleService: CycleService) { 
     this.userLocal = {};
   }
 
@@ -52,6 +52,7 @@ export class SidebarComponent implements OnInit, DoCheck {
         this.userLocal = user;
       }
     }
+    this.ciclo = this.cycleService.cycle;
   }
 
 }

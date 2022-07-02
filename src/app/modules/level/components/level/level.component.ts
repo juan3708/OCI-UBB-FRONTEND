@@ -28,6 +28,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   ciclo;
   level = new LevelModel();
   levels;
+  levelsLength = 0;
   cycles;
   studentsPerLevel = [];
   cycle = new CycleModel();
@@ -105,7 +106,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.levels = resp.ciclo.niveles;
+      this.levels = resp.niveles;
       this.rerender();
     })
   }
@@ -149,6 +150,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.levels = resp.niveles;
+      this.levelsLength = this.levels.length;
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
@@ -221,7 +223,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Error al crear la actividad',
+            title: 'Error al crear el nivel',
             text: resp.message
           });
         }

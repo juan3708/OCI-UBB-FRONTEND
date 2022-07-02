@@ -51,6 +51,11 @@ export class UsersService {
     return this.http.post(url +'/pdf/generalassistance',data,option);
   }
 
+  exportGeneralStatisticToPDF(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/pdf/generalstatistic',data,option);
+  }
+
   exportCosts(data){
     const option = { headers: this.headers };
     return this.http.post(url +'/pdf/costs',data,option);
