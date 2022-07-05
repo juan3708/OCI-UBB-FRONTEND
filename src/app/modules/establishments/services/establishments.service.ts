@@ -40,4 +40,11 @@ export class EstablishmentsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/ciclo/deleteestablishments', data, option);
   }
+
+  sendMessage(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/mail/messages', data, option);
+  }
+
+
 }

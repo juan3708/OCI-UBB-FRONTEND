@@ -96,7 +96,7 @@
                             </div>
 
                             <div class="entry-footer">
-                                <i class="bi bi-folder"></i>
+                                <!-- <i class="bi bi-folder"></i>
                                 <ul class="cats">
                                     <li><a href="#">Business</a></li>
                                 </ul>
@@ -106,7 +106,7 @@
                                     <li><a href="#">Creative</a></li>
                                     <li><a href="#">Tips</a></li>
                                     <li><a href="#">Marketing</a></li>
-                                </ul>
+                                </ul> -->
                             </div>
 
                         </article>
@@ -120,13 +120,13 @@
                         <!-- Sidebar search form-->
                         <div class="sidebar">
 
-                            <h3 class="sidebar-title">Search</h3>
+                            <!-- <h3 class="sidebar-title">Search</h3>
                             <div class="sidebar-item search-form">
                                 <form action="">
                                     <input type="text" class="form-control">
                                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                                 </form>
-                            </div>
+                            </div> -->
                             <!-- End sidebar search form-->
 
                             <!-- <h3 class="sidebar-title">Categories</h3>
@@ -142,14 +142,20 @@
                             </div> -->
                             <!-- End sidebar categories-->
 
-                            <h3 class="sidebar-title">Recent Posts</h3>
+                            <!-- <h3 class="sidebar-title">Recent Posts</h3>
                             <div class="sidebar-item recent-posts">
-                                <div class="post-item clearfix">
-                                    <img src="assets/images/samples/300x300/3.jpg" alt="">
-                                    <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
+                                <div *ngIf="recentPost.length >=1">
+                                    <div class="post-item clearfix" *ngFor="let post of recentPost">
+                                        <div *ngIf="post.adjuntos.length >=1"><img src="{{url}}{{post.adjuntos[0].url}}"
+                                                alt=""></div>
+                                        <h4><a (click)="onSelectNews(post)">{{post.titulo}}</a></h4>
+                                        <time datetime="2020-01-01">{{post.fecha}}</time>
+                                    </div>
                                 </div>
-                            </div>
+                                <div *ngIf="recentPost.length ==0">
+                                    No hay post recientes.
+                                </div>
+                            </div> -->
                             <!-- End sidebar recent posts-->
 
                             <!-- <h3 class="sidebar-title">Tags</h3>

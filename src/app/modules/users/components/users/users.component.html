@@ -1,0 +1,281 @@
+<!-- <div class="container-lg-10" style="display: flex; align-items: center; justify-content: center;"> -->
+<!-- <div class="col-lg-10 grid-margin stretch-card"> -->
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title"><b>Mantenedor Usuarios</b></h4>
+        <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
+            (click)="openModal(ModalContent)">Crear
+            usuario</button>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+            </div>
+            <!-- <select class="custom-select" id="cycle" (change)="getCycle($event.target.value)" style="width: 100px;">
+                    <option *ngFor="let cycle of cycles" [value]="cycle.id">
+                        {{cycle.nombre}}</option>
+                </select> -->
+        </div>
+        <div class="table-responsive">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
+                style="text-align: center;">
+                <thead class="table table-bordered">
+                    <tr>
+                        <th>
+                            <b>Activo</b>
+                        </th>
+                        <th>
+                            <b>RUT</b>
+                        </th>
+                        <th>
+                            <b>Nombre</b>
+                        </th>
+                        <th>
+                            <b>Apellidos</b>
+                        </th>
+                        <th>
+                            <b>Fecha de creación</b>
+                        </th>
+                        <th>
+                            <b>Correo</b>
+                        </th>
+                        <th>
+                            <b>Rol</b>
+                        </th>
+                        <th>
+                            <b>Acción</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                    <tr *ngFor="let user of users; let index = index">
+                        <td>
+                            <div id="app" class="checkbox-div">
+                                <label class="checker">
+                                    <input class="checkbox" type="checkbox" id="changeStatus" name="changeStatus"
+                                        (click)="changeStatus($event,$event.target.checked ? 1: 0, user.id)"
+                                        [checked]="user.activo == 1">
+                                    <div class="check-bg"></div>
+                                    <div class="checkmark">
+                                        <svg viewBox="0 0 100 100">
+                                            <path d="M20,55 L40,75 L77,27" fill="none" stroke="#FFF" stroke-width="15"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            {{user.rut}}
+                        </td>
+                        <td>
+                            {{user.nombre | titlecase}}
+                        </td>
+                        <td>
+                            {{user.apellidos | titlecase}}
+                        </td>
+                        <td>
+                            {{user.fecha_creacion | date:"dd-MM-yyyy"}}
+                        </td>
+                        <td>
+                            {{user.email}}
+                        </td>
+                        <td>
+                            {{user.rol.nombre | titlecase}}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
+                                (click)="openModal(ModalContentEdit);setUser(user)" *ngIf="user.admin == 0"
+                                title="Editar usuario"><i class="mdi mdi-grease-pencil"></i></button>
+                            <button type="button" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
+                                (click)="openModal(EmailModal);setUser(user)"><i class="mdi mdi-email"
+                                    title="Enviar mensaje"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div> -->
+<!-- </div> -->
+
+<!-- Modal Create starts  -->
+<ng-template class="modal fade" #ModalContent let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Crear usuario</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la creacion del usuario.
+                        </p>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" class="form-control" id="rut"
+                                    placeholder="Ingrese su rut sin puntos y con guion. Ej: 12345678-9" #rut>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" id="name" placeholder="Ingrese su Nombre" #name>
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Apellidos</label>
+                                <input type="text" class="form-control" id="surname"
+                                    placeholder="Ingrese sus y Apellidos" #surname>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <input type="email" class="form-control" id="email"
+                                    placeholder="Ingrese su correo. Ej: correo@email.cl" #email>
+                            </div>
+                            <div class="form-group">
+                                <label for="rol">Rol</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="rol" #rol
+                                        (change)="onChangeRol($event.target.value)">
+                                        <option selected>Seleccione un rol</option>
+                                        <option *ngFor="let rol of roles" [value]="rol.id">
+                                            {{rol.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div *ngIf="isTeacher">
+                                <div class="form-group">
+                                    <label for="faculty">Facultad</label>
+                                    <input type="faculty" class="form-control" id="faculty"
+                                        placeholder="Ejemplo: Facultad de salud" name="faculty" [(ngModel)]="faculty">
+                                </div>
+                                <div class="form-group">
+                                    <label for="modality">Modalidad</label>
+                                    <input type="modality" class="form-control" id="modality"
+                                        placeholder="Ejemplo: Jornada completa" name="modality" [(ngModel)]="modality">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+                (click)="userFormCreate(rut.value, name.value, surname.value, email.value, rol.value, modal)">Crear</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Modal starts Edit -->
+<ng-template class="modal fade" #ModalContentEdit let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Editar usuario</h4>
+                        <p class="card-description">
+                            Ingrese los campos para la modificacion del usuario.
+                        </p>
+                        <form class="forms-sample" #f="ngForm">
+                            <div class="form-group">
+                                <label for="rut">RUT</label>
+                                <input type="text" class="form-control"
+                                    placeholder="Ingrese su rut sin puntos y con guion. Ej: 12345678-9"
+                                    [(ngModel)]="user.rut" name="rut" #rut="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="user.nombre"
+                                    name="name" #name="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Apellidos</label>
+                                <input type="text" class="form-control" placeholder="Apellidos"
+                                    [(ngModel)]="user.apellidos" name="surname" #surname="ngModel">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo</label>
+                                <input type="email" class="form-control" id="email"
+                                    placeholder="Ingrese su correo. Ej: correo@email.cl"  [(ngModel)]="user.email" name="email" #email="ngModel">
+                            </div>
+                            <div class="form-group" *ngIf="user.admin == 0">
+                                <label for="rol">Rol</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                    </div>
+                                    <select class="custom-select" id="rol" name="rol" [(ngModel)]="user.rol_id"
+                                        #rol="ngModel" (change)="onChangeRol($event.target.value)">
+                                        <option selected>Seleccione un rol</option>
+                                        <option *ngFor="let rol of roles" [value]="rol.id">
+                                            {{rol.nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="userFormEdit(f, modal)">Editar</button>
+            <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close()">Cancelar</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Modal Edit ends -->
+
+<!-- Modal Mail starts -->
+<ng-template class="modal fade" #EmailModal let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card" style="text-align: center">Enviar mensaje</h4>
+              <p class="card-description">
+                Ingrese los campos para enviar un mensaje al usuario: {{user.nombre}} {{user.apellidos}}
+              </p>
+              <form class="forms-sample">
+                <div class="form-group">
+                  <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
+                </div>
+                <div class="form-group">
+                  <textarea type="text" class="form-control content" id="content" #content rows="20"
+                    placeholder="(*)"></textarea>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+          <div class="spinner-border text-success" role="status">
+          </div>
+          <span>Enviando correo, espere porfavor</span>
+        </div>
+        <button type="button" class="btn btn-success"
+          (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
+      </div>
+    </div>
+  </ng-template>
+  <!-- Modal Mail Ends -->

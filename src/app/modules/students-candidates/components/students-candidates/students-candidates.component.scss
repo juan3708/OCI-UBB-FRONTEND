@@ -41,3 +41,30 @@
 ::ng-deep .card .card-header.active > a > span {
   color: #1d2124 !important;
 }
+
+h5{
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+.col-sm-9,
+.col-sm-6,
+.col-sm-4,
+.col-sm-5,
+.col-12,
+.col-sm-3 {
+  padding-right: 0px !important;
+}
+
+.col-sm-3 {
+  padding-left: 0px !important;
+}
+
+.label-result {
+  font-weight: bold;
+}
+
+.thGastos{
+  text-align: center;
+  border: transparent;
+}

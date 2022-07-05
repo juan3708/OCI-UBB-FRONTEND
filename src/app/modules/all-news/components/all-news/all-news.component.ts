@@ -10,6 +10,7 @@ import { CycleModel } from 'src/models/cycle.model';
 import { NewsModel } from 'src/models/news.model';
 import Swal from 'sweetalert2';
 import { AllNewsService } from '../../services/all-news.service';
+import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
 
 @Component({
   selector: 'app-all-news',
@@ -24,13 +25,17 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloNew;
   ciclo;
   noticias;
+  images;
+  image;
+  user;
   selectedFiles: File[] = Array();
   fileNames: string;
+  currentDate;
   url = 'http://127.0.0.1:8000/storage/images/';
   filesNamesArray: string[] = Array();
   new;
   cycle = new CycleModel();
-  news = new NewsModel();
+  news;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -55,8 +60,9 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private allNewsService: AllNewsService, private modalService: NgbModal, private cycleService: CycleService) {
+  constructor(private allNewsService: AllNewsService, private userPageService:UserPagesService,private modalService: NgbModal, private cycleService: CycleService) {
     this.cicloOld = {};
+    this.user = userPageService.getUser();
   }
 
   ngOnInit(): void {
@@ -64,6 +70,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
   }
 
   ngAfterViewInit(): void {
@@ -112,7 +119,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.noticias = resp.ciclo.noticias;
+      this.noticias = resp.noticias;
       this.rerender();
     })
   }
@@ -123,28 +130,39 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       entrada: lead,
       cuerpo: body,
       fecha: formatDate(new Date(), 'yyyy-MM-dd', 'en'),
-      ciclo_id: this.cycle.id
+      ciclo_id: this.cycle.id,
+      user_id: this.user.id
     };
     this.allNewsService.createNews(data).subscribe((resp: any) => {
       if (resp.code === 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Se ha creado correctamente'
-        });
         let noticia_id = resp.noticia.id;
-        console.log(this.selectedFiles.length);
         if (this.selectedFiles.length >= 1) {
-          console.log('paso el if');
+          Swal.fire({
+            title: 'Espere porfavor...',
+            didOpen: () => {
+              Swal.showLoading()
+            },
+            willClose: () => {
+              Swal.hideLoading()
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false
+          });
           for (let index = 0; index < this.selectedFiles.length; index++) {
             const formData = new FormData();
             formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
             formData.append('noticia_id', noticia_id.toString());
             this.allNewsService.chargePhotosPerNews(formData).subscribe((resp: any) => {
-              console.log(resp);
             })
           }
+          Swal.close();
         }
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha creado correctamente'
+        });
+        modal.dismiss();
         this.listNewsPerCycle();
         this.clearForm();
       } else {
@@ -165,14 +183,36 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   newsFormEdit(form: NgForm, modal) {
+    var bool = false;
     this.allNewsService.editNews(this.news).subscribe((resp: any) => {
       if (resp.code == 200) {
-        modal.dismiss();
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Noticia editada correctamente',
-        });
+        if (this.selectedFiles.length >= 1) {
+          let noticia_id = resp.noticia.id;
+          for (let index = 0; index < this.selectedFiles.length; index++) {
+            const formData = new FormData();
+            formData.append('image', this.selectedFiles[index], this.filesNamesArray[index]);
+            formData.append('noticia_id', noticia_id.toString());
+            this.allNewsService.chargePhotosPerNews(formData).subscribe();
+            bool = true;
+          }
+        }
+        if (bool == true) {
+          Swal.fire({
+            title: 'Noticia editada correctamente. Cargando imagenes, espere porfavor',
+            timer: 2000,
+            didOpen: async () => {
+              Swal.showLoading();
+            },
+          })
+        } else {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Noticia editada correctamente',
+          });
+        }
         this.listNewsPerCycle();
+        this.clearForm();
+        modal.dismiss();
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -190,13 +230,48 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  editNews(news: NewsModel) {
-    this.news = news;
+  editNews(news) {
+    this.news = JSON.parse(JSON.stringify(news));
+    this.images = news.adjuntos
   }
 
-  setNew(noticia) {
-    this.new = noticia;
-    console.log(this.new);
+  setImage(image) {
+    this.image = JSON.parse(JSON.stringify(image));
+  }
+
+  deleteImage(image) {
+    let data = {
+      id: image
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea eliminar esta imagen?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.allNewsService.deleteImage(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.images.splice(this.images.indexOf(image), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha eliminado correctamente',
+            });
+            this.listNewsPerCycle();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
   deleteNews(id) {

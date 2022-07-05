@@ -2,9 +2,9 @@
   <div class="col-lg-10 grid-margin stretch-card"> -->
 <div class="card">
   <div class="card-body">
-    <h4 class="card-title"><b>Establecimientos por Ciclo</b></h4>
+    <h4 class="card-title"><b>Establecimientos</b></h4>
     <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm sendMails"
-      (click)="openModal(EmailModal)"><i class="mdi mdi-email"></i></button>
+      (click)="openModal(EmailModal)"><i class="mdi mdi-email" title="Enviar mensaje"></i></button>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
       </div>
@@ -45,11 +45,15 @@
               {{establishment.email_profesor}}
             </td>
             <td>
+              <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                (click)="getStudents(establishment.id,ModalContentSeeStudents);setEstablishment(establishment)"
+                title="Asistencia de alumnos"><i class="mdi mdi-eye"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);getEstablishment(establishment.id)"><i
+                (click)="openModal(ModalContentEdit);setEstablishment(establishment)" title="Editar establecimientos"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteEstablishment(establishment.id)"><i class="mdi mdi-delete"></i></button>
+                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento del ciclo" *ngIf="cycle.fecha_termino >= currentDate"><i
+                  class="mdi mdi-delete"></i></button>
             </td>
           </tr>
         </tbody>
@@ -124,7 +128,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="establishmentFormEdit(f, modal)">Editar</button>
+      <button type="submit" class="btn btn-success" (keypress.enter)="establishmentFormEdit(f, modal)"
+        (click)="establishmentFormEdit(f, modal)">Editar</button>
       <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
     </div>
   </div>
@@ -143,22 +148,17 @@
       <div class="col-12 stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card" style="text-align: center">Enviar invitacion Masiva</h4>
+            <h4 class="card" style="text-align: center">Enviar mensaje</h4>
             <p class="card-description">
-              Ingrese los campos para enviar una invitacion masiva a los colegios participes de la OCI {{cycle.nombre}}
+              Ingrese los campos para enviar un mensaje a los colegios participes de la OCI {{cycle.nombre}}
             </p>
             <form class="forms-sample">
-              <div class="form-group">
-                <input type="email" class="form-control to" id="to" placeholder="Destinatarios (No incluidos en la lista de emails de establecimientos)" #to>
-              </div>
               <div class="form-group">
                 <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
               </div>
               <div class="form-group">
-                <textarea type="text" class="form-control content" id="content" #content rows="20" placeholder="(*)"></textarea>
-              </div>
-              <div class="form-group">
-                <input type="text-area" class="form-control to" id="link" placeholder="Link Formulario (*)" #link>
+                <textarea type="text" class="form-control content" id="content" #content rows="20"
+                  placeholder="(*)"></textarea>
               </div>
             </form>
           </div>
@@ -166,10 +166,180 @@
       </div>
     </div>
     <div class="modal-footer">
+      <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+        <div class="spinner-border text-success" role="status">
+        </div>
+        <span>Enviando correo, espere porfavor</span>
+      </div>
       <button type="button" class="btn btn-success"
-        (click)="sendInvitations(to.value, subject.value, content.value, link.value, modal)">Enviar</button>
+        (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
       <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
     </div>
   </div>
 </ng-template>
 <!-- Modal Mail Ends -->
+
+<!-- Modal SeeStudents starts -->
+<ng-template class="modal fade" #ModalContentSeeStudents let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss();deletePdf()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card">Asistencia de los alumnos del establecimiento en el ciclo: {{cycle.nombre}}</h4>
+            <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
+              NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
+            </div>
+            <button type="button" style="float: right; margin: 8px;"
+              class="btn btn-gradient-info btn-rounded btn-sm export-pdf" (click)="exportPdf()"
+              style="float: right; margin: 8px;">Exportar a PDF <i class="fa-solid fa-file-pdf"></i></button>
+            <div class="d-flex justify-content-center" *ngIf="spinnerSee == true"
+              style="float: right;padding-top: 10px;">
+              <div class="spinner-border text-success" role="status">
+              </div>
+              <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere porfavor.</span>
+            </div>
+            <div *ngIf="students.length >= 1">
+              <div class="table-responsive">
+                <table class="table table-striped" style="text-align: center;">
+                  <thead class="table table-bordered">
+                    <tr>
+                      <th>
+                        <b>Rut</b>
+                      </th>
+                      <th>
+                        <b>Nombre</b>
+                      </th>
+                      <th>
+                        <b>Apellidos</b>
+                      </th>
+                      <th>
+                        <b>Porcentaje de asistencia</b>
+                      </th>
+                      <th>
+                        <b>Asistencias</b>
+                      </th>
+                      <th>
+                        <b>Inasistencias</b>
+                      </th>
+                      <th>
+                        <b>Total Clases</b>
+                      </th>
+                      <th>
+                        <b>Ver clases</b>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="table table-bordered">
+                    <tr *ngFor="let student of students">
+                      <td>
+                        {{student.rut}}
+                      </td>
+                      <td>
+                        {{student.nombre}}
+                      </td>
+                      <td>
+                        {{student.apellidos}}
+                      </td>
+                      <td *ngIf="student.PorcentajeAsistencia <=30" style="color: red;">
+                        {{student.PorcentajeAsistencia}}%
+                      </td>
+                      <td *ngIf="student.PorcentajeAsistencia >30 && student.PorcentajeAsistencia<=50"
+                        style="color: yellow;">
+                        {{student.PorcentajeAsistencia}}%
+                      </td>
+                      <td *ngIf="student.PorcentajeAsistencia >50 && student.PorcentajeAsistencia <=70"
+                        style="color: yellowgreen;">
+                        {{student.PorcentajeAsistencia}}%
+                      </td>
+                      <td *ngIf="student.PorcentajeAsistencia >70" style="color: green;">
+                        {{student.PorcentajeAsistencia}}%
+                      </td>
+                      <td>
+                        {{student.CantAsistenciasEInasistencias[0].asistencias}}
+                      </td>
+                      <td>
+                        {{student.CantAsistenciasEInasistencias[0].inasistencias}}
+                      </td>
+                      <td>
+                        {{student.Asistencias.length}}
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                          (click)="openModal(ModalContentLessonPerStudent);setStudent(student)"><i
+                            class="fa-solid fa-person-chalkboard"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal SeeStudents Ends -->
+
+<!-- Modal LessonPerStudent starts -->
+<ng-template class="modal fade" #ModalContentLessonPerStudent let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-12 stretch-card">
+        <div class="card">
+          <div class="card-header" style="font-size: bold;font-weight:bold;">
+            CLASES ASOCIADAS
+          </div>
+          <div class="card-body text-primary">
+            <div class="table-responsive">
+              <table class="table table-striped" style="text-align: center;">
+                <thead class="table table-bordered">
+                  <tr>
+                    <th>
+                      <b>Fecha</b>
+                    </th>
+                    <th>
+                      <b>Contenido</b>
+                    </th>
+                    <th>
+                      <b>Asistencia</b>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="table table-bordered">
+                  <tr *ngFor="let student of student.Asistencias">
+                    <td>
+                      {{student.fecha}}
+                    </td>
+                    <td>
+                      {{student.contenido}}
+                    </td>
+                    <td *ngIf="student.pivot.asistencia == 1" style="color: green;">
+                      PRESENTE
+                    </td>
+                    <td *ngIf="student.pivot.asistencia == 0" style="color: red;">
+                      AUSENTE
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal LessonPerStudent Ends -->

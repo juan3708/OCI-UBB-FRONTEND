@@ -1,5 +1,5 @@
 import { DataTableDirective } from 'angular-datatables';
-import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LevelModel } from '../../../../../models/level.model';
 import { LevelService } from '../../services/level.service';
 import { CycleService } from '../../../cycle/services/cycle.service';
@@ -19,7 +19,7 @@ import { formatDate } from '@angular/common';
 })
 
 export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
 
   dtElement: DataTableDirective;
 
@@ -28,6 +28,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   ciclo;
   level = new LevelModel();
   levels;
+  levelsLength = 0;
   cycles;
   studentsPerLevel = [];
   cycle = new CycleModel();
@@ -48,14 +49,14 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private LevelService: LevelService, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { 
+  constructor(private LevelService: LevelService, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     //this.listLevels();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     //this.listEstablishments();
     this.dtOptions = {
@@ -65,9 +66,9 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -105,7 +106,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.levels = resp.ciclo.niveles;
+      this.levels = resp.niveles;
       this.rerender();
     })
   }
@@ -126,8 +127,8 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     let data = {
       fecha_termino: this.currentDate
     };
-    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.levels = resp.ciclo.niveles;
         this.establishments = resp.ciclo.establecimientos;
@@ -148,14 +149,15 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.levels = resp.ciclo.niveles;
+      this.levels = resp.niveles;
+      this.levelsLength = this.levels.length;
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   addOrRemoveStudent(event, student) {
@@ -167,15 +169,44 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   }
 
 
-  getLevel(id) {
+  getLevel(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.LevelService.getLevelById(data).subscribe((resp: any) => {
       this.level = resp.nivel;
       this.studentsPerLevel = resp.nivel.alumnos;
       this.students = resp.alumnosSinNivel;
-      this.rerender();
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
+    })
+  }
+
+  setLevel(level) {
+    this.level = JSON.parse(JSON.stringify(level));
+    this.studentsPerLevel = level.alumnos;
+  }
+
+  assignCycle(id){
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any)=>{
+      this.cycleService.cycle = resp.ciclo;
     })
   }
 
@@ -192,6 +223,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           title: 'Se ha creado correctamente'
         });
         this.listLevelsPerCycle();
+        this.assignCycle(this.cycle.id);
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -201,7 +233,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Error al crear la actividad',
+            title: 'Error al crear el nivel',
             text: resp.message
           });
         }
@@ -257,6 +289,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               title: 'Nivel eliminado correctamente',
             });
             this.listLevelsPerCycle();
+            this.assignCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -273,9 +306,10 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   addLevelStudent(modal) {
     if (this.studentsIdAddLevel.length < 1) {
       this.Toast.fire({
-        icon: 'error',
-        title: 'Seleccione alumnos porfavor'
+        icon: 'info',
+        title: 'No se efectuaron cambios'
       });
+      modal.dismiss();
     } else {
       let data = {
         nivel_id: this.level.id,
@@ -289,6 +323,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
             title: 'Se asigno correctamente el nivel'
           });
           this.clearForm();
+          this.getCycle(this.cycle.id);
         } else {
           this.Toast.fire({
             icon: 'error',
@@ -301,7 +336,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
 
   removeStudent(student) {
     let data = {
-      nivel_id : this.level.id,
+      nivel_id: this.level.id,
       alumno_id: student
     };
     Swal.fire({
@@ -315,15 +350,17 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       confirmButtonText: 'Eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.LevelService.deleteStudent(data).subscribe((resp: any)=>{
-          if(resp.code == 200){
+        this.LevelService.deleteStudent(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
             this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
             this.Toast.fire({
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
-            this.getLevel(this.level.id);
-          }else{
+            this.getLevel(this.level.id, null);
+          this.getCycle(this.cycle.id);
+
+          } else {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al realizar la acción',

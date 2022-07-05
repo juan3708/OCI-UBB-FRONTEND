@@ -4,7 +4,7 @@
     <div class="card-body">
         <h4 class="card-title"><b>Noticias</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear noticia</button>
+            (click)="openModal(ModalContent)" *ngIf="cycle.fecha_termino >= currentDate">Crear noticia</button>
         <div class="table-responsive">
             <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped"
                 style="text-align: center;">
@@ -31,12 +31,12 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);editNews(noticia)"><i
+                                (click)="openModal(ModalContentEdit);editNews(noticia)" title="Editar noticia"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteNews(noticia.id)"><i class="mdi mdi-delete"></i></button>
-                                <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="openModal(ModalSeeImages);setNew(noticia)"><i class="mdi mdi-eye"></i></button>
+                                (click)="deleteNews(noticia.id)" title="Eliminar noticia"><i class="mdi mdi-delete"></i></button>
+                            <!-- <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
+                                (click)="openModal(ModalSeeImages);setNew(noticia)"><i class="mdi mdi-eye"></i></button> -->
                         </td>
                     </tr>
                 </tbody>
@@ -51,7 +51,8 @@
 <ng-template class="modal fade" #ModalContent let-modal>
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();clearForm()">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss();clearForm()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -66,21 +67,25 @@
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="title">Título de la noticia</label>
-                                <input type="text" class="form-control" id="title" placeholder="Ingrese el título de la noticia." #title>
+                                <input type="text" class="form-control" id="title"
+                                    placeholder="Ingrese el título de la noticia." #title>
                             </div>
                             <div class="form-group">
                                 <label for="lead">Entrada de la noticia</label>
-                                <textarea class="form-control" id="lead" rows="5" placeholder="Ingrese un resumen de la noticia. Invitación a leer." #lead></textarea>
+                                <textarea class="form-control" id="lead" rows="5"
+                                    placeholder="Ingrese un resumen de la noticia. Invitación a leer." #lead></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="body">Cuerpo de la noticia</label>
-                                <textarea class="form-control" id="body" rows="15" placeholder="Ingrese cuerpo de la noticia." #body></textarea>
+                                <textarea class="form-control" id="body" rows="15"
+                                    placeholder="Ingrese cuerpo de la noticia." #body></textarea>
                             </div>
                             <label for="body">Adjunte imagen(es)</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="customFile" name="myfile"
                                     (change)="onFileSelected($event)" multiple accept=".png, .jpg, .svg">
-                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione archivo(s)'}}</label>
+                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione
+                                    archivo(s)'}}</label>
                             </div>
                         </form>
                     </div>
@@ -90,7 +95,8 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
                 (click)="newsFormCreate(title.value, lead.value, body.value, modal)">Crear</button>
-            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close();clearForm()">Cancelar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal"
+                (click)="modal.close();clearForm()">Cancelar</button>
         </div>
     </div>
 </ng-template>
@@ -115,15 +121,52 @@
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
                                 <label for="title">Título de la noticia</label>
-                                <input type="text" class="form-control" id="title" [(ngModel)]="news.titulo" name="title" #title="ngModel">
+                                <input type="text" class="form-control" id="title" [(ngModel)]="news.titulo"
+                                    name="title" #title="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="lead">Entrada de la noticia</label>
-                                <textarea class="form-control" id="lead" rows="5" [(ngModel)]="news.entrada" name="lead" #lead="ngModel"></textarea>
+                                <textarea class="form-control" id="lead" rows="5" [(ngModel)]="news.entrada" name="lead"
+                                    #lead="ngModel"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="body">Cuerpo de la noticia</label>
-                                <textarea class="form-control" id="body" rows="15" [(ngModel)]="news.cuerpo" name="body" #body="ngModel"></textarea>
+                                <textarea class="form-control" id="body" rows="15" [(ngModel)]="news.cuerpo" name="body"
+                                    #body="ngModel"></textarea>
+                            </div>
+                            <label for="body">Imagenes: </label>
+                            <div *ngIf="images.length >=1">
+                                <div class="table-responsive">
+                                    <table style="text-align: left;border: hidden;">
+                                        <tbody class="table table-bordered">
+                                            <tr *ngFor="let image of images" style="border: hidden;">
+                                                <td style="border: hidden;">
+                                                    {{image.url}}
+                                                </td>
+                                                <td style="border: hidden;">
+                                                    <button type="button"
+                                                        class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                                        (click)="openModal(ModalSeeImage);setImage(image)" title="Ver imagen"><i
+                                                            class="mdi mdi-eye"></i></button>
+                                                    <button type="button"
+                                                        class="btn btn-gradient-info btn-rounded btn-sm"
+                                                        (click)="deleteImage(image.id)"><i
+                                                            class="fa-solid fa-xmark" title="Eliminar imagen"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div *ngIf="images.length == 0" style="text-align: center;font-weight: bold;">
+                                <h5>No hay imagenes asociadas.</h5>
+                            </div>
+                            <label for="body">Adjuntar imagen(es)</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="myfile"
+                                    (change)="onFileSelected($event)" multiple accept=".png, .jpg, .svg">
+                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione
+                                    archivo(s)'}}</label>
                             </div>
                         </form>
                     </div>
@@ -140,27 +183,9 @@
 
 
 <!-- Modal Image starts -->
-<ng-template class="modal fade" #ModalSeeImages let-modal>
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="col-12 stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div *ngFor="let adjunto of new.adjuntos">
-                              <div>
-                                <img class="d-block w-100" src="{{url}}{{adjunto.url}}" alt="Second slide">
-                              </div>
-                          </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<ng-template class="modal fade" #ModalSeeImage let-modal>
+
+    <img class="d-block w-100" src="{{url}}{{image.url}}" alt="Second slide">
+
 </ng-template>
 <!-- Modal Image ends -->
-

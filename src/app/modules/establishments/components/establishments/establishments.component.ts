@@ -10,6 +10,8 @@ import { CycleService } from '../../../cycle/services/cycle.service';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { Router } from '@angular/router';
+import { UsersService } from '../../../users/services/users.service';
 
 @Component({
   selector: 'app-establishments',
@@ -25,8 +27,13 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   ciclo;
   establishments;
   establishment = new EstablishmentModel();
+  students = [];
+  student;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  fileName = -1;
   cycle = new CycleModel();
   cycles;
+  spinnerSee = false;
   emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
   currentDate;
   emailsArray = [];
@@ -43,14 +50,14 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) { 
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal, private router: Router, private usersService:UsersService) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     //this.listEstablishmentsPerCycle();
     // this.lisCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -59,9 +66,9 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -87,13 +94,14 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
   listEstablishmentsPerCycle() {
     this.cycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
+      console.log(resp);
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'xl' });
+    this.modalService.open(ModalContent, { size: 'xl', keyboard: false });
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
@@ -139,6 +147,10 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     this.establishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
       this.establishment = resp.establecimiento;
     });
+  }
+
+  setEstablishment(establishment) {
+    this.establishment = JSON.parse(JSON.stringify(establishment));
   }
 
   lisCycles() {
@@ -202,6 +214,41 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
+  getStudents(id, ModalContent) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      establecimiento_id: id
+    }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.cycleService.getStudentAssistancePerCycleAndEstablishment(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        if (resp.estudiantesConEstadisticaDeAsistencia != undefined) {
+          this.students = resp.estudiantesConEstadisticaDeAsistencia;
+        } else {
+          this.students = [];
+        }
+        Swal.close();
+        this.modalService.open(ModalContent, { size: 'xl', keyboard: false });
+
+      }
+    })
+  }
+
+  setStudent(student) {
+    this.student = JSON.parse(JSON.stringify(student));
+  }
+
   deleteEstablishment(id) {
     let data = {
       establecimientos_id: id,
@@ -240,8 +287,8 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     })
   }
 
-  sendInvitations(to, subject, content, formLink, modal) {
-    if (subject == '' || content == '' || formLink == '') {
+  sendMessages(subject, content, modal) {
+    if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
         title: 'Porfavor rellenar todo los campos con asterisco(*)'
@@ -250,60 +297,68 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       this.establishments.forEach(e => {
         this.emailsArray.push(e.email, e.email_profesor);
       });
-      if (to != '') {
-        let bool = this.emailsRegex.test(to);
-        if (bool) {
-          this.emailsArray.push(to);
-          let data = {
-            emails: this.emailsArray,
-            subject,
-            content,
-            formLink,
-            start_date: this.cycle.fecha_inicio
-          };
-          this.cycleService.sendEmails(data).subscribe((resp: any) => {
-            if (resp.code == 200) {
-              this.Toast.fire({
-                icon: 'success',
-                title: 'Invitaciones enviadas correctamente'
-              });
-              modal.dismiss();
-            } else {
-              this.Toast.fire({
-                icon: 'error',
-                title: 'Error al enviar invitaciones'
-              });
-            }
-          })
+      let data = {
+        emails: this.emailsArray,
+        subject,
+        content,
+        cycleName: this.cycle.nombre
+      };
+      this.spinnerSee = true;
+      this.establishmentsService.sendMessage(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Mensajes enviados correctamente'
+          });
+          modal.dismiss();
+          this.spinnerSee = false;
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Email incorrecto'
+            title: 'Error al enviar los mensajes'
           });
+          this.spinnerSee = false;
         }
+      })
+    }
+  }
+
+  exportPdf() {
+    let data = {
+      students: this.students,
+      nombreCiclo: this.cycle.nombre,
+      nombreEstablecimiento: this.establishment.nombre,
+      email: this.establishment.email,
+      emailProfesor: this.establishment.email_profesor
+    }
+    this.spinnerSee = true;
+    this.usersService.exportAssistancePerEstablishmentToPDF(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
+
       } else {
-        let data = {
-          emails: this.emailsArray,
-          subject,
-          content,
-          formLink,
-          start_date: this.cycle.fecha_inicio
-        };
-        this.cycleService.sendEmails(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Invitaciones enviadas correctamente'
-            });
-            modal.dismiss();
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al enviar invitaciones'
-            });
-          }
-        })
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
       }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
     }
   }
 

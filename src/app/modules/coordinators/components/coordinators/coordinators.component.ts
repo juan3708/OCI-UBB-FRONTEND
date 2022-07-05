@@ -65,7 +65,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   coordinatorFormCreate(rut, name, surname, email, modal) {
@@ -108,6 +108,11 @@ export class CoordinatorsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.coordinatorsService.getCoordinatorById(data).subscribe((resp: any) => {
       this.coordinator = resp.coordinador;
     });
+  }
+
+  setCoordinator(coordinator){
+    this.coordinator = JSON.parse(JSON.stringify(coordinator));
+    
   }
 
   coordinatorFormEdit(form: NgForm, modal) {

@@ -1,4 +1,4 @@
-import { AfterViewInit,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, DoCheck } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -8,18 +8,25 @@ import Swal from 'sweetalert2';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { EstablishmentsService } from 'src/app/modules/establishments/services/establishments.service';
 import { DataTableDirective } from 'angular-datatables';
+import { CycleModel } from '../../../../../models/cycle.model';
 
 @Component({
   selector: 'app-all-establishments',
   templateUrl: './all-establishments.component.html',
   styleUrls: ['./all-establishments.component.scss']
 })
-export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild(DataTableDirective, {static: false})
+export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
-
+  cicloOld;
+  cicloNew;
+  ciclo;
+  spinnerSee = false;
+  cycle = new CycleModel();
   establishments;
+  emailsArray = [];
+  emailsRegex = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/img;
   establishment = new EstablishmentModel();
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
@@ -34,24 +41,118 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private establishmentsService: EstablishmentsService, private CycleService: CycleService, private modalService: NgbModal) { }
+  constructor(private establishmentsService: EstablishmentsService, private cycleService: CycleService, private modalService: NgbModal) { }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
   }
 
+  ngDoCheck(): void {
+    if (this.cycleService.cycle.id != undefined) {
+      this.cicloNew = this.cycleService.cycle;
+      if (this.cicloOld != this.cicloNew) {
+        this.cicloOld = this.cicloNew;
+        this.getCycle(this.cicloNew.id);
+      }
+    }
+  }
+
+  getCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycle = resp.ciclo;
+    })
+  }
+
+  sendInvitations(to, subject, content, formLink, modal) {
+    if (subject == '' || content == '') {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+      });
+    } else {
+      this.establishments.forEach(e => {
+        this.emailsArray.push(e.email, e.email_profesor);
+      });
+      if (to != '') {
+        let bool = this.emailsRegex.test(to);
+        if (bool) {
+          this.emailsArray.push(to);
+          let data = {
+            emails: this.emailsArray,
+            subject,
+            content,
+            formLink,
+            start_date: this.cycle.fecha_inicio
+          };
+          this.spinnerSee = true;
+          this.cycleService.sendEmails(data).subscribe((resp: any) => {
+            if (resp.code == 200) {
+              this.Toast.fire({
+                icon: 'success',
+                title: 'Mensajes enviados correctamente'
+              });
+              this.spinnerSee = false;
+              modal.dismiss();
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al enviar los mensajes'
+              });
+              this.spinnerSee = false;
+
+            }
+          })
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Formato de email incorrecto'
+          });
+        }
+      } else {
+        let data = {
+          emails: this.emailsArray,
+          subject,
+          content,
+          formLink,
+          start_date: this.cycle.fecha_inicio
+        };
+        this.spinnerSee = true;
+        this.cycleService.sendEmails(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Mensajes enviados correctamente'
+            });
+            this.spinnerSee = false;
+            modal.dismiss();
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al enviar los mensajes'
+            });
+            this.spinnerSee = false;
+
+          }
+        })
+      }
+    }
+  }
+
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
-  
+
   ngOnInit(): void {
     this.listEstablishments();
     this.dtOptions = {
@@ -68,7 +169,7 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   establishmentFormCreate(establishmentName, director, establishmentAddress, teacherPhoneNumber, teacherEmail, teacherName, establishmentEmail, establishmentPhoneNumber, modal) {
@@ -114,6 +215,10 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
     this.establishmentsService.getEstablishmentById(data).subscribe((resp: any) => {
       this.establishment = resp.establecimiento;
     });
+  }
+
+  setEstablishment(establishment) {
+    this.establishment = JSON.parse(JSON.stringify(establishment));
   }
 
   establishmentFormEdit(form: NgForm, modal) {

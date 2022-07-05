@@ -41,4 +41,14 @@ export class StudentsService {
     const option = { headers: this.headers };
     return this.http.post(url + '/alumno/delete', id, option);
   }
+
+  getStatistic(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/alumno/getstatistic', data, option);
+  }
+
+  getAssistancePerLastCycles(data){
+    const option = { headers: this.headers };
+    return this.http.post(url + '/alumno/getassistancepertwolastcycles', data, option);
+  }
 }

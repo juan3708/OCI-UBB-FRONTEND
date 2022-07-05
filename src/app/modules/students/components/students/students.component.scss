@@ -3,6 +3,72 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.btn-see {
+  background: rgb(16, 201, 24) !important;
+  background: linear-gradient(90deg, rgba(16, 201, 24, 1) 0%, rgba(50, 223, 59, 1) 100%) !important;
+}
+
+.label-ident {
+  color: #3674a7 !important;
+  font-weight: 300;
+}
+
+.col-form-label {
+  font-size: 16px;
+}
+
+.label-etbls {
+  padding-right: 10px;
+}
+
+.fa-id-card-clip {
+  font-size: 16px;
+  color: #b66dff;
+}
+
+.fa-rectangle-list {
+  font-size: 16px;
+  color: #b66dff;
+}
+
+.fa-square-poll-vertical {
+  font-size: 16px;
+  color: #b66dff;
+}
+
+h5, h6 {
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+.col-sm-9,
+.col-sm-6,
+.col-sm-4,
+.col-sm-5,
+.col-12,
+.col-sm-3 {
+  padding-right: 0px !important;
+}
+
+.col-sm-3 {
+  padding-left: 0px !important;
+}
+
+.label-result {
+  font-weight: bold;
+}
+
+.thGastos{
+  text-align: center;
+  border: transparent;
+}
+
+.ciclo{
+  width: 300px !important;
+  justify-content: center !important;
 }

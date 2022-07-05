@@ -11,13 +11,15 @@ import { HeroHomepageComponent } from './components/hero-homepage/hero-homepage.
 import { AboutHomepageComponent } from './components/about-homepage/about-homepage.component';
 import { NewsHomepageComponent } from './components/news-homepage/news-homepage.component';
 import { NewsSingleHomepageComponent } from './components/news-single-homepage/news-single-homepage.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [HomepageComponent, NavbarHomepageComponent, FooterHomepageComponent, FeaturedHomepageComponent, ContactHomepageComponent, HeroHomepageComponent, AboutHomepageComponent, NewsHomepageComponent, NewsSingleHomepageComponent],
   imports: [
     CommonModule,
-    HomepageRoutingModule
+    HomepageRoutingModule,
+    FormsModule
   ]
 })
 export class HomepageModule { }

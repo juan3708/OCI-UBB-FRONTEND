@@ -2,7 +2,7 @@
     <div class="col-lg-10 grid-margin stretch-card"> -->
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title"><b>Ayudantes</b></h4>
+                <h4 class="card-title"><b>Mantenedor Ayudantes</b></h4>
                 <button type="button" style="float: right; margin: 8px;"
                     class="btn btn-gradient-info btn-rounded btn-sm" (click)="openModal(ModalContent)">Registrar
                     Ayudante</button>
@@ -43,10 +43,10 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                        (click)="openModal(ModalContentEdit);getAssistants(assistant.id)"><i class="mdi mdi-grease-pencil"></i></button>
+                                        (click)="openModal(ModalContentEdit);setAssistant(assistant)" title="Editar ayudante"><i class="mdi mdi-grease-pencil"></i></button>
                                     <button type="button"
                                         class="btn btn-gradient-danger btn-rounded btn-sm"
-                                        (click)="deleteAssistant(assistant.id)"><i class="mdi mdi-delete"></i></button>
+                                        (click)="deleteAssistant(assistant.id)" title="Eliminar ayudante"><i class="mdi mdi-delete"></i></button>
                                 </td>
                             </tr>
                         </tbody>

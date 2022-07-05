@@ -8,29 +8,54 @@ import { HomepageService } from '../../services/homepage.service';
   styleUrls: ['./news-homepage.component.scss']
 })
 export class NewsHomepageComponent implements OnInit {
-  
+
   noticias;
+  recentPost = [];
   url = 'http://127.0.0.1:8000/storage/images/';
   constructor(private router: Router, private homepageService: HomepageService) { }
 
   ngOnInit(): void {
     this.listAllNews();
+    this.listRecentPost();
   }
 
-  listAllNews(){
-    this.homepageService.getNews().subscribe((resp:any) => {
-      console.log(resp);
+  listAllNews() {
+    this.homepageService.getNews().subscribe((resp: any) => {
       this.noticias = resp.noticias;
-      console.log(this.url);
     })
   }
 
-  onSelectNews(news){
-    console.log(news);
+  listRecentPost() {
+    this.homepageService.getRecentPost().subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.recentPost = resp.noticias;
+      } else {
+        this.recentPost = [];
+      }
+    })
+  }
+
+  listNewsForWord(word) {
+    if (word) {
+      let data = {
+        palabra: word
+      };
+      this.homepageService.getNewsLikeWord(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.noticias = resp.noticias;
+        }
+      })
+    } else {
+      this.listAllNews();
+    }
+  }
+
+  onSelectNews(news) {
     let title = news.titulo.replaceAll(' ', '-').toLowerCase();
-    this.router.navigate(['/news', title], {state:{
-      news
-    }});
-    console.log(title);
+    this.router.navigate(['/news', title], {
+      state: {
+        news
+      }
+    });
   }
 }

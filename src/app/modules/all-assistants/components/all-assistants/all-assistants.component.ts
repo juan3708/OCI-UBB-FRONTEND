@@ -66,7 +66,7 @@ export class AllAssistantsComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   getAssistants(id) {
@@ -76,6 +76,10 @@ export class AllAssistantsComponent implements OnInit, OnDestroy, AfterViewInit 
     this.assistantsService.getAssistantById(data).subscribe((resp: any) => {
       this.assistant = resp.ayudante;
     });
+  }
+
+  setAssistant(assistant){
+    this.assistant = JSON.parse(JSON.stringify(assistant));
   }
 
   assistantFormCreate(rut, name, surname, email, modal) {

@@ -9,8 +9,9 @@ import { CycleModel } from '../../../../../models/cycle.model';
 import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { UsersService } from '../../../users/services/users.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-costs',
@@ -26,15 +27,24 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   ciclo;
   detail = new DetailsModel();
   detailsList;
-  costs;
+  costs = [];
+  costsExport;
+  total;
+  totalCost = 0;
   cost = new CostsModel();
+  start_date;
+  finish_date;
+  spinnerSee = false;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  fileName = -1;
   currentDate;
+  students = [];
+  contentSee = 0;
   competencies = [];
   activities = [];
   ids = [];
   cycles;
   cycle = new CycleModel();
-  total = 0;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -58,13 +68,13 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   });
 
 
-  constructor(private CostsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private fb: FormBuilder) {
+  constructor(private costsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private usersService: UsersService, private fb: FormBuilder) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     //this.listCosts();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     // this.listCycles();
     this.dtOptions = {
@@ -109,7 +119,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   addDetail() {
     const detailFormGroup = this.fb.group({
       name: new FormControl(''),
-      priceDetail: new FormControl('0'),
+      priceDetail: new FormControl(''),
     });
     this.details.push(detailFormGroup);
   }
@@ -119,11 +129,10 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.ids.push(this.details.value[i].id);
     }
     this.details.removeAt(i);
-
   }
 
   listCosts() {
-    this.CostsService.getCosts().subscribe((resp: any) => {
+    this.costsService.getCosts().subscribe((resp: any) => {
       this.costs = resp.gastos;
       this.rerender();
     });
@@ -175,7 +184,8 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.costs = resp.ciclo.gastos;
+      this.costs = resp.gastos;
+      this.totalCost = resp.totalGastos;
       this.competencies = resp.ciclo.competencias;
       this.activities = resp.ciclo.actividades;
       this.rerender();
@@ -187,15 +197,23 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id
     };
     this.details.clear();
-    this.CostsService.getCostsById(data).subscribe((resp: any) => {
+    this.costsService.getCostsById(data).subscribe((resp: any) => {
       this.cost = resp.gastos;
       this.detailsList = resp.gastos.detalles;
       this.setCostCreateForm();
     });
   }
 
+  setCost(cost) {
+    this.cost = JSON.parse(JSON.stringify(cost));
+    this.detailsList = cost.detalles;
+    this.setCostCreateForm();
+
+  }
+
   setCostCreateForm() {
     this.costsFormCreate.reset();
+    this.details.controls.splice(0, this.details.length);
     this.detailsList.map((d: any) => {
       const detailFormGroup = this.fb.group({
         id: d.id,
@@ -225,54 +243,63 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           return;
         }
       }
-      let data = {
-        valor: this.total,
-        fecha: form.date,
-        ciclo_id: this.cycle.id,
-        actividad_id: form.activity,
-        competencia_id: form.competition
-      }
-      this.CostsService.createCosts(data).subscribe((resp: any) => {
-        if (resp.code == 200) {
-          modal.dismiss();
-          let gastos_id = resp.gastos.id;
-          for (let index = 0; index < this.details.length; index++) {
-            let dataDetail = {
-              valor: this.details.value[index].priceDetail,
-              nombre: this.details.value[index].name,
-              gastos_id: gastos_id
-            };
-            this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
-              if (resp.code != 200) {
-                this.Toast.fire({
-                  icon: 'error',
-                  title: 'Error al crear detalle'
-                });
-                return;
-              }
-            })
-          }
-          this.Toast.fire({
-            icon: 'success',
-            title: 'Se ha creado correctamente'
-          });
-          this.listCostsPerCycle();
-          this.clearForm();
-        } else {
-          if (resp.code == 400) {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Ingrese correctamente los valores'
-            });
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al crear un gasto',
-              text: resp.message
-            });
-          }
+      if ((this.total + Number(this.totalCost)) > Number(this.cycle.presupuesto)) {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'No se puede crear el gasto: El valor total se excede del presupuesto'
+        });
+        this.total = 0;
+      } else {
+        let data = {
+          valor: this.total,
+          fecha: form.date,
+          ciclo_id: this.cycle.id,
+          actividad_id: form.activity,
+          competencia_id: form.competition
         }
-      });
+        this.costsService.createCosts(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            modal.dismiss();
+            let gastos_id = resp.gastos.id;
+            for (let index = 0; index < this.details.length; index++) {
+              let dataDetail = {
+                valor: this.details.value[index].priceDetail,
+                nombre: this.details.value[index].name,
+                gastos_id: gastos_id
+              };
+              this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al crear detalle'
+                  });
+                  return;
+                }
+              })
+            }
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha creado correctamente'
+            });
+            this.listCostsPerCycle();
+            this.clearForm();
+          } else {
+            if (resp.code == 400) {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Ingrese correctamente los valores'
+              });
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al crear un gasto',
+                text: resp.message
+              });
+            }
+            this.total = 0;
+          }
+        });
+      }
     } else {
       this.Toast.fire({
         icon: 'error',
@@ -303,7 +330,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         actividad_id: form.activity,
         competencia_id: form.competition
       };
-      this.CostsService.editCosts(data).subscribe((resp: any) => {
+      this.costsService.editCosts(data).subscribe((resp: any) => {
         if (resp.code == 200) {
           let gastos_id = resp.gastos.id;
           modal.dismiss();
@@ -315,7 +342,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
                 nombre: this.details.value[index].name,
                 gastos_id: gastos_id
               };
-              this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+              this.costsService.editDetails(dataDetail).subscribe((resp: any) => {
                 if (resp.code != 200) {
                   this.Toast.fire({
                     icon: 'error',
@@ -334,7 +361,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
                   nombre: this.details.value[index].name,
                   gastos_id: gastos_id
                 };
-                this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+                this.costsService.editDetails(dataDetail).subscribe((resp: any) => {
                   if (resp.code != 200) {
                     this.Toast.fire({
                       icon: 'error',
@@ -349,7 +376,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
                   nombre: this.details.value[index].name,
                   gastos_id: gastos_id
                 };
-                this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
+                this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
                   if (resp.code != 200) {
                     this.Toast.fire({
                       icon: 'error',
@@ -364,7 +391,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               let data = {
                 id: this.ids[index]
               };
-              this.CostsService.deleteDetails(data).subscribe((resp: any) => {
+              this.costsService.deleteDetails(data).subscribe((resp: any) => {
                 if (resp.code != 200) {
                   this.Toast.fire({
                     icon: 'error',
@@ -383,7 +410,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
                   nombre: this.details.value[index].name,
                   gastos_id: gastos_id
                 };
-                this.CostsService.editDetails(dataDetail).subscribe((resp: any) => {
+                this.costsService.editDetails(dataDetail).subscribe((resp: any) => {
                   if (resp.code != 200) {
                     this.Toast.fire({
                       icon: 'error',
@@ -398,7 +425,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
                   nombre: this.details.value[index].name,
                   gastos_id: gastos_id
                 };
-                this.CostsService.createDetails(dataDetail).subscribe((resp: any) => {
+                this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
                   if (resp.code != 200) {
                     this.Toast.fire({
                       icon: 'error',
@@ -413,7 +440,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               let data = {
                 id: this.ids[index]
               };
-              this.CostsService.deleteDetails(data).subscribe((resp: any) => {
+              this.costsService.deleteDetails(data).subscribe((resp: any) => {
                 if (resp.code != 200) {
                   this.Toast.fire({
                     icon: 'error',
@@ -424,12 +451,12 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               })
             }
           }
+          this.listCostsPerCycle();
+          this.clearForm();
           this.Toast.fire({
             icon: 'success',
             title: 'Se ha editado correctamente'
           });
-          this.listCostsPerCycle();
-          this.clearForm();
         } else {
           if (resp.code == 400) {
             this.Toast.fire({
@@ -472,7 +499,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           let data = {
             id: this.detailsList[index].id
           }
-          this.CostsService.deleteDetails(data).subscribe((resp: any) => {
+          this.costsService.deleteDetails(data).subscribe((resp: any) => {
             if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
@@ -482,7 +509,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
             }
           });
         }
-        this.CostsService.deleteCosts(data).subscribe((resp: any) => {
+        this.costsService.deleteCosts(data).subscribe((resp: any) => {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
@@ -500,15 +527,165 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     });
   }
 
+  seeAsistance(start_date, finish_date) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      fecha_inicial: start_date,
+      fecha_final: finish_date
+    };
+    if (start_date == "" || finish_date == "") {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Debe ingresar ambas fechas'
+      });
+    } else {
+      Swal.fire({
+        title: 'Espere porfavor...',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        willClose: () => {
+          Swal.hideLoading()
+        },
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      this.cycleService.getAssistancePerDateAndCycle(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          if (resp.estudiantesConEstadisticaDeAsistencia == undefined) {
+            this.students = [];
+          } else {
+            this.students = resp.estudiantesConEstadisticaDeAsistencia;
+          }
+          Swal.close();
+          this.contentSee = 1;
+        } else if (resp.errors.fecha_final != undefined) {
+          this.Toast.fire({
+            icon: 'error',
+            title: resp.errors.fecha_final
+          });
+          Swal.close();
+
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al realizar la consulta'
+          });
+          Swal.close();
+
+        }
+      })
+    }
+  }
+
+
+  getCostPerDateAndCycle(start_date, finish_date) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      fecha_inicial: start_date,
+      fecha_final: finish_date
+    };
+    if (start_date == "" || finish_date == "") {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Debe ingresar ambas fechas'
+      });
+    } else {
+      this.start_date = start_date;
+      this.finish_date = finish_date;
+      Swal.fire({
+        title: 'Espere porfavor...',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        willClose: () => {
+          Swal.hideLoading()
+        },
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      this.costsService.getCostPerDateAndCycle(data).subscribe((resp: any) => {
+        if (resp.code == 200) {
+          this.costsExport = resp.gastos;
+          this.total = resp.totalGastado;
+          Swal.close()
+          this.contentSee = 1;
+        } else if (resp.errors.fecha_final != undefined) {
+          Swal.close()
+          this.Toast.fire({
+            icon: 'error',
+            title: resp.errors.fecha_final
+          });
+        } else {
+          Swal.close()
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al realizar la consulta'
+          });
+        }
+      })
+    }
+  }
+
+  exportPdf(modal) {
+    let data = {
+      nombreCiclo: this.cycle.nombre,
+      fecha_inicio: this.start_date,
+      fecha_final: this.finish_date,
+      gastos: this.costsExport,
+      totalGastado: this.total,
+      presupuestoCiclo: this.cycle.presupuesto
+    }
+    this.spinnerSee = true;
+    this.usersService.exportCosts(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
+        modal.dismiss();
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
+      }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
+    this.costsExport = [];
+    this.contentSee == 0;
+  }
+
   clearForm() {
     this.details.controls.splice(0, this.details.length);
     this.costsFormCreate.reset();
     this.ids = [];
+    this.contentSee = 0;
+    this.students = [];
+    this.costsExport = [];
+    this.total = 0;
   }
 
   openModal(ModalContent) {
     this.modalService.open(ModalContent, { size: 'xl' });
   }
+
+
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

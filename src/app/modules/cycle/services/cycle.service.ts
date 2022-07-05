@@ -103,4 +103,25 @@ export class CycleService {
     const option = { headers: this.headers };
     return this.http.post(url+'/ciclo/getstudentsenrolledpercycleperfinishdate', data, option);
   }
+
+  getAssistancePerDateAndCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getassistanceperdateandcycle', data, option);
+  }
+
+  getStudentAssistancePerCycleAndEstablishment(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentassistancepercycleandestablishment', data, option);
+  }
+
+  getStudentAssistancePerCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstudentassistancepercycle', data, option);
+  }
+
+  getStatisticsPerCycle(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getstatisticspercycle', data, option);
+  }
+
 }

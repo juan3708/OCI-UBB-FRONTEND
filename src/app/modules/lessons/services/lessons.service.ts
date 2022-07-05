@@ -84,4 +84,14 @@ export class LessonsService {
     const option = { headers: this.headers };
     return this.http.post(url +'/clase/deleteassistants', data, option);
   }
+
+  getLessonsPerCycleAndTeacher(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/getlessonspercycleandteacher', data, option);
+  }
+
+  getLessonsPerCycleAndAssistant(data){
+    const option = { headers: this.headers };
+    return this.http.post(url +'/clase/getlessonspercycleandassistant', data, option);
+  }
 }

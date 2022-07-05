@@ -8,9 +8,9 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { StudentsService } from 'src/app/modules/students/services/students.service';
 import { CycleModel } from 'src/models/cycle.model';
 import { CycleService } from '../../../cycle/services/cycle.service';
-import { formatDate } from '@angular/common';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { StudentsCandidatesService } from '../../services/students-candidates.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-students-candidates',
@@ -24,6 +24,21 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   cicloOld;
   cicloNew;
   ciclo;
+  spinnerSee = false;
+  oci1 = {
+    nombre: "",
+    Asistencias: Array(),
+    PorcentajeAsistencia: 0,
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+    Competencias: Array()
+  };
+  oci2 = {
+    nombre: "",
+    Asistencias: Array(),
+    PorcentajeAsistencia: 0,
+    CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+    Competencias: Array()
+  };
   studentsPerCycle = [];
   studentsEnrolled = [];
   establishments = [];
@@ -49,14 +64,14 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private studentsService: StudentsService, private modalService: NgbModal, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) { 
+  constructor(private studentsService: StudentsService, private modalService: NgbModal, private cycleService: CycleService, private EstablishmentsService: EstablishmentsService, private StudentsCandidatesService: StudentsCandidatesService) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     // this.listCycles();
     // this.listEstablishments();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -65,9 +80,9 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
@@ -135,9 +150,51 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       for (let index = 0; index < this.establishments.length; index++) {
         this.cupos.push(this.establishments[index].alumnosParticipantes.length);
       }
-    
       this.rerender();
     });
+  }
+
+  assignCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycleService.cycle = resp.ciclo;
+    })
+  }
+
+  getLastCyclesPerStudent(id) {
+    let data = {
+      alumno_id: id
+    }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
+      if (resp.CiclosConAsistenciaYCompetencias.length > 1) {
+        this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
+        this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
+      } else {
+        this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
+        this.oci2 = {
+          nombre: "",
+          Asistencias: Array(),
+          PorcentajeAsistencia: 0,
+          CantAsistenciasEInasistencias: [{ asistencias: 0, inasistencias: 0 }],
+          Competencias: Array()
+        };
+      }
+      Swal.close()
+    })
   }
 
   openModal(ModalContent) {
@@ -154,6 +211,12 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
+  setStudent(student) {
+    this.student = JSON.parse(JSON.stringify(student));
+    this.establishmentName = student.establecimiento.nombre;
+
+  }
+
   onFileSelected(event) {
     this.selectedFile = <File>event.target.files[0];
     this.fileName = this.selectedFile.name;
@@ -164,6 +227,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       const formData = new FormData();
       formData.append('file', this.selectedFile, this.fileName);
       formData.append('ciclo_id', this.cycle.id.toString());
+      this.spinnerSee = true;
       this.StudentsCandidatesService.chargeStudentsPerCycle(formData).subscribe((resp: any) => {
         if (resp.code == 200) {
           this.Toast.fire({
@@ -171,12 +235,16 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
             title: 'Se cargaron correctamente los alumnos',
           });
           modal.dismiss();
+          this.spinnerSee = false;
           this.getCycle(this.cycle.id);
+          this.resetFile();
         } else {
           this.Toast.fire({
             icon: 'error',
             title: 'Error al cargar alumnos',
           });
+          this.spinnerSee = false;
+
         }
       })
     } else {
@@ -217,6 +285,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       });
       this.clearForm();
       this.getCycle(this.cycle.id);
+      this.assignCycle(this.cycle.id);
       modal.dismiss();
     } else {
       let data = {
@@ -232,6 +301,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
             title: 'Se han inscritos correctamente',
           });
           this.clearForm();
+          this.assignCycle(this.cycle.id);
           this.getCycle(this.cycle.id);
           modal.dismiss();
         } else {
@@ -243,6 +313,41 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
         }
       })
     }
+  }
+
+  deleteStudent(id) {
+    let data = {
+      ciclo_id: this.cycle.id,
+      alumno_id: id
+    };
+    Swal.fire({
+      title: '¿Está seguro que desea eliminar la postulación del alumno?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cycleService.deleteStudents(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.getCycle(this.cycle.id);
+            this.assignCycle(this.cycle.id);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Postulación eliminada correctamente'
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al eliminar la postulación',
+            });
+          }
+        });
+      }
+    });
   }
 
   removeStudent(id, indexEstablishments, indexStudent) {

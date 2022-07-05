@@ -19,7 +19,7 @@
       </form>
     </div> -->
     <ul class="navbar-nav navbar-nav-right">
-      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id">
+      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" *ngIf="cycles.length >=1">
         <option *ngFor="let cycle of cycles" [value]="cycle.id">
           {{cycle.nombre}}</option>
       </select>
@@ -30,19 +30,24 @@
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
-            <p class="mb-1 text-black">Juan San Martín</p>
+            <p class="mb-1 text-black">{{userLocal.nombre}}</p>
           </div>
         </a>
         <div class="dropdown-menu navbar-dropdown" ngbDropdownMenu aria-labelledby="profileDropdown">
-          <a class="dropdown-item" href="javascript:;">
-            <i class="mdi mdi-cached mr-2 text-success"></i>
-            Actividad
+          <a class="dropdown-item" routerLink="user-pages/change-password" routerLinkActive>
+            <i class="fa-solid fa-key mr-2 text-success"></i>
+            Cambiar<br>contraseña
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/user-pages/login">
+          <a class="dropdown-item" routerLink="user-pages/change-email" routerLinkActive>
+            <i class="fa-solid fa-envelopes-bulk mr-2 text-success"></i>
+            Cambiar<br>correo
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" (click)="logout()">
             <i class="mdi mdi-logout mr-2 text-primary"></i>
             Cerrar sesión
-          </a>
+          </button>
         </div>
       </li>
       <!-- <li class="nav-item dropdown" ngbDropdown>

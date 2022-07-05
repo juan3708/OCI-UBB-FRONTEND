@@ -1,14 +1,15 @@
-import { AfterViewInit,Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';import { ActivitiesModel } from '../../../../../models/activities.model';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable'; import { ActivitiesModel } from '../../../../../models/activities.model';
 import { ActivitiesService } from '../../services/activities.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import Swal from 'sweetalert2';
-import { NgForm } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, NgForm } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { CycleModel } from '../../../../../models/cycle.model';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { CostsService } from '../../../costs/services/costs.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-activities',
@@ -16,7 +17,7 @@ import { DataTableDirective } from 'angular-datatables';
   styleUrls: ['./activities.component.scss']
 })
 export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
-  @ViewChild(DataTableDirective, {static: false})
+  @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
   cicloOld;
@@ -24,11 +25,16 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   ciclo;
   activities;
   detailsPerCost;
-  costs;
+  totalCost;
+  costs = [];
   cycles;
   cycle = new CycleModel();
   currentDate;
   activity = new ActivitiesModel();
+
+  ids = [];
+  total = 0;
+
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -42,7 +48,16 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private activitiesService: ActivitiesService, private cycleService: CycleService, private modalService : NgbModal) { 
+
+  costsFormCreate = this.fb.group({
+    date: new FormControl(''),
+    price: new FormControl(''),
+    activityName: this.activity.nombre,
+    details: this.fb.array([])
+  });
+
+
+  constructor(private activitiesService: ActivitiesService, private cycleService: CycleService, private costsService: CostsService, private modalService: NgbModal, private fb: FormBuilder) {
     this.cicloOld = {};
   }
 
@@ -51,13 +66,13 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   }
 
   rerender(): void {
-    if("dtInstance" in this.dtElement){
+    if ("dtInstance" in this.dtElement) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
         this.dtTrigger.next();
       });
     }
-    else{
+    else {
       this.dtTrigger.next();
     }
   }
@@ -65,7 +80,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   ngOnInit(): void {
     //this.listActivities();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -74,48 +89,67 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.getCycle(this.cicloNew.id);
       }
     }
   }
 
-  listActivities(){
-    this.activitiesService.getActivities().subscribe((resp: any) =>{
+  get details() {
+    return this.costsFormCreate.controls["details"] as FormArray;
+  }
+
+  addDetail() {
+    const detailFormGroup = this.fb.group({
+      name: new FormControl(''),
+      priceDetail: new FormControl(''),
+    });
+    this.details.push(detailFormGroup);
+  }
+
+  removeDetail(i: number) {
+    if (this.details.value[i] != undefined) {
+      this.ids.push(this.details.value[i].id);
+    }
+    this.details.removeAt(i);
+  }
+
+  listActivities() {
+    this.activitiesService.getActivities().subscribe((resp: any) => {
       this.activities = resp.actividades;
       this.rerender();
     })
   }
 
-  listActivitiesPerCycle(){
+  listActivitiesPerCycle() {
     let data = {
       id: this.cycle.id
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
-      this.activities = resp.ciclo.actividades;
+      this.activities = resp.actividades;
       this.rerender();
     })
   }
 
-  listCycles(){
-    this.cycleService.getCycles().subscribe((resp: any)=>{
+  listCycles() {
+    this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
     })
   }
 
-  getCyclePerFinishtDate(){
+  getCyclePerFinishtDate() {
     let data = {
-      fecha_termino : this.currentDate
+      fecha_termino: this.currentDate
     };
-    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any)=>{
-      if(resp.code == 200){
+    this.cycleService.getCycleByFinishDate(data).subscribe(async (resp: any) => {
+      if (resp.code == 200) {
         this.cycle = resp.ciclo;
         this.activities = resp.ciclo.actividades;
         this.rerender();
-      }else{
+      } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
@@ -130,31 +164,32 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.activities = resp.ciclo.actividades;
+      this.activities = resp.actividades;
+      this.totalCost = resp.totalGastos;
       this.rerender();
     })
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
-  activityFormCreate(name, description, date, modal){
+  activityFormCreate(name, description, date, modal) {
     let data = {
       nombre: name,
       descripcion: description,
       fecha: date,
       ciclo_id: this.cycle.id
     };
-    this.activitiesService.createActivity(data).subscribe((resp:any)=>{
-      if(resp.code===200){        
+    this.activitiesService.createActivity(data).subscribe((resp: any) => {
+      if (resp.code === 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
         this.listActivitiesPerCycle();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -171,30 +206,50 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     })
   }
 
-  getActivity(id){
+  getActivity(id, ModalContent) {
     let data = {
       id
     };
-    this.activitiesService.getActivityById(data).subscribe((resp: any)=>{
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.activitiesService.getActivityById(data).subscribe((resp: any) => {
       this.activity = resp.actividad;
       this.costs = resp.gastos;
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
     })
   }
 
-  getDetailsPerCost(cost){
+  setActivity(activity) {
+    this.activity = JSON.parse(JSON.stringify(activity));
+  }
+
+  getDetailsPerCost(cost) {
     this.detailsPerCost = cost.detalles;
   }
 
-  activityFormEdit(form: NgForm, modal){
-    this.activitiesService.editActivity(this.activity).subscribe((resp: any)=>{
-      if(resp.code == 200){
+  activityFormEdit(form: NgForm, modal) {
+    this.activitiesService.editActivity(this.activity).subscribe((resp: any) => {
+      if (resp.code == 200) {
         modal.dismiss();
         this.Toast.fire({
           icon: 'success',
           title: 'Actividad editada correctamente',
         });
         this.listActivitiesPerCycle();
-      }else{
+      } else {
         if (resp.code == 400) {
           this.Toast.fire({
             icon: 'error',
@@ -211,7 +266,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     })
   }
 
-  deleteActivity(id){
+  deleteActivity(id) {
     let data = {
       id
     };
@@ -237,7 +292,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar la actividad',
-              text: resp.id 
+              text: resp.id
             });
           }
         });
@@ -245,8 +300,94 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     });
   }
 
+  createCosts(form, modal) {
+    if (this.details.length > 0) {
+      for (let index = 0; index < this.details.length; index++) {
+        if (this.details.value[index].name != '') {
+          this.total += Number(this.details.value[index].priceDetail);
+        } else {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Ingrese un nombre al detalle'
+          });
+          return;
+        }
+      }
+      if ((this.total + Number(this.totalCost)) > Number(this.cycle.presupuesto)) {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'No se puede crear el gasto: El valor total se excede del presupuesto'
+        });
+        this.total = 0;
+      } else {
+        let data = {
+          valor: this.total,
+          fecha: form.date,
+          ciclo_id: this.cycle.id,
+          actividad_id: this.activity.id
+        }
+        this.costsService.createCosts(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            modal.dismiss();
+            let gastos_id = resp.gastos.id;
+            for (let index = 0; index < this.details.length; index++) {
+              let dataDetail = {
+                valor: this.details.value[index].priceDetail,
+                nombre: this.details.value[index].name,
+                gastos_id: gastos_id
+              };
+              this.costsService.createDetails(dataDetail).subscribe((resp: any) => {
+                if (resp.code != 200) {
+                  this.Toast.fire({
+                    icon: 'error',
+                    title: 'Error al crear detalle'
+                  });
+                  return;
+                }
+              })
+            }
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha creado correctamente'
+            });
+            this.totalCost = this.total + Number(this.totalCost);
+            this.getActivity(this.activity.id, null);
+            this.clearForm();
+          } else {
+            if (resp.code == 400) {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Ingrese correctamente los valores'
+              });
+            } else {
+              this.Toast.fire({
+                icon: 'error',
+                title: 'Error al crear un gasto',
+                text: resp.message
+              });
+            }
+            this.total = 0;
+          }
+        });
+      }
+    } else {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Ingrese un detalle porfavor'
+      });
+    }
+
+  }
+
+  clearForm() {
+    this.details.controls.splice(0, this.details.length);
+    this.costsFormCreate.reset();
+    this.ids = [];
+    this.total = 0;
+  }
+
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
-}
+  }
 
 }

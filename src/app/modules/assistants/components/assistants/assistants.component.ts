@@ -27,7 +27,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
   currentDate;
   cycles;
   cycle = new CycleModel();
-  assistant = new AssistantModel();
+  assistant;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -112,22 +112,31 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
     let data = {
       ciclo_id: this.cycle.id
     }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.assistantsService.getAssistantsPerCycle(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.assistants = resp.ayudantes;
-        Swal.fire({
-          title: 'Espere porfavor',
-          timer: 600,
-          didOpen: async () => {
-            Swal.showLoading()
-          },
-        })
         this.rerender();
+        Swal.close()
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al cargar el ciclo'
         });
+        Swal.close()
+
       }
     });
   }
@@ -143,6 +152,10 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
     this.assistantsService.getAssistantById(data).subscribe((resp: any) => {
       this.assistant = resp.ayudante;
     });
+  }
+
+  setAssistant(assistant){
+    this.assistant = JSON.parse(JSON.stringify(assistant));
   }
 
   assistantFormCreate(rut, name, surname, email, modal) {

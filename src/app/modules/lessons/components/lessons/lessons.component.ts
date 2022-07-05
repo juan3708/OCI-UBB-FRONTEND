@@ -11,8 +11,10 @@ import { LevelService } from '../../../level/services/level.service';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
-import { formatDate } from '@angular/common';
 import { DataTableDirective } from 'angular-datatables';
+import { UsersService } from '../../../users/services/users.service';
+import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-lessons',
@@ -26,15 +28,24 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloOld;
   cicloNew;
   ciclo;
-  lessons;
+  user;
+  lessons = [];
+  lessonSee;
   cycles;
-  establishments;
+  establishments = []
+  establishmentMaxStudent;
+  establishmentMinStudent;
   bool;
   currentDate;
+  totalStudents = 0;
+  fileName = -1;
+  urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
+  spinnerSee = false;
   lesson = new LessonModel();
   cycle = new CycleModel();
   level = new LevelModel();
   levels = [];
+  student;
   studentsPerLevel = [];
   studentsId = [];
   studentsAssistance = [];
@@ -43,8 +54,10 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   studentsLesson = [];
   removeStudents = [];
   studentList;
-  teachers;
-  assistants;
+  teachers = [];
+  teacher;
+  assistant;
+  assistants = [];
   lessonTeachers = [];
   lessonAssistants = [];
   addTeachers = [];
@@ -65,14 +78,14 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private modalService: NgbModal) { 
+  constructor(private lessonsService: LessonsService, private cycleService: CycleService, private LevelService: LevelService, private EstablishmentsService: EstablishmentsService, private usersService: UsersService, private usersPagesService: UserPagesService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     //this.listLessons();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -81,11 +94,18 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   ngDoCheck(): void {
-    if(this.cycleService.cycle.id != undefined){
+    if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
-      if(this.cicloOld != this.cicloNew){
+      if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
-        this.getCycle(this.cicloNew.id);
+        this.user = this.usersPagesService.getUser();
+        if (this.user.rol.nombre == 'profesor') {
+          this.listLessonsPerTeacher(this.user.rut, this.cicloNew.id);
+        } else if (this.user.rol.nombre == 'ayudante') {
+          this.listLessonsPerAssistants(this.user.rut, this.cicloNew.id);
+        } else {
+          this.getCycle(this.cicloNew.id);
+        }
       }
     }
   }
@@ -121,6 +141,33 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.lessons = resp.clases;
       this.rerender();
 
+    })
+  }
+
+  listLessonsPerTeacher(rut, ciclo_id) {
+    let data = {
+      rut_profesor: rut,
+      ciclo_id: ciclo_id
+    };
+    this.lessonsService.getLessonsPerCycleAndTeacher(data).subscribe((resp: any) => {
+      this.lessons = resp.clases;
+      this.teacher = resp.profesor;
+      this.levels = resp.ciclo.niveles;
+      this.cycle = resp.ciclo;
+      this.rerender();
+    })
+  }
+
+  listLessonsPerAssistants(rut, ciclo_id) {
+    let data = {
+      rut_ayudante: rut,
+      ciclo_id: ciclo_id
+    };
+    this.lessonsService.getLessonsPerCycleAndAssistant(data).subscribe((resp: any) => {
+      this.lessons = resp.clases;
+      this.levels = resp.ciclo.niveles;
+      this.cycle = resp.ciclo;
+      this.rerender();
     })
   }
 
@@ -185,10 +232,22 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  getLesson(id) {
+  getLesson(id, ModalContent) {
     let data = {
       id
     };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
     this.lessonsService.getLessonById(data).subscribe((resp: any) => {
       this.lesson = resp.clase;
       this.studentsLesson = resp.clase.alumnos;
@@ -196,24 +255,123 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       this.lessonTeachers = resp.clase.profesores;
       this.students = resp.alumnosSinClase;
       this.getLevelById(this.lesson.nivel_id);
-      this.rerender();
+      Swal.close();
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
+      }
+
     });
 
   }
 
-  getTeachersAndAssistants(id) {
+  getStudentAssistancePerCycle(ModalContent) {
     let data = {
-      clase_id: id
-    };
-    this.lessonsService.getTeachersAndAssistants(data).subscribe((resp: any) => {
+      ciclo_id: this.cycle.id
+    }
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.cycleService.getStudentAssistancePerCycle(data).subscribe((resp: any) => {
       if (resp.code == 200) {
-        this.assistants = resp.ayudantes;
-        this.teachers = resp.profesores;
+        if (resp.Establecimientos.length >= 1) {
+          this.establishments = resp.Establecimientos;
+          this.establishmentMaxStudent = resp.EstablecimientoConMasAlumnos;
+          this.establishmentMinStudent = resp.EstablecimientoConMenosAlumnos;
+          this.totalStudents = resp.TotalAlumnos;
+        } else {
+          this.establishments = [];
+          this.establishmentMaxStudent = [];
+          this.establishmentMinStudent = [];
+
+
+        }
+        Swal.close();
+        this.modalService.open(ModalContent, { size: 'xl' });
+
       } else {
         this.Toast.fire({
           icon: 'error',
           title: 'Error al realizar la consulta'
         });
+        this.establishments = [];
+        Swal.close();
+      }
+    })
+  }
+  setLesson(lesson) {
+    this.lesson = JSON.parse(JSON.stringify(lesson));
+
+
+    if (lesson.alumnos.length >= 1) {
+      this.studentsLesson = lesson.alumnos;
+    } else {
+      this.studentsLesson = [];
+    }
+
+    if (lesson.ayudantes.length >= 1) {
+      this.lessonAssistants = lesson.ayudantes;
+    } else {
+      this.lessonAssistants = [];
+    }
+
+    if (lesson.profesores.length >= 1) {
+      this.lessonTeachers = lesson.profesores;
+    } else {
+      this.lessonTeachers = [];
+    }
+  }
+
+  setStudent(student) {
+    this.student = JSON.parse(JSON.stringify(student));
+
+  }
+  getTeachersAndAssistants(id, ModalContent) {
+    let data = {
+      clase_id: id
+    };
+    Swal.fire({
+      title: 'Espere porfavor...',
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      willClose: () => {
+        Swal.hideLoading()
+      },
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    this.lessonsService.getTeachersAndAssistants(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        if (resp.profesores.length >= 1) {
+          this.teachers = resp.profesores;
+        } else {
+          this.teachers = [];
+        }
+
+        if (resp.ayudantes.length >= 1) {
+          this.assistants = resp.ayudantes;
+        } else {
+          this.assistants = [];
+        }
+        Swal.close();
+        this.modalService.open(ModalContent, { size: 'xl' });
+
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al realizar la consulta'
+        });
+        Swal.close();
       }
     })
   }
@@ -225,17 +383,30 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       ciclo_id: this.cycle.id,
       nivel_id: level
     };
-    if (this.studentsPerLevel.length >= 1) {
+    console.log(data);
+    if (this.studentsId.length >= 1) {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        console.log(resp);
         if (resp.code == 200) {
           this.AssignStudentToLesson(resp.clase.id);
           await new Promise(f => setTimeout(f, 500));
-          modal.dismiss();
           this.Toast.fire({
             icon: 'success',
             title: 'Clase creada correctamente'
           });
-          this.listLessonsPerCycle();
+          if (this.user.rol.nombre == 'profesor') {
+            let data = {
+              profesores_id: this.teacher.id,
+              clase_id: resp.clase.id
+            }
+            this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
+              console.log(resp1);
+            });
+            this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+          } else {
+            this.listLessonsPerCycle();
+          }
+          modal.dismiss();
           this.clearForm();
 
         } else {
@@ -254,10 +425,43 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         }
       })
     } else {
-      this.Toast.fire({
-        icon: 'error',
-        title: 'Porfavor seleccione alumnos',
-      });
+      this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
+        console.log(resp);
+        if (resp.code == 200) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Clase creada correctamente'
+          });
+          if (this.user.rol.nombre == 'profesor') {
+            let data = {
+              profesores_id: this.teacher.id,
+              clase_id: resp.clase.id
+            }
+            this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
+              console.log(resp1);
+            });
+            this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+          } else {
+            this.listLessonsPerCycle();
+          }
+          modal.dismiss();
+          this.clearForm();
+
+        } else {
+          if (resp.code == 400) {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Ingrese correctamente los valores',
+            });
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al registrar la clase',
+              text: resp.message
+            });
+          }
+        }
+      })
     }
 
   }
@@ -270,7 +474,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
           icon: 'success',
           title: 'Clase editada correctamente'
         });
-        this.listLessonsPerCycle();
+        if (this.user.rol.nombre == 'profesor') {
+          this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+        } else {
+          this.listLessonsPerCycle();
+        }
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -287,19 +495,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       }
     })
   }
-
-  async deleteLesson(id) {
-    this.getLesson(id);
-    await new Promise(f => setTimeout(f, 800));
-    if (this.studentsLesson.length >= 1) {
-      this.studentsId = this.studentsLesson.map((s: any) => {
-        return s.id;
-      });
-    }
+  deleteLesson(id) {
     let data = {
-      clase_id: id,
-      alumnos_id: this.studentsId
-
+      clase_id: id
     };
     Swal.fire({
       title: '¿Esta seguro que desea eliminar esta clase?',
@@ -318,7 +516,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               icon: 'success',
               title: 'Clase eliminada correctamente'
             });
-            this.listLessonsPerCycle();
+            if (this.user.rol.nombre == 'profesor') {
+              this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
+            } else {
+              this.listLessonsPerCycle();
+            }
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -339,13 +541,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       };
       this.LevelService.getLevelById(data).subscribe((resp: any) => {
         this.studentsPerLevel = resp.nivel.alumnos;
-        if (this.studentsPerLevel.length < 1) {
-          this.Toast.fire({
-            icon: 'error',
-            title: 'No existen alumnos asociados al nivel seleccionado',
-          });
-        }
-        this.deleteStudentLevelArray();
+        this.students = resp.alumnosSinNivel;
+
       });
     } else {
       this.Toast.fire({
@@ -355,22 +552,13 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
-  deleteStudentLevelArray(){
-    this.students.forEach((s, index) => {
-      this.studentsPerLevel.forEach(sp =>{
-        if(s.id == sp.id){
-          this.students.splice(index, 1);
-        }
-      })
-    });
-  }
-
   addOrRemoveStudentCreate(event, student) {
     if (event) {
       this.studentsAdd.push(student);
     } else {
       this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
     }
+    console.log(this.studentsAdd);
   }
 
   addOrRemoveTeacher(event, teacher) {
@@ -425,7 +613,10 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   concatStudentsArrays(modal) {
-    if (this.studentsPerLevel.length >= 1) {
+    console.log(this.studentsPerLevel);
+    console.log(this.studentsAdd);
+
+    if (this.studentsPerLevel.length >= 1 || this.studentsAdd.length >= 1) {
       this.studentsId = this.studentsPerLevel.map((s: any) => {
         return s.id;
       });
@@ -455,9 +646,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  async chargeAssistance(lesson) {
-    this.getLesson(lesson);
-    await new Promise(f => setTimeout(f, 800));
+  async chargeAssistance(lesson, ModalContent) {
+    this.getLesson(lesson, ModalContent);
     this.studentsAssistance = this.studentsLesson.map((s: any) => {
       let assistance = {
         alumno_id: s.id,
@@ -468,6 +658,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.studentsId = this.studentsAssistance.map((s: any) => {
       return s.alumno_id;
     });
+
   }
 
   editAssistancePerStudent(modal) {
@@ -762,11 +953,11 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       if (this.removeStudents.length >= 1) {
         let data = {
-          clase_id : this.lesson.id,
+          clase_id: this.lesson.id,
           alumnos_id: this.removeStudents
         };
-        this.lessonsService.removeStudents(data).subscribe((resp: any)=>{
-          if(resp.code != 200){
+        this.lessonsService.removeStudents(data).subscribe((resp: any) => {
+          if (resp.code != 200) {
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar alumno de la clase'
@@ -775,13 +966,13 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             return
           }
         });
-        if(this.studentsAdd.length >=1){
+        if (this.studentsAdd.length >= 1) {
           let data = {
-            clase_id : this.lesson.id,
+            clase_id: this.lesson.id,
             alumnos_id: this.studentsAdd
           };
-          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
-            if(resp.code !=200){
+          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
                 title: 'Error al asignar alumno a la clase'
@@ -797,14 +988,14 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         });
         modal.dismiss();
         this.clearForm();
-      }else{
-        if(this.studentsAdd.length >=1){
+      } else {
+        if (this.studentsAdd.length >= 1) {
           let data = {
-            clase_id : this.lesson.id,
+            clase_id: this.lesson.id,
             alumnos_id: this.studentsAdd
           };
-          this.lessonsService.chargeStudents(data).subscribe((resp:any)=>{
-            if(resp.code !=200){
+          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
                 title: 'Error al asignar alumno a la clase'
@@ -824,6 +1015,45 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
+  exportPdf() {
+    let data = {
+      establecimientos: this.establishments,
+      establecimientoConMenosEstudiantes: this.establishmentMinStudent,
+      establecimientoConMasEstudiantes: this.establishmentMaxStudent,
+      totalAlumnos: this.totalStudents,
+      totalEstablecimientos: this.establishments.length,
+      nombreCiclo: this.cycle.nombre
+    }
+    this.spinnerSee = true;
+    this.usersService.exportGeneralAssistanceToPDF(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.fileName = resp.fileName;
+        this.Toast.fire({
+          icon: 'success',
+          title: 'Se ha exportado correctamente'
+        });
+        this.spinnerSee = false;
+        window.location.assign(this.urlDownload + this.fileName);
+
+      } else {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Error al exportar el archivo'
+        });
+        this.spinnerSee = false;
+      }
+    })
+  }
+
+  deletePdf() {
+    if (this.fileName != -1) {
+      let data = {
+        fileName: this.fileName
+      }
+      this.usersService.deletePDF(data).subscribe((resp: any) => { });
+      this.fileName = -1;
+    }
+  }
 
 
   clearForm() {

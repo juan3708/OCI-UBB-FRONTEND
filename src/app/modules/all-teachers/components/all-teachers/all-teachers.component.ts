@@ -20,6 +20,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   teachers;
   teacher = new TeacherModel();
+  tempTeacher;
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject<any>();
   Toast = Swal.mixin({
@@ -65,7 +66,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openModal(ModalContent) {
-    this.modalService.open(ModalContent, { size: 'lg' });
+    this.modalService.open(ModalContent, { size: 'xl' });
   }
 
   getTeachers(id) {
@@ -75,6 +76,10 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.teachersService.getTeacherById(data).subscribe((resp: any) => {
       this.teacher = resp.profesor;
     });
+  }
+
+  setTeacher(teacher: TeacherModel){
+    this.teacher = JSON.parse(JSON.stringify(teacher));
   }
 
   teacherFormCreate(rut, name, surname, email, faculty, modality, modal) {
@@ -170,6 +175,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     })
   }
+
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

@@ -1,19 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { UserPagesService } from 'src/app/user-pages/services/user-pages.service';
+import { CycleService } from '../../modules/cycle/services/cycle.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, DoCheck {
   public uiBasicCollapsed = false;
-  public studentsCollapsed = false;
-  public teachersCollapsed = false;
-  public establishmentsCollapsed = false;
-  public assistantsCollapsed = false;
   public samplePagesCollapsed = false;
-  
-  constructor() { }
+  public settingsCollapsed = false;
+  public cyclesCollapsed = false;
+  public lessonsCollapsed = false;
+
+
+  userLocal;
+  rolName;
+  ciclo;
+
+
+  constructor(private userPagesService: UserPagesService, private cycleService: CycleService) { 
+    this.userLocal = {};
+  }
 
   ngOnInit() {
     const body = document.querySelector('body');
@@ -31,6 +40,20 @@ export class SidebarComponent implements OnInit {
         }
       });
     });
+    if(this.userPagesService.getUser()){
+      let rol = this.userPagesService.getRol();
+      this.rolName = rol.nombre;
+    }
+  }
+
+  ngDoCheck(): void {
+    if(localStorage.getItem('access_token')){
+      let user = this.userPagesService.getUser();
+      if(user.id != this.userLocal.id){
+        this.userLocal = user;
+      }
+    }
+    this.ciclo = this.cycleService.cycle;
   }
 
 }

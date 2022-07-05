@@ -1,0 +1,26 @@
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Cambiar correo</h4>
+        <form class="forms-sample" #formEmail="ngForm">
+            <div class="form-group">
+                <label for="name">Ingrese su contraseña actual</label>
+                <input type="password" class="form-control form-control-lg" id="password" name="password"
+                    placeholder="Contraseña" #password ngModel>
+            </div>
+            <div class="form-group">
+                <label for="newEmail">Ingrese su nuevo correo</label>
+                <input type="newEmail" class="form-control" id="newEmail"  name="newEmail" placeholder="Ingrese su correo. Ej: correo@email.cl"
+                    #newEmail ngModel>
+            </div>
+            <div class="form-group">
+                <label for="repeatEmail">Ingrese nuevamente su nuevo correo</label>
+                <input type="repeatEmail" class="form-control" id="repeatEmail"   name="repeatEmail" placeholder="Ingrese su correo. Ej: correo@email.cl"
+                    #repeatEmail ngModel>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="changeEmail(formEmail)">Cambiar correo</button>
+</div>
