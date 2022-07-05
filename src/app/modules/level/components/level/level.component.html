@@ -36,8 +36,7 @@
                             {{level.nombre}}
                         </td>
                         <td *ngIf="level.alumnos.length >=1 && cycle.fecha_termino >= currentDate">
-                            <button type="button" class="btn"
-                                style="border: transparent;background: transparent;"
+                            <button type="button" class="btn" style="border: transparent;background: transparent;"
                                 (click)="openModal(ModalStudentPerLevel);setLevel(level)"
                                 title="Ver alumnos asociados">{{level.nombre}}</button>
                         </td>
@@ -54,9 +53,8 @@
                                 *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalStudentPerLevel);setLevel(level)"
-                                title="Ver alumnos asociados" *ngIf="cycle.fecha_termino <= currentDate"><i
-                                class="mdi mdi-eye"></i></button>
+                                (click)="openModal(ModalStudentPerLevel);setLevel(level)" title="Ver alumnos asociados"
+                                *ngIf="cycle.fecha_termino <= currentDate"><i class="mdi mdi-eye"></i></button>
 
                         </td>
                     </tr>
@@ -226,17 +224,12 @@
                                                         {{student.apellidos}}
                                                     </td>
                                                     <td>
-                                                        <div class="form-check form-check-success">
-                                                            <label class="form-check-label" aria-label="Asignar">
-                                                                <input type="checkbox"
-                                                                    class="form-check-input position-static"
-                                                                    style="text-align: center;" [value]="student.id"
-                                                                    id="studentLevel"
-                                                                    (change)="addOrRemoveStudent($event.target.checked, student.id)"
-                                                                    #studentLevel>
-                                                                <i class="input-helper"></i>
-                                                            </label>
-                                                        </div>
+                                                        <input type="checkbox" class="form-check-input position-static"
+                                                            style="text-align: center;" [value]="student.id"
+                                                            id="studentLevel"
+                                                            (change)="addOrRemoveStudent($event.target.checked, student.id)"
+                                                            #studentLevel>
+                                                        <i class="input-helper"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
