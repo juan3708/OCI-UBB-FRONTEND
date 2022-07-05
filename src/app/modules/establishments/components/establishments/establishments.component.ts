@@ -57,7 +57,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
   ngOnInit(): void {
     //this.listEstablishmentsPerCycle();
     // this.lisCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,

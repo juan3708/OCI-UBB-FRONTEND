@@ -4,7 +4,7 @@
     <div class="card-body">
         <h4 class="card-title"><b>Actividades</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear
+            (click)="openModal(ModalContent)" *ngIf="cycle.fecha_termino >= currentDate">Crear
             actividad</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -46,11 +46,12 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setActivity(activity)" title="Editar actividad"><i
+                                (click)="openModal(ModalContentEdit);setActivity(activity)" title="Editar actividad"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteActivity(activity.id)" title="Editar actividad"><i
-                                    class="mdi mdi-delete"></i></button>
+                                (click)="deleteActivity(activity.id)" title="Editar actividad"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                                 (click)="getActivity(activity.id,ModalListCost)" title="Gastos"><i
                                     class="fa-solid fa-file-invoice-dollar"></i></button>
@@ -168,48 +169,51 @@
                     <div class="card-body">
                         <h4 class="card">Gastos de la competencia {{activity.nombre}}</h4>
                         <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto:
-                            {{cycle.presupuesto |
-                            currency: 'CLP':"$"}}</h5>
+                            ${{cycle.presupuesto |
+                            currency: 'CLP':""}}</h5>
                         <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado en las OCI:
-                            {{totalCost | currency: 'CLP':"$"}}
+                            ${{totalCost | currency: 'CLP':""}}
                         </h5>
                         <button type="button" style="float: right; margin: 8px;"
                             class="btn btn-gradient-info btn-rounded btn-sm"
                             (click)="openModal(ModalCostCreate);clearForm();costsFormCreate.patchValue({ 'activityName': activity.nombre });"
-                            style="float: right; margin: 8px;">Crear
+                            style="float: right; margin: 8px;" *ngIf="cycle.fecha_termino >= currentDate">Crear
                             gasto</button>
+                        <br>
                         <div *ngIf="costs.length >=1">
-                            <table class="table table-striped" style="text-align: center;">
-                                <thead class="table table-bordered">
-                                    <tr>
-                                        <th>
-                                            <b>Fecha</b>
-                                        </th>
-                                        <th>
-                                            <b>Valor</b>
-                                        </th>
-                                        <th>
-                                            <b>Ver Detalles</b>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table table-bordered">
-                                    <tr *ngFor="let cost of costs">
-                                        <td>
-                                            {{cost.fecha | date:"dd-MM-yyyy"}}
-                                        </td>
-                                        <td>
-                                            {{cost.valor | currency: 'CLP':"$"}}
-                                        </td>
-                                        <td>
-                                            <button type="button"
-                                                class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                                (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
-                                                    class="mdi mdi-eye"></i></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped" style="text-align: center;">
+                                    <thead class="table table-bordered">
+                                        <tr>
+                                            <th>
+                                                <b>Fecha</b>
+                                            </th>
+                                            <th>
+                                                <b>Valor</b>
+                                            </th>
+                                            <th>
+                                                <b>Ver Detalles</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table table-bordered">
+                                        <tr *ngFor="let cost of costs">
+                                            <td>
+                                                {{cost.fecha | date:"dd-MM-yyyy"}}
+                                            </td>
+                                            <td>
+                                                ${{cost.valor | currency: 'CLP':""}}
+                                            </td>
+                                            <td>
+                                                <button type="button"
+                                                    class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                                    (click)="getDetailsPerCost(cost);openModal(ModalDetailList)"><i
+                                                        class="mdi mdi-eye"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div *ngIf="costs.length == 0">
                             <br>
@@ -254,7 +258,7 @@
                                         {{detail.nombre}}
                                     </td>
                                     <td>
-                                        {{detail.valor | currency: 'CLP':"$"}}
+                                        ${{detail.valor | currency: 'CLP':""}}
                                     </td>
                                 </tr>
                             </tbody>

@@ -46,8 +46,76 @@
     </li>
 
     <!-- ------------------------- MENU CICLOS POR ACCIONES ------------------------------ -->
-    <li class="nav-item" [ngClass]="{'active' : students.isActive || studentscandidates.isActive|| cycle.isActive|| establishments.isActive}"
-      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined">
+
+    <!-- CICLO SIN DATOS -->
+    <li class="nav-item" [ngClass]="{'active' : cycle.isActive}"
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined &&
+       (ciclo.establecimientos.length == 0 && ciclo.establecimientoTieneCupos == false && ciclo.alumnosParticipantes == 0)">
+      <a class="nav-link" (click)="cyclesCollapsed = !cyclesCollapsed" [attr.aria-expanded]="cyclesCollapsed"
+        aria-controls="ui-basic">
+        <span class="menu-title">Acciones Ciclos</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-sync menu-icon"></i>
+      </a>
+      <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" routerLink="/cycle" routerLinkActive="active"
+              #cycle="routerLinkActive">Mantenedor Ciclo</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- CICLO CON ESTABLECIMIENTO PERO SIN CUPOS -->
+    <li class="nav-item" [ngClass]="{'active' :cycle.isActive|| establishments.isActive}"
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined &&
+        (ciclo.establecimientos.length >= 1 && ciclo.establecimientoTieneCupos == false && ciclo.alumnosParticipantes == 0)">
+      <a class="nav-link" (click)="cyclesCollapsed = !cyclesCollapsed" [attr.aria-expanded]="cyclesCollapsed"
+        aria-controls="ui-basic">
+        <span class="menu-title">Acciones Ciclos</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-sync menu-icon"></i>
+      </a>
+      <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/establishments" routerLinkActive="active"
+              #establishments="routerLinkActive">Establecimientos</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" routerLink="/cycle" routerLinkActive="active"
+              #cycle="routerLinkActive">Mantenedor Ciclo</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- CICLO CON ESTABLECIMIENTO Y CUPOS, PERO SIN ALUMNOS PARTICIPANTES -->
+    <li class="nav-item" [ngClass]="{'active' :studentscandidates.isActive|| cycle.isActive|| establishments.isActive}"
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined &&
+    (ciclo.establecimientos.length >= 1 && ciclo.establecimientoTieneCupos == true && ciclo.alumnosParticipantes == 0)">
+      <a class="nav-link" (click)="cyclesCollapsed = !cyclesCollapsed" [attr.aria-expanded]="cyclesCollapsed"
+        aria-controls="ui-basic">
+        <span class="menu-title">Acciones Ciclos</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-sync menu-icon"></i>
+      </a>
+      <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" routerLink="/studentscandidates" routerLinkActive="active"
+              #studentscandidates="routerLinkActive">Alumnos postulantes</a></li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/establishments" routerLinkActive="active"
+              #establishments="routerLinkActive">Establecimientos</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" routerLink="/cycle" routerLinkActive="active"
+              #cycle="routerLinkActive">Mantenedor Ciclo</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- CICLO COMPLETO -->
+    <li class="nav-item"
+      [ngClass]="{'active' : students.isActive || studentscandidates.isActive|| cycle.isActive|| establishments.isActive || level.isActive}"
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined &&
+      (ciclo.establecimientos.length >= 1 && ciclo.establecimientoTieneCupos == true && ciclo.alumnosParticipantes >= 1)">
       <a class="nav-link" (click)="cyclesCollapsed = !cyclesCollapsed" [attr.aria-expanded]="cyclesCollapsed"
         aria-controls="ui-basic">
         <span class="menu-title">Acciones Ciclos</span>
@@ -138,14 +206,14 @@
       </a>
     </li> -->
     <li class="nav-item" [ngClass]="{ 'active': activities.isActive }"
-      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined">
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador')&& ciclo.id != undefined && ciclo.alumnosParticipantes >= 1 ">
       <a class="nav-link" routerLink="/activities" routerLinkActive #activities="routerLinkActive">
         <span class="menu-title">Actividades</span>
         <i class="mdi mdi-note-text menu-icon"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': competencies.isActive }"
-      *ngIf="(rolName == 'admin' || rolName == 'coordinador' || rolName == 'director')&& ciclo.id != undefined">
+      *ngIf="(rolName == 'admin' || rolName == 'coordinador' || rolName == 'director')&& ciclo.id != undefined && ciclo.alumnosParticipantes >= 1">
       <a class="nav-link" routerLink="/competencies" routerLinkActive #competencies="routerLinkActive">
         <span class="menu-title">Competencias</span>
         <i class="mdi mdi-seal menu-icon"></i>

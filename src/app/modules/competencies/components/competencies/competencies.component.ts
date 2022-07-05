@@ -72,7 +72,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
   ngOnInit(): void {
     // this.listcycles();
     //this.listCompetencies();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,

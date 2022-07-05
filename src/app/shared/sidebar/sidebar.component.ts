@@ -19,6 +19,7 @@ export class SidebarComponent implements OnInit, DoCheck {
   rolName;
   ciclo;
 
+
   constructor(private userPagesService: UserPagesService, private cycleService: CycleService) { 
     this.userLocal = {};
   }

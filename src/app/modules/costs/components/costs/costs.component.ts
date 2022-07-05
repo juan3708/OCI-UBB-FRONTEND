@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { DataTableDirective } from 'angular-datatables';
 import { UsersService } from '../../../users/services/users.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-costs',
@@ -67,13 +68,13 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   });
 
 
-  constructor(private costsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private usersService: UsersService,private fb: FormBuilder) {
+  constructor(private costsService: CostsService, private modalService: NgbModal, private cycleService: CycleService, private usersService: UsersService, private fb: FormBuilder) {
     this.cicloOld = {};
   }
 
   ngOnInit(): void {
     //this.listCosts();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     // this.listCycles();
     this.dtOptions = {

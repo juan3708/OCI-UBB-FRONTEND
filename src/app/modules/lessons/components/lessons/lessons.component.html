@@ -4,11 +4,13 @@
     <div class="card-body">
         <h4 class="card-title"><b>Clases</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)" title="Registrar Clase" *ngIf="user.rol.nombre != 'ayudante'">Registrar
+            (click)="openModal(ModalContent)" title="Registrar Clase"
+            *ngIf="user.rol.nombre != 'ayudante' && cycle.fecha_termino >= currentDate">Registrar
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="getStudentAssistancePerCycle(ModalListStudentsAssistance)" style="float: right; margin: 8px;"
-            *ngIf="lessons.length >=1 && (user.rol.nombre != 'profesor' && user.rol.nombre != 'ayudante')" title="Ver Asistencia"><i class="fa-solid fa-users-line"></i>Ver
+            *ngIf="lessons.length >=1 && (user.rol.nombre != 'profesor' && user.rol.nombre != 'ayudante')"
+            title="Ver Asistencia"><i class="fa-solid fa-users-line"></i>Ver
             Asistencias</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -37,34 +39,48 @@
                 </thead>
                 <tbody class="table table-bordered">
                     <tr *ngFor="let lesson of lessons">
-                        <td>
+                        <td *ngIf="cycle.fecha_termino >= currentDate">
                             <button type="button" style="background: transparent;border: transparent;"
                                 (click)="openModal(ModalSeeLesson);setLesson(lesson)">{{lesson.fecha}}</button>
                         </td>
-                        <td>
+                        <td *ngIf="cycle.fecha_termino >= currentDate">
                             <button type="button" style="background: transparent;border: transparent;"
                                 (click)="openModal(ModalSeeLesson);setLesson(lesson)"> {{lesson.nivel.nombre}}</button>
+                        </td>
+                        <td *ngIf="cycle.fecha_termino <= currentDate">
+                            {{lesson.fecha}}
+                        </td>
+                        <td *ngIf="cycle.fecha_termino <= currentDate">
+                            {{lesson.nivel.nombre}}
                         </td>
                         <td>
                             <!-- <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalSeeLesson);setLesson(lesson)" title="Información de la clase"><i
                                     class="mdi mdi-eye"></i></button> -->
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="getLesson(lesson.id,ModalAddOrRemoveStudent)" title="Ingresar estudiantes"><i
+                                (click)="getLesson(lesson.id,ModalAddOrRemoveStudent)" title="Ingresar estudiantes"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="fa-solid fa-person-circle-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="chargeAssistance(lesson.id,ModalContentList)" *ngIf="lesson.alumnos.length >=1"
+                                (click)="chargeAssistance(lesson.id,ModalContentList)"
+                                *ngIf="lesson.alumnos.length >=1 && cycle.fecha_termino >= currentDate"
                                 title="Registrar asistencia"><i class="fa-solid fa-users"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="setLesson(lesson);getTeachersAndAssistants(lesson.id,ModalAssignTeacherAndAssistants)" *ngIf="user.rol.nombre != 'ayudante'"
+                                (click)="setLesson(lesson);getTeachersAndAssistants(lesson.id,ModalAssignTeacherAndAssistants)"
+                                *ngIf="user.rol.nombre != 'ayudante'&& cycle.fecha_termino >= currentDate"
                                 title="Asignar profesor y/o ayudantes">
                                 <i class="fa-solid fa-person-chalkboard"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setLesson(lesson)" title="Editar clase"><i
+                                (click)="openModal(ModalContentEdit);setLesson(lesson)" title="Editar clase"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteLesson(lesson.id);" title="Eliminar clase" *ngIf="user.rol.nombre != 'ayudante'"><i
+                                (click)="deleteLesson(lesson.id);" title="Eliminar clase"
+                                *ngIf="user.rol.nombre != 'ayudante'&& cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-delete"></i></button>
+                            <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
+                                (click)="openModal(ModalSeeLesson);setLesson(lesson)" title="Ver información"
+                                *ngIf="cycle.fecha_termino <= currentDate"><i class="mdi mdi-eye"></i></button>
 
 
                         </td>
@@ -227,17 +243,12 @@
                                                         {{student.apellidos}}
                                                     </td>
                                                     <td>
-                                                        <div class="form-check form-check-success">
-                                                            <label class="form-check-label" aria-label="Asignar">
-                                                                <input type="checkbox"
-                                                                    class="form-check-input position-static"
-                                                                    style="text-align: center;" [value]="student.id"
-                                                                    id="studentLevel"
-                                                                    (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
-                                                                    #studentLevel>
-                                                                <i class="input-helper"></i>
-                                                            </label>
-                                                        </div>
+                                                        <input type="checkbox" class="form-check-input position-static"
+                                                            style="text-align: center;" [value]="student.id"
+                                                            id="studentLevel"
+                                                            (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
+                                                            #studentLevel>
+                                                        <i class="input-helper"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -356,17 +367,12 @@
                                                         {{student.apellidos}}
                                                     </td>
                                                     <td>
-                                                        <div class="form-check form-check-success">
-                                                            <label class="form-check-label" aria-label="Asignar">
-                                                                <input type="checkbox"
-                                                                    class="form-check-input position-static"
-                                                                    style="text-align: center;" [value]="student.id"
-                                                                    id="studentLevel"
-                                                                    (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
-                                                                    #studentLevel>
-                                                                <i class="input-helper"></i>
-                                                            </label>
-                                                        </div>
+                                                        <input type="checkbox" class="form-check-input position-static"
+                                                            style="text-align: center;" [value]="student.id"
+                                                            id="studentLevel"
+                                                            (change)="addOrRemoveStudentCreate($event.target.checked, student.id)"
+                                                            #studentLevel>
+                                                        <i class="input-helper"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -618,6 +624,14 @@
                                                     <td>
                                                         {{student.apellidos}}
                                                     </td>
+                                                    <td *ngIf="student.pivot.asistencia == 1"
+                                                        style="color: green;font-weight: bold;">
+                                                        PRESENTE
+                                                    </td>
+                                                    <td *ngIf="student.pivot.asistencia == 0"
+                                                        style="color: red;font-weight: bold">
+                                                        AUSENTE
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -654,22 +668,24 @@
                             <div class="col-12 grid-margin">
                                 <div class="card">
                                     <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
-                                        <li class="nav-item" *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
+                                        <li class="nav-item"
+                                            *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
                                             <a class="nav-link active " id="teacher-tab" data-toggle="tab"
                                                 href="#teacher" role="tab" aria-controls="teacher"
-                                                aria-selected="true"><i class="fa-solid fa-graduation-cap" ></i>
+                                                aria-selected="true"><i class="fa-solid fa-graduation-cap"></i>
                                                 Profesores</a>
                                         </li>
-                                        <li class="nav-item" *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
+                                        <li class="nav-item"
+                                            *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
                                             <a class="nav-link" id="assistant-tab" data-toggle="tab" href="#assistant"
                                                 role="tab" aria-controls="assistant" aria-selected="false"
                                                 style="box-sizing: border-box;"><i
                                                     class="fa-solid fa-rectangle-list"></i> Ayudantes</a>
                                         </li>
                                         <li class="nav-item" *ngIf="user.rol.nombre == 'profesor'">
-                                            <a class="nav-link active" id="assistant-tab" data-toggle="tab" href="#assistant"
-                                                role="tab" aria-controls="assistant" aria-selected="false"
-                                                style="box-sizing: border-box;"><i
+                                            <a class="nav-link active" id="assistant-tab" data-toggle="tab"
+                                                href="#assistant" role="tab" aria-controls="assistant"
+                                                aria-selected="false" style="box-sizing: border-box;"><i
                                                     class="fa-solid fa-rectangle-list"></i> Ayudantes</a>
                                         </li>
                                     </ul>
@@ -748,18 +764,13 @@
                                                                     {{teacher.apellidos}}
                                                                 </td>
                                                                 <td>
-                                                                    <div class="form-check form-check-success">
-                                                                        <label class="form-check-label"
-                                                                            aria-label="Asignar">
-                                                                            <input type="checkbox"
-                                                                                class="form-check-input position-static"
-                                                                                style="text-align: center;"
-                                                                                [value]="teacher.id" id="teacher"
-                                                                                (change)="addOrRemoveTeacher($event.target.checked, teacher.id)"
-                                                                                #teacher>
-                                                                            <i class="input-helper"></i>
-                                                                        </label>
-                                                                    </div>
+                                                                    <input type="checkbox"
+                                                                        class="form-check-input position-static"
+                                                                        style="text-align: center;" [value]="teacher.id"
+                                                                        id="teacher"
+                                                                        (change)="addOrRemoveTeacher($event.target.checked, teacher.id)"
+                                                                        #teacher>
+                                                                    <i class="input-helper"></i>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -845,18 +856,13 @@
                                                                 {{assistant.apellidos}}
                                                             </td>
                                                             <td>
-                                                                <div class="form-check form-check-success">
-                                                                    <label class="form-check-label"
-                                                                        aria-label="Asignar">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input position-static"
-                                                                            style="text-align: center;"
-                                                                            [value]="assistant.id" id="studentLevel"
-                                                                            (change)="addOrRemoveAssistant($event.target.checked, assistant.id)"
-                                                                            #assistant>
-                                                                        <i class="input-helper"></i>
-                                                                    </label>
-                                                                </div>
+                                                                <input type="checkbox"
+                                                                    class="form-check-input position-static"
+                                                                    style="text-align: center;" [value]="assistant.id"
+                                                                    id="studentLevel"
+                                                                    (change)="addOrRemoveAssistant($event.target.checked, assistant.id)"
+                                                                    #assistant>
+                                                                <i class="input-helper"></i>
                                                             </td>
                                                         </tr>
                                                     </tbody>

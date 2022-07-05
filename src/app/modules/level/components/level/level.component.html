@@ -4,7 +4,7 @@
     <div class="card-body">
         <h4 class="card-title"><b>Niveles</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalContent)">Crear un
+            (click)="openModal(ModalContent)" *ngIf="cycle.fecha_termino >= currentDate">Crear un
             nivel</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -29,21 +29,35 @@
                 </thead>
                 <tbody class="table table-bordered">
                     <tr *ngFor="let level of levels">
-                        <td>
+                        <td *ngIf="cycle.fecha_termino <= currentDate">
                             {{level.nombre}}
+                        </td>
+                        <td *ngIf="level.alumnos.length ==0">
+                            {{level.nombre}}
+                        </td>
+                        <td *ngIf="level.alumnos.length >=1 && cycle.fecha_termino >= currentDate">
+                            <button type="button" class="btn"
+                                style="border: transparent;background: transparent;"
+                                (click)="openModal(ModalStudentPerLevel);setLevel(level)"
+                                title="Ver alumnos asociados">{{level.nombre}}</button>
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setLevel(level)" title="Editar nivel"><i
+                                (click)="openModal(ModalContentEdit);setLevel(level)" title="Editar nivel"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteLevel(level.id)" title="Eliminar nivel"><i class="mdi mdi-delete"></i></button>
+                                (click)="deleteLevel(level.id)" title="Eliminar nivel"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="getLevel(level.id,ModalAddStudentLevel)" title="Asignar alumnos"><i
+                                (click)="getLevel(level.id,ModalAddStudentLevel)" title="Asignar alumnos"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalStudentPerLevel);setLevel(level)"
-                                *ngIf="level.alumnos.length >=1" title="Ver alumnos asociados"><i class="mdi mdi-eye"></i></button>
+                                title="Ver alumnos asociados" *ngIf="cycle.fecha_termino <= currentDate"><i
+                                class="mdi mdi-eye"></i></button>
+
                         </td>
                     </tr>
                 </tbody>

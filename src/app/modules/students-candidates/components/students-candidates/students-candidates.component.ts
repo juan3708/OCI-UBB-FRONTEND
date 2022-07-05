@@ -10,6 +10,7 @@ import { CycleModel } from 'src/models/cycle.model';
 import { CycleService } from '../../../cycle/services/cycle.service';
 import { EstablishmentsService } from '../../../establishments/services/establishments.service';
 import { StudentsCandidatesService } from '../../services/students-candidates.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-students-candidates',
@@ -70,7 +71,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
   ngOnInit(): void {
     // this.listCycles();
     // this.listEstablishments();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -149,9 +150,17 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       for (let index = 0; index < this.establishments.length; index++) {
         this.cupos.push(this.establishments[index].alumnosParticipantes.length);
       }
-
       this.rerender();
     });
+  }
+
+  assignCycle(id) {
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
+      this.cycleService.cycle = resp.ciclo;
+    })
   }
 
   getLastCyclesPerStudent(id) {
@@ -171,10 +180,10 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       allowEnterKey: false
     });
     this.studentsService.getAssistancePerLastCycles(data).subscribe((resp: any) => {
-      if(resp.CiclosConAsistenciaYCompetencias.length >1){
-      this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
-      this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
-      }else{
+      if (resp.CiclosConAsistenciaYCompetencias.length > 1) {
+        this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
+        this.oci2 = resp.CiclosConAsistenciaYCompetencias[1];
+      } else {
         this.oci1 = resp.CiclosConAsistenciaYCompetencias[0];
         this.oci2 = {
           nombre: "",
@@ -276,6 +285,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       });
       this.clearForm();
       this.getCycle(this.cycle.id);
+      this.assignCycle(this.cycle.id);
       modal.dismiss();
     } else {
       let data = {
@@ -291,6 +301,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
             title: 'Se han inscritos correctamente',
           });
           this.clearForm();
+          this.assignCycle(this.cycle.id);
           this.getCycle(this.cycle.id);
           modal.dismiss();
         } else {
@@ -322,11 +333,12 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       if (result.isConfirmed) {
         this.cycleService.deleteStudents(data).subscribe((resp: any) => {
           if (resp.code == 200) {
+            this.getCycle(this.cycle.id);
+            this.assignCycle(this.cycle.id);
             this.Toast.fire({
               icon: 'success',
               title: 'Postulación eliminada correctamente'
             });
-            this.getCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',

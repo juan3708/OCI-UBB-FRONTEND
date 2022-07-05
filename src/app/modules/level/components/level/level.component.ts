@@ -56,7 +56,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   ngOnInit(): void {
     //this.listLevels();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     //this.listEstablishments();
     this.dtOptions = {
@@ -201,6 +201,15 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     this.studentsPerLevel = level.alumnos;
   }
 
+  assignCycle(id){
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp: any)=>{
+      this.cycleService.cycle = resp.ciclo;
+    })
+  }
+
   levelFormCreate(name, modal) {
     let data = {
       nombre: name,
@@ -214,6 +223,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           title: 'Se ha creado correctamente'
         });
         this.listLevelsPerCycle();
+        this.assignCycle(this.cycle.id);
       } else {
         if (resp.code == 400) {
           this.Toast.fire({
@@ -279,6 +289,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               title: 'Nivel eliminado correctamente',
             });
             this.listLevelsPerCycle();
+            this.assignCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -295,9 +306,10 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   addLevelStudent(modal) {
     if (this.studentsIdAddLevel.length < 1) {
       this.Toast.fire({
-        icon: 'error',
-        title: 'Seleccione alumnos porfavor'
+        icon: 'info',
+        title: 'No se efectuaron cambios'
       });
+      modal.dismiss();
     } else {
       let data = {
         nivel_id: this.level.id,
@@ -311,6 +323,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
             title: 'Se asigno correctamente el nivel'
           });
           this.clearForm();
+          this.getCycle(this.cycle.id);
         } else {
           this.Toast.fire({
             icon: 'error',
@@ -345,6 +358,8 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
               title: 'Se ha eliminado correctamente',
             });
             this.getLevel(this.level.id, null);
+          this.getCycle(this.cycle.id);
+
           } else {
             this.Toast.fire({
               icon: 'error',

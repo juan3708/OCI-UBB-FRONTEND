@@ -3,6 +3,41 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title"><b>Ciclos</b></h4>
+        <div class="table-responsive" >
+            <div class="card" *ngIf="cycleSee.niveles.length == 0">
+                <h5>Proceso de creación del ciclo ({{cycleSee.nombre}})</h5>
+                <section class="step-wizard">
+                    <ul class="step-wizard-list">
+                        <li [class.current-item]='cycleSee.establecimientos.length == 0' class="step-wizard-item">
+                            <span class="progress-count">1</span>
+                            <span class="progress-label">Asignar <br> Establecimientos (<i class="mdi mdi-book-plus"></i>)</span>
+                        </li>
+                        <li [class.current-item]='cycleSee.establecimientoTieneCupos == false && cycleSee.establecimientos.length >= 1'
+                            class="step-wizard-item ">
+                            <span class="progress-count">2</span>
+                            <span class="progress-label">Asignar cupos (<i
+                                class="mdi mdi-school"></i>)</span>
+                        </li>
+                        <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length == 0'
+                            class="step-wizard-item ">
+                            <span class="progress-count">3</span>
+                            <span class="progress-label">Cargar alumnos (Alumnos Postulantes)</span>
+                        </li>
+                        <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length >= 1 && cycleSee.alumnosParticipantes == 0'
+                            class="step-wizard-item ">
+                            <span class="progress-count">4</span>
+                            <span class="progress-label">Inscribir alumnos (Alumnos Postulantes)</span>
+                        </li>
+                        <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length >= 1 && cycleSee.alumnosParticipantes >= 1 && cycleSee.niveles.length == 0'
+                            class="step-wizard-item ">
+                            <span class="progress-count">5</span>
+                            <span class="progress-label">Crear Niveles (Nivel)</span>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)">Crear
             ciclo</button>
@@ -52,7 +87,7 @@
                             {{cycle.fecha_termino | date:"dd-MM-yyyy"}}
                         </td>
                         <td>
-                            {{cycle.presupuesto |currency: 'CLP':"$"}}
+                            ${{cycle.presupuesto |currency: 'CLP':""}}
                         </td>
                         <td>
                             {{cycle.coordinador.nombre}} {{cycle.coordinador.apellido}}
@@ -62,14 +97,16 @@
                                 (click)="getStatisticPerCycle(cycle.id,ModalContentStatistics);setCycle(cycle)"
                                 title="Estadistica del ciclo"><i class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm "
-                                (click)="openModal(ModalContentEdit);setCycle(cycle)" title="Editar ciclo"><i
+                                (click)="openModal(ModalContentEdit);setCycle(cycle)"
+                                *ngIf="cycle.fecha_termino >= currentDate" title="Editar ciclo"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
-                                (click)="getCycle(cycle.id,SelectEstableshments)" title="Asignar Establecimientos"><i
+                                (click)="getCycle(cycle.id,SelectEstableshments)"
+                                *ngIf="cycle.fecha_termino >= currentDate" title="Asignar Establecimientos"><i
                                     class="mdi mdi-book-plus"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
                                 (click)="getCycle(cycle.id,EditQuotasPerEstableshment)"
-                                *ngIf="cycle.establecimientos.length >=1" title="Editar cupos de establecimiento"><i
+                                *ngIf="cycle.establecimientos.length >=1" title="Cupos por establecimiento"><i
                                     class="mdi mdi-school"></i></button>
                         </td>
                     </tr>
@@ -283,16 +320,11 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let establishment of establishments">
                                                 <td>
-                                                    <div class="form-check form-check-success">
-                                                        <label class="form-check-label" aria-label="Asignar">
-                                                            <input type="checkbox"
-                                                                class="form-check-input position-static"
-                                                                style="text-align: center;" id="establishment"
-                                                                (change)="addOrRemoveEstablishments($event.target.checked, establishment.id)"
-                                                                #studentLevel>
-                                                            <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
+                                                    <input type="checkbox" class="form-check-input position-static"
+                                                        style="text-align: center;width: 20px;" id="establishment"
+                                                        (change)="addOrRemoveEstablishments($event.target.checked, establishment.id)"
+                                                        #studentLevel>
+                                                    <i class="input-helper"></i>
                                                 </td>
                                                 <td>
                                                     {{establishment.nombre}}
@@ -329,7 +361,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="editFeeEstablishment">
-                        <h4 class="card">Editar cupos de los establecimiento</h4>
+                        <h4 class="card">Cupos de los establecimiento</h4>
                         <p class="card-description">
                             Ingrese los campos para la modificacion de cupos por establecimiento.
                         </p>
@@ -372,7 +404,8 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success"
-                (click)="establishmentQuotesEdit(editFeeEstablishment.value, modal)">Editar</button>
+                (click)="establishmentQuotesEdit(editFeeEstablishment.value, modal)"
+                *ngIf="cycle.fecha_termino >= currentDate">Asignar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();clearForm();">Cancelar</button>
         </div>
@@ -849,15 +882,15 @@
                                             style="background-color: transparent;border: transparent;">
                                             <tr>
                                                 <th class="thGastos">
-                                                    <h5> Prespuesto Actual: {{cycle.presupuesto | currency: 'CLP':"$"}}
+                                                    <h5> Prespuesto Actual: ${{cycle.presupuesto | currency: 'CLP':""}}
                                                     </h5>
                                                 </th>
                                                 <th class="thGastos">
-                                                    <h5>Total Gastado: {{totalGastos | currency: 'CLP':"$"}}</h5>
+                                                    <h5>Total Gastado: ${{totalGastos | currency: 'CLP':""}}</h5>
                                                 </th>
                                                 <th class="thGastos">
-                                                    <h5>Presupuesto restante: {{prespuestoRestante | currency:
-                                                        'CLP':"$"}}</h5>
+                                                    <h5>Presupuesto restante: ${{prespuestoRestante | currency:
+                                                        'CLP':""}}</h5>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -908,12 +941,12 @@
                                                         {{detail.nombre}}
                                                     </td>
                                                     <td>
-                                                        {{detail.valor | currency: 'CLP':"$"}}
+                                                        ${{detail.valor | currency: 'CLP':""}}
                                                     </td>
                                                 </tr>
                                             </tbody>
                                             <td style="font-weight: bold;text-align: right;">TOTAL:</td>
-                                            <td style="border: 1px solid #ebedf2;">{{cost.valor | currency: 'CLP':"$" }}
+                                            <td style="border: 1px solid #ebedf2;">${{cost.valor | currency: 'CLP':"" }}
                                             </td>
                                             <br>
                                         </table>

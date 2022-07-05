@@ -89,7 +89,6 @@ export class NavbarComponent implements OnInit, DoCheck {
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
       this.cycleService.cycle = resp.ciclo;
-      console.log(resp.ciclo);
     });
   }
 

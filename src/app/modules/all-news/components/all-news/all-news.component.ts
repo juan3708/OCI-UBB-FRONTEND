@@ -30,6 +30,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   user;
   selectedFiles: File[] = Array();
   fileNames: string;
+  currentDate;
   url = 'http://127.0.0.1:8000/storage/images/';
   filesNamesArray: string[] = Array();
   new;
@@ -69,6 +70,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       language: LanguageDataTable.spanish_datatables,
       responsive: true
     };
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
   }
 
   ngAfterViewInit(): void {

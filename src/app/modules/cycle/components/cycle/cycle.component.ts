@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CycleService } from '../../services/cycle.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -10,22 +10,38 @@ import { EstablishmentsService } from '../../../establishments/services/establis
 import { EstablishmentModel } from '../../../../../models/establishment.model';
 import { DataTableDirective } from 'angular-datatables';
 import { UsersService } from '../../../users/services/users.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-cycle',
   templateUrl: './cycle.component.html',
   styleUrls: ['./cycle.component.scss']
 })
-export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck {
   @ViewChild(DataTableDirective, { static: false })
   dtElement: DataTableDirective;
 
+  
+  
+  
+  cicloOld;
+  cicloNew;
+  ciclo;
   cycles = [];
   lengthCycles = 0;
   coordinators;
   cyclesEdit: FormGroup;
   cycleModel = new CycleModel();
   cycle;
+  cycleSee = {
+    establecimientos: Array(),
+    establecimientoTieneCupos: false,
+    alumnosParticipantes: 0,
+    niveles: Array(),
+    alumnos: Array(),
+    nombre: ""
+  }
+  currentDate;
   spinnerSee = false;
   fileName = -1
   urlDownload = "http://127.0.0.1:8000/api/pdf/download/";
@@ -88,12 +104,13 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     establishmentsFee: this.fb.array([])
   });
 
-  constructor(private cycleService: CycleService, private establishmentsService: EstablishmentsService, private usersService: UsersService,private fb: FormBuilder, private modalService: NgbModal) { }
+  constructor(private cycleService: CycleService, private establishmentsService: EstablishmentsService, private usersService: UsersService, private fb: FormBuilder, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
     this.listCycles();
     this.listCoordinators();
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     //this.listEstablishments();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -101,6 +118,15 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
+  ngDoCheck(): void {
+    if (this.cycleService.cycle.id != undefined) {
+      this.cicloNew = this.cycleService.cycle;
+      if (this.cicloOld != this.cicloNew) {
+        this.cicloOld = this.cicloNew;
+        this.cycleSee = this.cycleService.cycle;
+      }
+    }
+  }
 
   ngAfterViewInit(): void {
     this.dtTrigger.next();
@@ -141,7 +167,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   listCoordinators() {
     this.cycleService.getCoordinators().subscribe((resp: any) => {
       this.coordinators = resp.coordinadores;
-      if(this.coordinators.length == 0){
+      if (this.coordinators.length == 0) {
         this.Toast2.fire({
           icon: 'info',
           title: 'No existen coordinadores en el sistema, por favor crear uno'
@@ -212,17 +238,27 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.cycle = resp.ciclo;
-      this.cycleModel = resp.ciclo;
+      this.cycleSee = resp.ciclo;
       this.establishmentsPerCycle = resp.ciclo.establecimientos;
       this.establishments = resp.establecimientosSinCiclo
       this.setEditFeeForm();
+      this.cycleService.cycle = this.cycle;
       Swal.close();
-      if(ModalContent != null){
-      this.modalService.open(ModalContent, { size: 'xl' });
+      if (ModalContent != null) {
+        this.modalService.open(ModalContent, { size: 'xl' });
       }
-
     })
   }
+
+  assingCycle(id){
+    let data = {
+      id
+    };
+    this.cycleService.getCycleById(data).subscribe((resp:any)=>{
+      this.cycleService.cycle = resp.ciclo;
+    })
+  }
+
 
   getStatisticPerCycle(id, modal) {
     let data = {
@@ -369,9 +405,10 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
   addEstablishmentsPerCycle(modal) {
     if (this.establishmentsPerCycleId.length < 1 && this.establishmentsPerCycle.length < 1) {
       this.Toast.fire({
-        icon: 'error',
-        title: 'Seleccione establecimientos porfavor'
+        icon: 'info',
+        title: 'No se efectuaron cambios.'
       });
+      this.assingCycle(this.cycle.id)
     } else {
       if (this.establishmentsPerCycleId.length == 0) {
         this.Toast.fire({
@@ -380,6 +417,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
         });
         modal.dismiss();
         this.clearForm();
+        this.assingCycle(this.cycle.id)
       } else {
         let data = {
           ciclo_id: this.cycle.id,
@@ -394,6 +432,8 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.clearForm();
             this.listCycles();
+            this.assingCycle(this.cycle.id)
+
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -428,7 +468,10 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
               icon: 'success',
               title: 'Se ha eliminado correctamente',
             });
-            this.getCycle(this.cycle.id, null);
+            if(this.cycle.establecimientos.length == 1){
+              this.listCycles();
+            }
+            this.assingCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -462,6 +505,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
           title: 'Se asignaron correctamente los cupos'
         });
         this.clearForm();
+        this.assingCycle(this.cycle.id);
       } else {
         this.Toast.fire({
           icon: 'error',
@@ -546,7 +590,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  exportPdf(){
+  exportPdf() {
     let data = {
       cantEstablecimientos: this.cantEstablecimientos,
       cantidadAlumnosInscritos: this.cantidadAlumnosInscritos,

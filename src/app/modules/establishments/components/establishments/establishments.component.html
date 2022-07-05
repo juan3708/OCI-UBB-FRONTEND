@@ -52,7 +52,7 @@
                 (click)="openModal(ModalContentEdit);setEstablishment(establishment)" title="Editar establecimientos"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento del ciclo"><i
+                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento del ciclo" *ngIf="cycle.fecha_termino >= currentDate"><i
                   class="mdi mdi-delete"></i></button>
             </td>
           </tr>

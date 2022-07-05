@@ -14,6 +14,7 @@ import { LanguageDataTable } from 'src/app/auxiliars/languageDataTable';
 import { DataTableDirective } from 'angular-datatables';
 import { UsersService } from '../../../users/services/users.service';
 import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-lessons',
@@ -84,7 +85,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   ngOnInit(): void {
     //this.listLessons();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,
@@ -473,9 +474,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
           icon: 'success',
           title: 'Clase editada correctamente'
         });
-        if(this.user.rol.nombre == 'profesor'){
+        if (this.user.rol.nombre == 'profesor') {
           this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
-        }else{
+        } else {
           this.listLessonsPerCycle();
         }
       } else {
@@ -515,9 +516,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               icon: 'success',
               title: 'Clase eliminada correctamente'
             });
-            if(this.user.rol.nombre == 'profesor'){
+            if (this.user.rol.nombre == 'profesor') {
               this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
-            }else{
+            } else {
               this.listLessonsPerCycle();
             }
           } else {

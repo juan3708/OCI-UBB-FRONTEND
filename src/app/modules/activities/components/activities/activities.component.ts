@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { CycleModel } from '../../../../../models/cycle.model';
 import { DataTableDirective } from 'angular-datatables';
 import { CostsService } from '../../../costs/services/costs.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-activities',
@@ -79,7 +80,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
   ngOnInit(): void {
     //this.listActivities();
     // this.listCycles();
-    // this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
+    this.currentDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     // this.getCyclePerFinishtDate();
     this.dtOptions = {
       language: LanguageDataTable.spanish_datatables,

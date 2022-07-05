@@ -5,10 +5,11 @@
         <h4 class="card-title"><b>Alumnos postulantes</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContentEnrolled)"
-            *ngIf="studentsPerCycle.length >=1 || studentsEnrolled.length >=1 "><i
+            *ngIf="(studentsPerCycle.length >=1 || studentsEnrolled.length >=1)&& cycle.fecha_termino >= currentDate "><i
                 class="fa-solid fa-clipboard-list"></i> Inscribir alumnos</button>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
-            (click)="openModal(ModalChargeStudent)"><i class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
+            (click)="openModal(ModalChargeStudent)" *ngIf="cycle.fecha_termino >= currentDate"><i
+                class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -58,8 +59,8 @@
                                 (click)="openModal(ModalContentStatistics);setStudent(student);getLastCyclesPerStudent(student.id)"
                                 title="Ver estadisticas de los ultimos dos ciclos"><i class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteStudent(student.id)" title="Eliminar alumno"><i
-                                    class="mdi mdi-delete"></i></button>
+                                (click)="deleteStudent(student.id)" title="Eliminar alumno"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
 
                         </td>
                     </tr>
@@ -238,8 +239,8 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="second-tab" data-toggle="tab" href="#second" role="tab"
-                                    aria-controls="second" aria-selected="false"
-                                    style="box-sizing: border-box;" *ngIf='oci2.nombre != "" '>{{oci2.nombre}}</a>
+                                    aria-controls="second" aria-selected="false" style="box-sizing: border-box;"
+                                    *ngIf='oci2.nombre != "" '>{{oci2.nombre}}</a>
                             </li>
                         </ul>
                         <div class="tab-content" id="myTabContent">
@@ -645,18 +646,14 @@
                                                                     class="mdi mdi-eye"></i></button>
                                                         </td>
                                                         <td>
-                                                            <div class="form-check form-check-success">
-                                                                <label class="form-check-label" aria-label="Asignar">
-                                                                    <input type="checkbox"
-                                                                        class="form-check-input position-static"
-                                                                        style="text-align: center;" [value]="student.id"
-                                                                        id="studentLevel"
-                                                                        (change)="addOrRemoveStudents($event.target.checked, student.id,indexEstablishments)"
-                                                                        [checked]="studentsAdd.includes(student.id)"
-                                                                        #studentLevel>
-                                                                    <i class="input-helper"></i>
-                                                                </label>
-                                                            </div>
+                                                            <input type="checkbox"
+                                                                class="form-check-input position-static"
+                                                                style="text-align: center;" [value]="student.id"
+                                                                id="studentLevel"
+                                                                (change)="addOrRemoveStudents($event.target.checked, student.id,indexEstablishments)"
+                                                                [checked]="studentsAdd.includes(student.id)"
+                                                                #studentLevel>
+                                                            <i class="input-helper"></i>
                                                         </td>
                                                     </tr>
                                                 </tbody>
