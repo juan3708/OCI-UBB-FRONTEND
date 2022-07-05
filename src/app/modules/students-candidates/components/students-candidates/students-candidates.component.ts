@@ -237,6 +237,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
           modal.dismiss();
           this.spinnerSee = false;
           this.getCycle(this.cycle.id);
+          this.assignCycle(this.cycle.id);
           this.resetFile();
         } else {
           this.Toast.fire({
@@ -375,6 +376,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
               title: 'Se ha realizado correctamente',
             });
             this.getCycle(this.cycle.id);
+            this.assignCycle(this.cycle.id)
           } else {
             this.Toast.fire({
               icon: 'error',
