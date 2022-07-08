@@ -45,17 +45,17 @@
             </td>
             <td>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="openModal(ModalContentEdit);setCompetition(competition)" title="Editar competencia" *ngIf="cycle.fecha_termino >= currentDate"><i
-                  class="mdi mdi-grease-pencil"></i></button>
+                (click)="openModal(ModalContentEdit);setCompetition(competition)" title="Editar competencia"
+                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteCompetition(competition.id)" title="Eliminar competencia" *ngIf="cycle.fecha_termino >= currentDate"><i
-                  class="mdi mdi-delete"></i></button>
+                (click)="deleteCompetition(competition.id)" title="Eliminar competencia"
+                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="getCompetition(competition.id,ModalAddStudents)" title="Asignar Alumnos" *ngIf="cycle.fecha_termino >= currentDate"><i
-                  class="fa-solid fa-person-circle-plus"></i></button>
+                (click)="getCompetition(competition.id,ModalAddStudents)" title="Asignar Alumnos"
+                *ngIf="cycle.fecha_termino >= currentDate"><i class="fa-solid fa-person-circle-plus"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="getCompetition(competition.id,ModalEditScores)"
-                *ngIf="competition.alumnos.length >=1" title="Puntaje"><i class="fa-solid fa-medal"></i></button>
+                (click)="getCompetition(competition.id,ModalEditScores)" *ngIf="competition.alumnos.length >=1"
+                title="Puntaje"><i class="fa-solid fa-medal"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="getCompetition(competition.id,ModalListCost)" title="Gastos"><i
                   class="fa-solid fa-file-invoice-dollar"></i></button>
@@ -251,15 +251,10 @@
                             {{student.apellidos}}
                           </td>
                           <td>
-                            <div class="form-check form-check-success">
-                              <label class="form-check-label" aria-label="Asignar">
-                                <input type="checkbox" class="form-check-input position-static"
-                                  style="text-align: center;" [value]="student.id" id="studentLevel"
-                                  (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)"
-                                  #studentLevel>
-                                <i class="input-helper"></i>
-                              </label>
-                            </div>
+                            <input type="checkbox" class="form-check-input position-static" style="text-align: center;"
+                              [value]="student.id" id="studentLevel"
+                              (change)="addOrRemoveStudentAddArray($event.target.checked, student.id)" #studentLevel>
+                            <i class="input-helper"></i>
                           </td>
                         </tr>
                       </tbody>
@@ -354,8 +349,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success"
-        (click)="establishmentQuotesEdit(editScorePerStudent.value, modal)" *ngIf="cycle.fecha_termino >= currentDate">Editar</button>
+      <button type="button" class="btn btn-success" (click)="establishmentQuotesEdit(editScorePerStudent.value, modal)"
+        *ngIf="cycle.fecha_termino >= currentDate">Asignar</button>
       <button type="button" class="btn btn-light" data-dismiss="modal"
         (click)="modal.close();clearForm();">Cancelar</button>
     </div>

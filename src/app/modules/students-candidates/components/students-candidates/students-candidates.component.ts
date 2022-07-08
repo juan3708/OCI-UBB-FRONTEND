@@ -165,7 +165,8 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
 
   getLastCyclesPerStudent(id) {
     let data = {
-      alumno_id: id
+      alumno_id: id,
+      ciclo_id: this.cycle.id
     }
     Swal.fire({
       title: 'Espere porfavor...',

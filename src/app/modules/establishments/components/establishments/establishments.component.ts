@@ -279,7 +279,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
             this.Toast.fire({
               icon: 'error',
               title: 'Error al eliminar el establecimiento',
-              text: resp.id
+              text: resp.message
             });
           }
         })

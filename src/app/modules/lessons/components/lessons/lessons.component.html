@@ -534,7 +534,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="lessonFormEdit(f, modal)">Confirmar</button>
+            <button type="button" class="btn btn-success" (click)="lessonFormEdit(f, modal)">Editar</button>
             <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
                 (click)="modal.close();clearForm()">Cancelar</button>
         </div>
@@ -655,7 +655,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
-                (click)="modal.dismiss();clearForm()">
+                (click)="modal.dismiss();clearForm();listLessonsPerCycle()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -884,7 +884,7 @@
             <button type="button" class="btn btn-success"
                 (click)="assignOrDesassignTeachersAndAssistants(modal)">Asignar</button>
             <button type="button" id="closeModal" class="btn btn-light" data-dismiss="modal"
-                (click)="modal.close();clearForm()">Cancelar</button>
+                (click)="modal.close();clearForm();listLessonsPerCycle()">Cancelar</button>
         </div>
     </div>
 </ng-template>

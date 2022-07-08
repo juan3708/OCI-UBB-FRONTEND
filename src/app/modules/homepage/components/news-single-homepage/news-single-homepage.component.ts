@@ -13,7 +13,10 @@ export class NewsSingleHomepageComponent implements OnInit {
   recentPost = []
   url = 'http://127.0.0.1:8000/storage/images/';
   constructor(private router: Router, private homepageService: HomepageService) {
+    console.log(this.router.getCurrentNavigation().extras.state)
+    if(this.router.getCurrentNavigation().extras.state != undefined){
     this.single = this.router.getCurrentNavigation().extras.state.news;
+    }
   }
 
   ngOnInit(): void {
@@ -31,6 +34,7 @@ export class NewsSingleHomepageComponent implements OnInit {
   
   onSelectNews(news) {
     let title = news.titulo.replaceAll(' ', '-').toLowerCase();
+    console.log(title);
     this.router.navigate(['/news', title], {
       state: {
         news

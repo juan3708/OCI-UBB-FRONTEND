@@ -28,7 +28,12 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   cicloOld;
   cicloNew;
   ciclo;
-  user;
+  user = {
+    rol: {
+      nombre: ""
+    },
+    rut: ""
+  };
   lessons = [];
   lessonSee;
   cycles;
@@ -736,6 +741,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
                     title: 'Ayudante(s) asignados correctamente'
                   });
                   this.clearForm();
+                  this.getCycle(this.cycle.id);
                   modal.dismiss();
                   return;
                 } else {
@@ -769,6 +775,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             }
             modal.dismiss();
             this.clearForm();
+            this.getCycle(this.cycle.id);
           } else {
             this.Toast.fire({
               icon: 'error',
@@ -815,6 +822,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
                     });
                     this.clearForm();
                     modal.dismiss();
+                    this.getCycle(this.cycle.id);
                     return;
                   } else {
                     this.Toast.fire({
@@ -847,6 +855,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               }
               modal.dismiss();
               this.clearForm();
+              this.getCycle(this.cycle.id);
             } else {
               this.Toast.fire({
                 icon: 'error',
@@ -893,6 +902,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               }
             })
           }
+          this.getCycle(this.cycle.id);
         }
       } else if (this.addAssistants.length >= 1) {
         let data = {
@@ -913,7 +923,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
             });
           }
         })
-
+        this.getCycle(this.cycle.id);
       } else if (this.removeAssistants.length >= 1) {
         let data = {
           ayudantes_id: this.removeAssistants,
@@ -936,6 +946,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       }
     }
     this.clearForm();
+    this.getCycle(this.cycle.id);
   }
 
   addOrRemoveStudentPerLesson(modal) {
