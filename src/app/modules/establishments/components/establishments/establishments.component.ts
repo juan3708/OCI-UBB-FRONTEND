@@ -93,8 +93,10 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
 
   listEstablishmentsPerCycle() {
-    this.cycleService.getCycleById(this.cycle.id).subscribe((resp: any) => {
-      console.log(resp);
+    let data = {
+      id: this.cycle.id
+    }
+    this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.establishments = resp.ciclo.establecimientos;
       this.rerender();
     })
@@ -251,7 +253,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
 
   deleteEstablishment(id) {
     let data = {
-      establecimientos_id: id,
+      establecimiento_id: id,
       ciclo_id: this.cycle.id
 
     };

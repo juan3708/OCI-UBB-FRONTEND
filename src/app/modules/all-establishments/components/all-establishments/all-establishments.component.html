@@ -33,20 +33,24 @@
         <tbody class="table table-bordered">
           <tr *ngFor="let establishment of establishments">
             <td>
-              {{establishment.nombre}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setEstablishment(establishment);"
+                style="border: transparent;background: transparent;width: 200px;">{{establishment.nombre}}</button>
             </td>
             <td>
-              {{establishment.nombre_profesor}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setEstablishment(establishment);"
+                style="border: transparent;background: transparent;width: 200px;">{{establishment.nombre_profesor}}</button>
             </td>
             <td>
-              {{establishment.email_profesor}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setEstablishment(establishment);"
+                style="border: transparent;background: transparent;width: 200px;">{{establishment.email_profesor}}</button>
             </td>
             <td>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="openModal(ModalContentEdit);setEstablishment(establishment)" title="Editar establecimiento"><i
                   class="mdi mdi-grease-pencil"></i></button>
               <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento"><i class="mdi mdi-delete"></i></button>
+                (click)="deleteEstablishment(establishment.id)" title="Eliminar establecimiento"><i
+                  class="mdi mdi-delete"></i></button>
             </td>
           </tr>
         </tbody>
@@ -250,3 +254,94 @@
   </div>
 </ng-template>
 <!-- Modal Mail Ends -->
+
+<!-- Modal Information starts -->
+<ng-template class="modal fade" #ModalInformation let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="col-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card" style="text-align: center">Información del establecimiento</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Nombre:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{establishment.nombre}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Director:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{establishment.director}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Dirección:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-5 col-form-label">{{establishment.direccion}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Correo del Establecimiento:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-5 col-form-label">{{establishment.email}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Teléfono del establecimiento</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{establishment.telefono}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Profesor Encargado:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{establishment.nombre_profesor}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Correo del Profesor: </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{establishment.email_profesor}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Teléfono del Profesor: </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{establishment.telefono_profesor}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Information ends -->

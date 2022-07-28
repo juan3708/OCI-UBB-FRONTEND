@@ -1,28 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color:#ffffff !important">
+    <a class="navbar-brand" routerLink="/home"><img src="assets/images/logo_web.png" alt="" class="img-fluid"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse form-inline my-2 my-lg-0" id="navbarSupportedContent" style="float:left !important ;">
+
+        <a class="nav-link" [routerLink]="['/']">Inicio</a>
+        <a class="nav-link" href="#featured">Destacados</a>
+        <a class="nav-link" [routerLink]="['/about']">Acerca de</a>
+        <a class="nav-link" [routerLink]="['/news']">Noticias</a>
+        <a class="nav-link" href="#contact">Contáctanos</a>
+        <a routerLink="/user-pages/login" class="btn-get-started"
+            style="background: black !important;border-radius: 8px;color: white;">Login</a>
+
+    </div>
+</nav>
 <!-- ======= Header ======= -->
-<section id="header">
+<!-- <section id="header">
     <header id="header" class="fixed-top d-flex align-items-center">
         <div class="container-fluid">
             <div class="row justify-content-center align-items-center">
                 <div class="col-xl-11 d-flex align-items-center justify-content-between">
                     <a [routerLink]="['/']" class="logo"><img src="assets/images/logo_web.png" alt=""
                             class="img-fluid"></a>
-                    <!-- <a [routerLink]="['/']" class="logo" style="width: 7%;"><img src="assets/images/logo_ubb.svg" alt=""
-                            class="img-fluid"></a> -->
-                    <!-- Navbar -->
                     <nav id="navbar" class="navbar">
-                        <ul>
-                            <li><a class="nav-link" [routerLink]="['/']">Inicio</a></li>
-                            <li><a class="nav-link" href="#featured">Destacados</a></li>
-                            <li><a class="nav-link" [routerLink]="['/about']">Acerca de</a></li>
-                            <li><a class="nav-link" [routerLink]="['/news']">Noticias</a></li>
-                            <li><a class="nav-link" href="#contact">Contáctanos</a></li>
-                            <li><a routerLink="/user-pages/login" class="btn-get-started">Login</a></li>
-                        </ul>
+                        
                     </nav>
-                    <!-- End navbar -->
                 </div>
             </div>
         </div>
     </header>
-</section>
+</section> -->
 <!-- End Header -->

@@ -300,7 +300,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
         if (resp.code == 200) {
           this.Toast.fire({
             icon: 'success',
-            title: 'Se han inscritos correctamente',
+            title: 'Se han inscritos correctamente los alumnos seleccionados',
           });
           this.clearForm();
           this.assignCycle(this.cycle.id);

@@ -369,8 +369,9 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
           this.assistants = [];
         }
         Swal.close();
-        this.modalService.open(ModalContent, { size: 'xl' });
-
+        if (ModalContent != null) {
+          this.modalService.open(ModalContent, { size: 'xl' });
+        }
       } else {
         this.Toast.fire({
           icon: 'error',
@@ -566,7 +567,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     console.log(this.studentsAdd);
   }
 
-  addOrRemoveTeacher(event, teacher) {
+  addOrRemoveTeacherAdd(event, teacher) {
     if (event) {
       this.addTeachers.push(teacher);
     } else {
@@ -574,7 +575,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }
   }
 
-  addOrRemoveAssistant(event, assistant) {
+  addOrRemoveAssistantAdd(event, assistant) {
     if (event) {
       this.addAssistants.push(assistant);
     } else {
@@ -586,31 +587,113 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.studentsPerLevel.splice(this.studentsPerLevel.indexOf(student), 1);
   }
 
-  removeStudentsLessonArray(student) {
-    this.studentsLesson.splice(this.studentsLesson.indexOf(student), 1);
-    this.removeStudents.push(student);
-    this.Toast.fire({
-      icon: 'info',
-      title: 'Se ha almacenado correctamente el alumno a eliminar',
-    });
+  removeStudentsLessonToLesson(student) {
+    let data = {
+      clase_id: this.lesson.id,
+      alumnos_id: student
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea desasignar al alumno de la clase?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.lessonsService.DeleteTeachers(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.studentsLesson.splice(this.studentsLesson.indexOf(student), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha desasignado correctamente',
+            });
+            this.getCycle(this.cycle.id);
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
-  removeTeacherArray(teacher) {
-    this.lessonTeachers.splice(this.lessonTeachers.indexOf(teacher), 1);
-    this.removeTeachers.push(teacher);
-    this.Toast.fire({
-      icon: 'info',
-      title: 'Se ha almacenado correctamente el profesor a eliminar',
-    });
+  removeTeacherToLesson(teacher) {
+    let data = {
+      clase_id: this.lesson.id,
+      profesores_id: teacher
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea desasignar al profesor de la clase?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.lessonsService.DeleteTeachers(data).subscribe((resp: any) => {
+          if (resp.code == 200) {
+            this.lessonTeachers.splice(this.lessonTeachers.indexOf(teacher), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha desasignado correctamente',
+            });
+            this.getTeachersAndAssistants(this.lesson.id, null);
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
-  removeAssistantArray(assistant) {
-    this.lessonAssistants.splice(this.lessonAssistants.indexOf(assistant), 1);
-    this.removeAssistants.push(assistant);
-    this.Toast.fire({
-      icon: 'info',
-      title: 'Se ha almacenado correctamente el ayudante a eliminar',
-    });
+  removeAssistantToLesson(assistant) {
+    let data = {
+      clase_id: this.lesson.id,
+      ayudantes_id: assistant
+    };
+    Swal.fire({
+      title: '¿Esta seguro que desea desasignar al ayudante de la clase?',
+      text: "No se puede revertir esta operación.",
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
+          console.log(resp);
+          if (resp.code == 200) {
+            this.lessonAssistants.splice(this.lessonAssistants.indexOf(assistant), 1);
+            this.Toast.fire({
+              icon: 'success',
+              title: 'Se ha desasignado correctamente',
+            });
+            this.getTeachersAndAssistants(this.lesson.id, null);
+          } else {
+            this.Toast.fire({
+              icon: 'error',
+              title: 'Error al realizar la acción',
+              text: resp.message
+            });
+          }
+        })
+      }
+    })
   }
 
   changeStatusAssistance(event, student) {
@@ -618,9 +701,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
   }
 
   concatStudentsArrays(modal) {
-    console.log(this.studentsPerLevel);
-    console.log(this.studentsAdd);
-
     if (this.studentsPerLevel.length >= 1 || this.studentsAdd.length >= 1) {
       this.studentsId = this.studentsPerLevel.map((s: any) => {
         return s.id;
@@ -694,335 +774,100 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     })
   }
 
-  assignOrDesassignTeachersAndAssistants(modal) {
-    var addAssistants = this.addAssistants;
-    var removeAssistants = this.removeAssistants;
-    var removeTeachers = this.removeTeachers;
-    if (this.addTeachers.length == 0 && this.lessonTeachers.length == 0 && this.removeTeachers.length == 0 && this.removeAssistants.length == 0) {
+  assignTeachersAndAssistants(modal) {
+    var correctTeachers = true;
+    var correctAssistants = true;
+
+    if (this.lessonTeachers.length == 0 && this.addTeachers.length == 0) {
       this.Toast.fire({
         icon: 'error',
-        title: 'Error debe seleccionar un profesor'
+        title: 'Seleccione un profesor'
       });
     } else {
-      if (this.addTeachers.length >= 1) {
+      if (this.addTeachers.length == 0 && this.addAssistants.length == 0) {
+        this.Toast.fire({
+          icon: 'info',
+          title: 'No se efectuaron cambios'
+        });
+        modal.dismiss();
+      } else {
         let data = {
           clase_id: this.lesson.id,
           profesores_id: this.addTeachers
-        };
-        this.lessonsService.ChargeTeachers(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            if (removeTeachers.length >= 1) {
-              let data = {
-                clase_id: this.lesson.id,
-                profesores_id: removeTeachers
-              }
-              this.lessonsService.DeleteTeachers(data).subscribe;
-            }
-            let data = {
-              clase_id: this.lesson.id,
-              ayudantes_id: addAssistants
-            };
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Profesor(es) asignados correctamente'
-            });
-            if (addAssistants.length >= 1) {
-              this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
-                if (resp.code == 200) {
-                  if (removeAssistants.length >= 1) {
-                    let data = {
-                      clase_id: this.lesson.id,
-                      ayudantes_id: removeAssistants
-                    }
-                    this.lessonsService.DeleteAssistants(data).subscribe;
-                  }
-                  this.Toast.fire({
-                    icon: 'success',
-                    title: 'Ayudante(s) asignados correctamente'
-                  });
-                  this.clearForm();
-                  this.getCycle(this.cycle.id);
-                  modal.dismiss();
-                  return;
-                } else {
-                  this.Toast.fire({
-                    icon: 'error',
-                    title: 'Error al asignar el ayudante'
-                  });
-                  modal.dismiss();
-                }
-              })
-            } else if (this.removeAssistants.length >= 1) {
-              let data = {
-                ayudantes_id: this.removeAssistants,
-                clase_id: this.lesson.id
-              };
-              this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
-                if (resp.code == 200) {
-                  this.Toast.fire({
-                    icon: 'success',
-                    title: 'Ayudante desasignado correctamente'
-                  });
-
-                } else {
-                  this.Toast.fire({
-                    icon: 'error',
-                    title: 'Error al deasignar el ayudante'
-                  });
-                }
-              })
-
-            }
-            modal.dismiss();
-            this.clearForm();
-            this.getCycle(this.cycle.id);
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al asignar el profesor'
-            });
-          }
-        })
-      } else if (this.removeTeachers.length >= 1 && this.teachers.length >= 1) {
+        }
         if (this.addTeachers.length >= 1) {
-          let data = {
-            clase_id: this.lesson.id,
-            profesores_id: this.addTeachers
-          };
           this.lessonsService.ChargeTeachers(data).subscribe((resp: any) => {
-            if (resp.code == 200) {
-              if (removeTeachers.length >= 1) {
-                let data = {
-                  clase_id: this.lesson.id,
-                  profesores_id: removeTeachers
-                }
-                this.lessonsService.DeleteTeachers(data).subscribe;
-              }
-              let data = {
-                clase_id: this.lesson.id,
-                ayudantes_id: addAssistants
-              };
-              this.Toast.fire({
-                icon: 'success',
-                title: 'Profesor(es) asignados correctamente'
-              });
-              if (addAssistants.length >= 1) {
-                this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
-                  if (resp.code == 200) {
-                    if (removeAssistants.length >= 1) {
-                      let data = {
-                        clase_id: this.lesson.id,
-                        ayudantes_id: removeAssistants
-                      }
-                      this.lessonsService.DeleteAssistants(data).subscribe;
-                    }
-                    this.Toast.fire({
-                      icon: 'success',
-                      title: 'Ayudante(s) asignados correctamente'
-                    });
-                    this.clearForm();
-                    modal.dismiss();
-                    this.getCycle(this.cycle.id);
-                    return;
-                  } else {
-                    this.Toast.fire({
-                      icon: 'error',
-                      title: 'Error al asignar el ayudante'
-                    });
-                    modal.dismiss();
-                  }
-                })
-              } else if (this.removeAssistants.length >= 1) {
-                let data = {
-                  ayudantes_id: this.removeAssistants,
-                  clase_id: this.lesson.id
-                };
-                this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
-                  if (resp.code == 200) {
-                    this.Toast.fire({
-                      icon: 'success',
-                      title: 'Ayudante desasignado correctamente'
-                    });
-
-                  } else {
-                    this.Toast.fire({
-                      icon: 'error',
-                      title: 'Error al deasignar el ayudante'
-                    });
-                  }
-                })
-
-              }
-              modal.dismiss();
-              this.clearForm();
-              this.getCycle(this.cycle.id);
-            } else {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
                 title: 'Error al asignar el profesor'
               });
+              correctTeachers = false;
             }
           })
-        } else {
+        }
+        if (this.addAssistants.length >= 1) {
           let data = {
-            profesores_id: this.removeTeachers,
-            clase_id: this.lesson.id
-          };
-          this.lessonsService.DeleteTeachers(data).subscribe((resp: any) => {
-            if (resp.code == 200) {
-              this.Toast.fire({
-                icon: 'success',
-                title: 'Profesor desaignado correctamente'
-              });
-              modal.dismiss();
-            } else {
+            clase_id: this.lesson.id,
+            ayudantes_id: this.addAssistants
+          }
+          this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
+            if (resp.code != 200) {
               this.Toast.fire({
                 icon: 'error',
-                title: 'Error al deasignar el profesor'
+                title: 'Error al asignar el ayudante'
               });
+              correctAssistants = false;
             }
+          })
+        }
+        if (correctAssistants && correctTeachers) {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se asignaron correctamente profesor(es) y ayudante(s)'
           });
-          if (this.removeAssistants.length >= 1) {
-            let data2 = {
-              ayudantes_id: this.removeAssistants,
-              clase_id: this.lesson.id
-            };
-            this.lessonsService.DeleteAssistants(data2).subscribe((resp: any) => {
-              if (resp.code == 200) {
-                this.Toast.fire({
-                  icon: 'success',
-                  title: 'Ayudante desasignado correctamente'
-                });
-                modal.dismiss();
-              } else {
-                this.Toast.fire({
-                  icon: 'error',
-                  title: 'Error al deasignar el ayudante'
-                });
-              }
-            })
-          }
+          this.clearForm();
+          modal.dismiss();
           this.getCycle(this.cycle.id);
         }
-      } else if (this.addAssistants.length >= 1) {
-        let data = {
-          ayudantes_id: this.addAssistants,
-          clase_id: this.lesson.id
-        }
-        this.lessonsService.ChargeAssistants(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Ayudante asignado correctamente'
-            });
-            modal.dismiss();
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al asignar ayudante'
-            });
-          }
-        })
-        this.getCycle(this.cycle.id);
-      } else if (this.removeAssistants.length >= 1) {
-        let data = {
-          ayudantes_id: this.removeAssistants,
-          clase_id: this.lesson.id
-        };
-        this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
-          if (resp.code == 200) {
-            this.Toast.fire({
-              icon: 'success',
-              title: 'Ayudante desasignado correctamente'
-            });
-            modal.dismiss();
-          } else {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al deasignar el ayudante'
-            });
-          }
-        })
       }
     }
-    this.clearForm();
-    this.getCycle(this.cycle.id);
   }
 
-  addOrRemoveStudentPerLesson(modal) {
+  addStudentPerLesson(modal) {
     if (this.removeStudents.length == 0 && this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'info',
         title: 'No se efectuaron cambios'
       });
       modal.dismiss();
-    } else if (this.removeStudents.length >= 1 && this.studentsLesson.length == 0 && this.studentsAdd.length == 0) {
+    } else if (this.studentsLesson.length == 0 && this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'error',
         title: 'Debe seleccionar un alumno'
       });
     } else {
-      if (this.removeStudents.length >= 1) {
-        let data = {
-          clase_id: this.lesson.id,
-          alumnos_id: this.removeStudents
-        };
-        this.lessonsService.removeStudents(data).subscribe((resp: any) => {
-          if (resp.code != 200) {
-            this.Toast.fire({
-              icon: 'error',
-              title: 'Error al eliminar alumno de la clase'
-            });
-            modal.dismiss();
-            return
-          }
-        });
-        if (this.studentsAdd.length >= 1) {
-          let data = {
-            clase_id: this.lesson.id,
-            alumnos_id: this.studentsAdd
-          };
-          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
-            if (resp.code != 200) {
-              this.Toast.fire({
-                icon: 'error',
-                title: 'Error al asignar alumno a la clase'
-              });
-              modal.dismiss();
-              return
-            }
-          })
+
+      let data = {
+        clase_id: this.lesson.id,
+        alumnos_id: this.studentsAdd
+      };
+      this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
+        if (resp.code != 200) {
+          this.Toast.fire({
+            icon: 'error',
+            title: 'Error al asignar alumno a la clase'
+          });
+        } else {
+          this.Toast.fire({
+            icon: 'success',
+            title: 'Se guardaron correctamente los cambios'
+          });
+          modal.dismiss();
+          this.clearForm();
         }
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Se guardaron correctamente los cambios'
-        });
-        modal.dismiss();
-        this.clearForm();
-      } else {
-        if (this.studentsAdd.length >= 1) {
-          let data = {
-            clase_id: this.lesson.id,
-            alumnos_id: this.studentsAdd
-          };
-          this.lessonsService.chargeStudents(data).subscribe((resp: any) => {
-            if (resp.code != 200) {
-              this.Toast.fire({
-                icon: 'error',
-                title: 'Error al asignar alumno a la clase'
-              });
-              modal.dismiss();
-              return
-            }
-          })
-        }
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Se guardaron correctamente los cambios'
-        });
-        modal.dismiss();
-        this.clearForm();
-      }
+      })
+
     }
   }
 

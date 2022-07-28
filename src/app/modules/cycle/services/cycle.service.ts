@@ -34,9 +34,9 @@ export class CycleService {
     return this.http.post(url + '/ciclo/delete',id,option);
   }
 
-  getCycleById(id) {
+  getCycleById(data) {
     const option = { headers: this.headers };
-    return this.http.post(url+'/ciclo/getbyid/', id, option);
+    return this.http.post(url+'/ciclo/getbyid/', data, option);
   }
 
   getCycleByFinishDate(data) {

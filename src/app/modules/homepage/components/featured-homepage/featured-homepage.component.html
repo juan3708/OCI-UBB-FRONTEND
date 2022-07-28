@@ -6,38 +6,109 @@
             <h3>Destacados</h3>
             <p></p>
         </header>
-
-        <div class="row" class="entry" *ngFor="let noticia of noticias">
-            <div *ngIf="noticia.adjuntos.length < 2">
-                <div class="entry-img" *ngFor="let adjunto of noticia.adjuntos">
-                    <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
-                </div>
-            </div>
-            <div *ngIf="noticia.adjuntos.length >= 2">
-                <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li data-target="#carouselExampleCaptions"
-                            *ngFor="let adjunto of noticia.adjuntos;let index = index" [attr.data-slide-to]="index">
-                        </li>
-                    </ol>
-                    <div class="carousel-inner">
-                        <div class="carousel-item"
-                            *ngFor="let adjunto of noticia.adjuntos;let index = index;let isFirst = first"
-                            [ngClass]="{active:isFirst}">
-                            <img [src]="url+adjunto.url" class="d-block w-100" [alt]="adjunto.title">
+        <div *ngIf="recentPost.length >=1">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card" style="background-color: #f7f7f7;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{recentPost[0].titulo}}</h5>
+                            <p class="card-text">{{recentPost[0].entrada}}
+                            </p>
+                            <a (click)="onSelectNews(recentPost[0])" class="btn btn-primary"
+                                style="background-color:#18d26e;border: transparent;">Leer mas</a>
                         </div>
                     </div>
-                    <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
+                </div>
+                <div class="col-sm-4">
+                    <div *ngIf="recentPost.length >=2">
+                        <div class="card" style="background-color: #f7f7f7;border: black ;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{recentPost[1].titulo}}</h5>
+                                <p class="card-text">{{recentPost[1].entrada}}
+                                </p>
+                                <a (click)="onSelectNews(recentPost[1])" class="btn btn-primary"
+                                    style="background-color:#18d26e;border: transparent;">Leer mas</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div *ngIf="recentPost.length == 3">
+                        <div class="card" style="background-color: #f7f7f7;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{recentPost[2].titulo}}</h5>
+                                <p class="card-text">{{recentPost[2].entrada}}
+                                </p>
+                                <a (click)="onSelectNews(recentPost[2])" class="btn btn-primary"
+                                    style="background-color:#18d26e;border: transparent;">Leer mas</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- <div class="col-lg-8 entries">
+
+            <article class="entry" *ngFor="let noticia of noticias">
+                <div *ngIf="noticia.adjuntos.length < 2">
+                    <div class="entry-img" *ngFor="let adjunto of noticia.adjuntos">
+                        <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
+                    </div>
+                </div>
+                <div *ngIf="noticia.adjuntos.length >= 2">
+                    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li data-target="#carouselExampleCaptions"
+                                *ngFor="let adjunto of noticia.adjuntos;let index = index"
+                                [attr.data-slide-to]="index"></li>
+                        </ol>
+                        <div class="carousel-inner">
+                            <div class="carousel-item"
+                                *ngFor="let adjunto of noticia.adjuntos;let index = index;let isFirst = first"
+                                [ngClass]="{active:isFirst}">
+                                <img [src]="url+adjunto.url" class="d-block w-100" [alt]="adjunto.title">
+                            </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button"
+                            data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button"
+                            data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+                <h2 class="entry-title">
+                    <a (click)="onSelectNews(noticia)">{{noticia.titulo}}</a>
+                </h2>
+
+                <div class="entry-meta">
+                    <ul>
+                        <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a>Autor: {{noticia.user.nombre}} {{noticia.user.apellidos}}</a>
+                        </li>
+                        <li class="d-flex align-items-center"><i class="bi bi-clock"></i>
+                            <a>{{noticia.fecha}}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="entry-content">
+                    <p>
+                        {{noticia.cuerpo}}
+                    </p>
+                    <div class="read-more">
+                        <a (click)="onSelectNews(noticia)">Leer más</a>
+                    </div>
+                </div>
+
+            </article>
+            End blog entry -->
+        <!-- </div> -->
     </div>
 </section>
 <!-- ======= Featured Section ======= -->

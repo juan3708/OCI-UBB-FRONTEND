@@ -28,15 +28,19 @@
         <tbody class="table table-bordered">
           <tr *ngFor="let student of students">
             <td>
-              {{student.nombre}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setStudent(student);"
+                style="border: transparent;background: transparent;width: 200px;">{{student.nombre}}</button>
             </td>
             <td>
-              {{student.apellidos}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setStudent(student);"
+                style="border: transparent;background: transparent;">{{student.apellidos}}</button>
             </td>
             <td>
-              {{student.rut}}
+              <button type="button" class="btn" (click)="openModal(ModalInformation);setStudent(student);"
+                style="border: transparent;background: transparent;">{{student.rut}}</button>
             </td>
             <td>
+
               <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
                 (click)="openModal(ModalContentStatistics);setStudent(student);" title="Estadistica del alumno"><i
                   class="mdi mdi-eye"></i></button>
@@ -262,12 +266,7 @@
         <div class="card">
           <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active " id="student-tab" data-toggle="tab" href="#student" role="tab"
-                aria-controls="student" aria-selected="true"><i class="fa-solid fa-id-card-clip"></i>
-                Información</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="assistancePerCycle-tab" data-toggle="tab" href="#assistancePerCycle" role="tab"
+              <a class="nav-link active" id="assistancePerCycle-tab" data-toggle="tab" href="#assistancePerCycle" role="tab"
                 aria-controls="assistancePerCycle" aria-selected="false"><i class="fa-solid fa-rectangle-list"></i>
                 Asistencia</a>
             </li>
@@ -277,126 +276,10 @@
                 Puntajes</a>
             </li>
           </ul>
-          <!-- TAB INFORMACION ALUMNO -->
+
           <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
-              <div class="col-12 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">RUT:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-5 col-form-label">{{student.rut}}</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Fecha de
-                            nacimiento:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
-                              date:'dd-M-y'}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Curso:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-4 col-form-label">{{student.curso}}</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Correo
-                            electronico:</label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-9 col-form-label">{{student.email}}</label>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
-                            apoderado:
-                          </label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident">Telefono del
-                            apoderado: </label>
-                          <div class="col-sm-9">
-                            <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
-                          <div class="col-sm-8">
-                            <label class="col-sm-8 col-form-label ">{{student.establecimiento.nombre}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <!-- TAB ASISTENCIA ALUMNO -->
-            <div class="tab-pane fade" id="assistancePerCycle" role="tabpanel" aria-labelledby="assistancePerCycle-tab">
+            <div class="tab-pane fade show active" id="assistancePerCycle" role="tabpanel" aria-labelledby="assistancePerCycle-tab">
               <div *ngIf="studentStatistic.Porcentaje !=-1">
                 <div class="card">
                   <div class="card-body">
@@ -516,3 +399,129 @@
   </div>
 </ng-template>
 <!-- Modal Statistics ends -->
+
+<!-- Modal Information starts -->
+<ng-template class="modal fade" #ModalInformation let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="col-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+        <h4 class="card" style="text-align: center">Información del alumno</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Nombres:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{student.nombre}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Apellidos:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{student.apellidos}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">RUT:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-5 col-form-label">{{student.rut}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Fecha de
+                  nacimiento:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-5 col-form-label">{{student.fecha_nacimiento|
+                    date:'dd-M-y'}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Curso:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-4 col-form-label">{{student.curso}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Correo
+                  electronico:</label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{student.email}}</label>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{student.telefono}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Dirección: </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{student.direccion}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Nombre y apellido del
+                  apoderado:
+                </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{student.nombre_apoderado}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident">Telefono del
+                  apoderado: </label>
+                <div class="col-sm-9">
+                  <label class="col-sm-9 col-form-label">{{student.telefono_apoderado}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label label-ident label-etbls">Establecimiento:</label>
+                <div class="col-sm-8">
+                  <label class="col-sm-8 col-form-label ">{{student.establecimiento.nombre}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal Information ends -->

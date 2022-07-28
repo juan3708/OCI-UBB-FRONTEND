@@ -4,21 +4,12 @@
     <a class="navbar-brand brand-logo-mini" routerLink="/"><img src="assets/images/logo-mini.png" alt="logo" /></a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-stretch">
-    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"
-      (click)="toggleSidebar()">
-      <span class="mdi mdi-menu"></span>
-    </button>
-    <!-- <div class="search-field d-none d-md-block">
-      <form class="d-flex align-items-center h-100" action="#">
-        <div class="input-group">
-          <div class="input-group-prepend bg-transparent">
-            <i class="input-group-text border-0 mdi mdi-magnify"></i>
-          </div>
-          <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
-        </div>
-      </form>
-    </div> -->
+    <div style="text-align: center;">
+      <label for="cycle" style="color: black;font-size: 20px;margin: auto;padding-right: 5px;">OCI - UBB </label>
+      <img src="assets/images/escudo_color_gradiente.png" alt="image" style="height: 80px;width: 103px;">
+    </div>
     <ul class="navbar-nav navbar-nav-right">
+      <label for="cycle" style="color: black;font-size: 20px;margin: auto;padding-right: 5px;">Ciclos: </label>
       <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" *ngIf="cycles.length >=1">
         <option *ngFor="let cycle of cycles" [value]="cycle.id">
           {{cycle.nombre}}</option>
@@ -26,7 +17,7 @@
       <li class="nav-item nav-profile dropdown" ngbDropdown>
         <a class="nav-link dropdown-toggle" id="profileDropdown" ngbDropdownToggle>
           <div class="nav-profile-img">
-            <img src="assets/images/faces/face1.jpg" alt="image">
+            <img src="assets/images/simple_logo.png" alt="image">
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
