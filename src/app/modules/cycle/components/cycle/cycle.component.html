@@ -98,7 +98,7 @@
                                 title="Estadistica del ciclo"><i class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm "
                                 (click)="openModal(ModalContentEdit);setCycle(cycle)"
-                                *ngIf="cycle.fecha_termino >= currentDate" title="Editar ciclo"><i
+                                *ngIf="cycle.fecha_termino >= currentDate || user.rol.nombre == 'admin'" title="Editar ciclo"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-edit"
                                 (click)="getCycle(cycle.id,SelectEstableshments)"

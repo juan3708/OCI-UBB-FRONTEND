@@ -9,13 +9,19 @@ import { HomepageService } from '../../services/homepage.service';
 })
 export class NewsSingleHomepageComponent implements OnInit {
 
-  single;
+  single = {
+    titulo: "",
+    fecha: "",
+    adjuntos: Array(),
+    cuerpo: ""
+  }
   recentPost = []
   url = 'http://127.0.0.1:8000/storage/images/';
   constructor(private router: Router, private homepageService: HomepageService) {
-    console.log(this.router.getCurrentNavigation().extras.state)
     if(this.router.getCurrentNavigation().extras.state != undefined){
     this.single = this.router.getCurrentNavigation().extras.state.news;
+    }else{
+      this.router.navigateByUrl('/news');
     }
   }
 
@@ -34,7 +40,6 @@ export class NewsSingleHomepageComponent implements OnInit {
   
   onSelectNews(news) {
     let title = news.titulo.replaceAll(' ', '-').toLowerCase();
-    console.log(title);
     this.router.navigate(['/news', title], {
       state: {
         news

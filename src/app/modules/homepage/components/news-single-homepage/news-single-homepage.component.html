@@ -40,13 +40,13 @@
 
                 <div class="row">
 
-                    <div class="col-lg-8 entries">
+                    <div class="col-lg-12 entries">
 
                         <article class="entry entry-single">
 
                             <div *ngIf="single.adjuntos.length < 2">
-                                <div class="entry-img" *ngFor="let adjunto of single.adjuntos">
-                                    <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
+                                <div class="entry-img" *ngFor="let adjunto of single.adjuntos"style="text-align: center;">
+                                    <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid" >
                                 </div>
                             </div>
                             <div *ngIf="single.adjuntos.length >= 2">
@@ -115,10 +115,10 @@
                     </div>
                     <!-- End blog entries list -->
 
-                    <div class="col-lg-4">
+                    <!-- <div class="col-lg-4"> -->
 
                         <!-- Sidebar search form-->
-                        <div class="sidebar">
+                        <!-- <div class="sidebar"> -->
 
                             <!-- <h3 class="sidebar-title">Search</h3>
                             <div class="sidebar-item search-form">
@@ -176,10 +176,10 @@
                             </div> -->
                             <!-- End sidebar tags-->
 
-                        </div>
+                        <!-- </div> -->
                         <!-- End sidebar -->
 
-                    </div>
+                    <!-- </div> -->
                     <!-- End blog sidebar -->
 
                 </div>

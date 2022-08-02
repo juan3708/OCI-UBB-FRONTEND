@@ -11,6 +11,7 @@ import { EstablishmentModel } from '../../../../../models/establishment.model';
 import { DataTableDirective } from 'angular-datatables';
 import { UsersService } from '../../../users/services/users.service';
 import { formatDate } from '@angular/common';
+import { UserPagesService } from '../../../../user-pages/services/user-pages.service';
 
 @Component({
   selector: 'app-cycle',
@@ -27,6 +28,12 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   cicloOld;
   cicloNew;
   ciclo;
+  user = {
+    rol: {
+      nombre: ""
+    },
+    rut: ""
+  };
   cycles = [];
   lengthCycles = 0;
   coordinators;
@@ -104,7 +111,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     establishmentsFee: this.fb.array([])
   });
 
-  constructor(private cycleService: CycleService, private establishmentsService: EstablishmentsService, private usersService: UsersService, private fb: FormBuilder, private modalService: NgbModal) { }
+  constructor(private cycleService: CycleService, private establishmentsService: EstablishmentsService, private usersService: UsersService, private usersPagesService:UserPagesService ,private fb: FormBuilder, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
@@ -121,6 +128,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
   ngDoCheck(): void {
     if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
+      this.user = this.usersPagesService.getUser();
       if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
         this.cycleSee = this.cycleService.cycle;

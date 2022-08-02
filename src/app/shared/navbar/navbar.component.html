@@ -5,12 +5,12 @@
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-stretch">
     <div style="text-align: center;">
-      <label for="cycle" style="color: black;font-size: 20px;margin: auto;padding-right: 5px;">OCI - UBB </label>
-      <img src="assets/images/escudo_color_gradiente.png" alt="image" style="height: 80px;width: 103px;">
+      <!-- <img src="assets/images/escudo_color_gradiente.png" alt="image" style="height: 80px;width: 103px;"> -->
     </div>
     <ul class="navbar-nav navbar-nav-right">
       <label for="cycle" style="color: black;font-size: 20px;margin: auto;padding-right: 5px;">Ciclos: </label>
-      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id" *ngIf="cycles.length >=1">
+      <select class="custom-select ciclo" id="cycle" (change)="getCycle($event.target.value)" [(ngModel)]="cycle.id"
+        *ngIf="cycles.length >=1">
         <option *ngFor="let cycle of cycles" [value]="cycle.id">
           {{cycle.nombre}}</option>
       </select>
