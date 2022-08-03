@@ -5,7 +5,7 @@
         <h4 class="card-title"><b>Clases</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)" title="Registrar Clase"
-            *ngIf="user.rol.nombre != 'ayudante' && cycle.fecha_termino >= currentDate">Registrar
+            *ngIf="user.rol.nombre != 'ayudante' && cycle.fecha_termino >= currentDate">Crear
             Clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="getStudentAssistancePerCycle(ModalListStudentsAssistance)" style="float: right; margin: 8px;"
@@ -118,7 +118,7 @@
                             <div class="form-group">
                                 <label for="lessonDate">Fecha</label>
                                 <input style="width: 50%;" type="date" class="form-control" id="lessonDate"
-                                    placeholder="aaaa-mm-dd" #lessonDate>
+                                    placeholder="aaaa-mm-dd" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}" #lessonDate>
                             </div>
                             <div class="form-group">
                                 <label for="level">Nivel</label>
@@ -513,7 +513,7 @@
                             <div class="form-group">
                                 <label for="lessonDate">Fecha</label>
                                 <input style="width: 50%;" type="date" class="form-control" id="lessonDate"
-                                    [(ngModel)]="lesson.fecha" name="lessonDate" #lessonDate="ngModel">
+                                    [(ngModel)]="lesson.fecha" name="lessonDate" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}" #lessonDate="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="level">Nivel</label>

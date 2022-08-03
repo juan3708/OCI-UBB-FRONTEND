@@ -244,6 +244,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
           this.Toast.fire({
             icon: 'error',
             title: 'Error al cargar alumnos',
+            text: resp.msg
           });
           this.spinnerSee = false;
 

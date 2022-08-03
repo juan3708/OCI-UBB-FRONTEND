@@ -50,7 +50,7 @@
                                 *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteActivity(activity.id)" title="Editar actividad"
+                                (click)="deleteActivity(activity.id)" title="Eliminar actividad"
                                 *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                                 (click)="getActivity(activity.id,ModalListCost)" title="Gastos"><i
@@ -94,7 +94,7 @@
                             <div class="form-group">
                                 <label for="date">Fecha</label>
                                 <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    placeholder="aaaa-mm-dd" #date>
+                                    placeholder="aaaa-mm-dd" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}" #date>
                             </div>
                         </form>
                     </div>
@@ -139,7 +139,7 @@
                             <div class="form-group">
                                 <label for="date">Fecha</label>
                                 <input style="width: 50%;" type="date" class="form-control" id="date"
-                                    [(ngModel)]="activity.fecha" name="date" #date="ngModel">
+                                    [(ngModel)]="activity.fecha" name="date" #date="ngModel" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}">
                             </div>
                         </form>
                     </div>

@@ -282,15 +282,6 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     } else {
       this.students = [];
     }
-    if (competition.alumnosSinCompetencia.length >= 1) {
-      this.studentsPerCycle = competition.alumnosSinCompetencia;
-    } else {
-      this.studentsPerCycle = [];
-    }
-    if (this.students.length >= 1) {
-      this.setEditFeeForm();
-    }
-
   }
 
   addOrRemoveStudentAddArray(event, student) {

@@ -97,7 +97,7 @@
               </div>
               <div class="form-group">
                 <label for="date">Fecha</label>
-                <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" #date>
+                <input style="width: 50%;" type="date" class="form-control" id="date" placeholder="aaaa-mm-dd" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}" #date>
               </div>
             </form>
           </div>
@@ -143,7 +143,7 @@
               <div class="form-group">
                 <label for="date">Fecha</label>
                 <input style="width: 50%;" type="date" class="form-control" id="date" [(ngModel)]="competition.fecha"
-                  name="date" #date="ngModel">
+                  name="date" #date="ngModel" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}">
               </div>
             </form>
           </div>
