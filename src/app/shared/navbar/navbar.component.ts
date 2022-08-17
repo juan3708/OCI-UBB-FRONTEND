@@ -75,8 +75,10 @@ export class NavbarComponent implements OnInit, DoCheck {
   listCycles() {
     this.cycleService.getCycles().subscribe((resp: any) => {
       this.cycles = resp.ciclos;
-      if (this.cycles.length == 0) {
-        Swal.fire('No existen ciclos en el sistema, por favor ingrese uno.')
+      if (this.cycles.length == 0 && this.userLocal.rut != undefined && (this.userLocal.rol.nombre == 'admin' ||this.userLocal.rol.nombre == 'coordinador' )) {
+        Swal.fire('El sistema no está configurado correctamente. Porfavor completar los pasos.')
+      }else if(this.cycles.length == 0 && this.userLocal.rut != undefined && (this.userLocal.rol.nombre == 'admin' ||this.userLocal.rol.nombre == 'coordinador' )){
+        Swal.fire('El sistema no esta configurado correctamente. Porfavor, contactese con el administrador.')
       }
     })
   }

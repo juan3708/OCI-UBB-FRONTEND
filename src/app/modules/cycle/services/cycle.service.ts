@@ -124,4 +124,8 @@ export class CycleService {
     return this.http.post(url+'/ciclo/getstatisticspercycle', data, option);
   }
 
+  checkSystem(){
+    return this.http.get(url +'/ciclo/check');
+  }
+
 }

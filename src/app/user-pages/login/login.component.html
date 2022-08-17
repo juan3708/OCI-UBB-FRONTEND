@@ -1,40 +1,97 @@
-<div class="d-flex align-items-center auth px-0">
-  <div class="row w-100 mx-0">
-    <div class="col-lg-4 mx-auto">
-      <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-        <div class="brand-logo" style="margin-bottom: 0px !important;text-align: center;">
-          <img src="assets/images/escudo_color_gradiente.png" alt="logo">
-          <img src="assets/images/logo_web.png" alt="logo">
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Olimpiada Chilena de Informática</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700"
+    rel="stylesheet">
+
+</head>
+
+<body style="background: #f9f9f9 !important;">
+  <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="assets/images/logo_web.png" alt="" class="img-fluid">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-link" [routerLink]="['/']">Inicio</a>
+          <a class="nav-link" href="#featured">Destacados</a>
+          <a class="nav-link" [routerLink]="['/about']">Acerca de</a>
+          <a class="nav-link" [routerLink]="['/news']">Noticias</a>
+          <a class="nav-link" href="#contact">Contáctanos</a>
+          <!-- <a routerLink="/user-pages/login" class="btn-get-started"
+                  style="background: black !important;border-radius: 8px;color: white;padding-left: 20px;padding-right: 20px!important;">Login</a> -->
         </div>
-        <h4>Hola! Bienvenido.</h4>
-        <h6 class="font-weight-light">Inicie sesión para continuar.</h6>
-        <form class="pt-3">
-          <div class="form-group">
-            <input type="text" class="form-control form-control-lg" id="rut"
-              placeholder="Ingrese su rut, sin puntos y con guion. Ej: 12345678-9" #rut>
+        <div>
+          <a routerLink="/user-pages/login" class="btn-get-started login-btn"
+            style="background: black !important;border-radius: 8px;color: white;padding-left: 20px;padding-right: 20px!important;">Login</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="d-flex align-items-center auth px-0" style="background: #f9f9f9 !important">
+    <div class="row w-100 mx-0">
+      <div class="col-lg-4 mx-auto" >
+        <div class="auth-form-light text-left py-5 px-4 px-sm-5"style="background: #f9f9f9;">
+          <div class="brand-logo" style="margin-bottom: 0px !important;text-align: center;">
+            <img src="assets/images/escudo_color_gradiente.png" alt="logo">
+            <img src="assets/images/logo_web.png" alt="logo">
           </div>
-          <div class="form-group">
-            <input type="password" class="form-control form-control-lg" id="password" placeholder="Contraseña"
-              #password>
-          </div>
-          <div class="mt-3">
-            <button type="button" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
-              (click)="login(rut.value, password.value)">INICIAR SESIÓN</button>
-          </div>
-          <button type="button" class="btn reset-pass" (click)="openModal(ModalContent);isError=false">¿Olvidó su contraseña?</button>
-          <div class="mt-3" *ngIf="isError">
-            <div class="alert alert-danger" role="alert">
-              {{error}}
+          <h4 style="color: black !important;font-weight: bold;">Hola! Bienvenido.</h4>
+          <h6 class="font-weight-light" style="color: black !important;">Inicie sesión para continuar.</h6>
+          <form class="pt-3">
+            <div class="form-group">
+              <input type="text" class="form-control form-control-lg" id="rut"
+                placeholder="Ingrese su rut, sin puntos y con guion. Ej: 12345678-9" #rut>
             </div>
-          </div>
-          <!-- <div class="my-2 d-flex justify-content-between align-items-center">
+            <div class="form-group">
+              <input type="password" class="form-control form-control-lg" id="password" placeholder="Contraseña"
+                #password>
+            </div>
+            <div class="mt-3">
+              <button type="button" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
+                (click)="login(rut.value, password.value)">INICIAR SESIÓN</button>
+            </div>
+            <button type="button" class="btn reset-pass" (click)="openModal(ModalContent);isError=false">¿Olvidó su
+              contraseña?</button>
+            <div class="mt-3" *ngIf="isError">
+              <div class="alert alert-danger" role="alert">
+                {{error}}
+              </div>
+            </div>
+            <!-- <div class="my-2 d-flex justify-content-between align-items-center">
             <a href="javascript:(void)" class="auth-link text-black">Forgot password?</a>
           </div> -->
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</body>
+<!-- ======= Footer ======= -->
+<footer id="footer">
+  <div class="container">
+    <div class="copyright">
+      &copy; Copyright OCI UBB. Todos los derechos reservados
+      <a href="#" class="instagram" style="padding-left: 5px;"><i class="fa-brands fa-instagram" style="color: white;width: 10px;height: 10px;"></i></a>
+      <a href="#" class="facebook" style="padding-left: 10px;"><i class="fa-brands fa-facebook" style="color: white;width: 10px;height: 10px;"></i></a>
+    </div>
+  </div>
+</footer>
+<!-- End Footer -->
+</html>
 
 <!-- Modal Create starts  -->
 <ng-template class="modal fade" #ModalContent let-modal>
