@@ -13,7 +13,11 @@ export class NewsSingleHomepageComponent implements OnInit {
     titulo: "",
     fecha: "",
     adjuntos: Array(),
-    cuerpo: ""
+    cuerpo: "",
+    user:{
+      nombre: "",
+      apellidos: ""
+    }
   }
   recentPost = []
   url = 'http://127.0.0.1:8000/storage/images/';

@@ -12,6 +12,7 @@ export class NewsHomepageComponent implements OnInit {
   noticias;
   recentPost = [];
   url = 'http://127.0.0.1:8000/storage/images/';
+  p: any;
   constructor(private router: Router, private homepageService: HomepageService) { }
 
   ngOnInit(): void {

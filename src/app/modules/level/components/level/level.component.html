@@ -32,7 +32,7 @@
                         <td *ngIf="cycle.fecha_termino <= currentDate">
                             {{level.nombre}}
                         </td>
-                        <td *ngIf="level.alumnos.length ==0">
+                        <td *ngIf="level.alumnos.length == 0 && cycle.fecha_termino >= currentDate">
                             {{level.nombre}}
                         </td>
                         <td *ngIf="level.alumnos.length >=1 && cycle.fecha_termino >= currentDate">

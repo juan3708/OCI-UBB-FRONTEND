@@ -42,13 +42,13 @@
 
                     <div class="col-lg-8 entries">
 
-                        <article class="entry" *ngFor="let noticia of noticias">
-                            <div *ngIf="noticia.adjuntos.length < 2">
+                        <article class="entry" *ngFor="let noticia of noticias | paginate: {itemsPerPage: 3, currentPage: p}">
+                            <!-- <div *ngIf="noticia.adjuntos.length < 2">
                                 <div class="entry-img" *ngFor="let adjunto of noticia.adjuntos">
                                     <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
                                 </div>
-                            </div>
-                            <div *ngIf="noticia.adjuntos.length >= 2">
+                            </div> -->
+                            <div>
                                 <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
                                         <li data-target="#carouselExampleCaptions"
@@ -102,11 +102,10 @@
 
 
                         <div class="blog-pagination">
-                            <ul class="justify-content-center">
-                                <li><a href="#">1</a></li>
-                                <li class="active"><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                            </ul>
+                            <pagination-controls (pageChange)="p= $event" responsive="true" autoHide="true"
+                            previousLabel="Anterior" nextLabel="Siguiente" class="float-right">
+
+                            </pagination-controls>
                         </div>
                     </div>
 

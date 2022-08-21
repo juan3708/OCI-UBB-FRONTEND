@@ -44,12 +44,12 @@
 
                         <article class="entry entry-single">
 
-                            <div *ngIf="single.adjuntos.length < 2">
+                            <!-- <div *ngIf="single.adjuntos.length < 2">
                                 <div class="entry-img" *ngFor="let adjunto of single.adjuntos"style="text-align: center;">
                                     <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid" >
                                 </div>
-                            </div>
-                            <div *ngIf="single.adjuntos.length >= 2">
+                            </div> -->
+                            <div>
                                 <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
                                         <li data-target="#carouselExampleCaptions"
@@ -82,8 +82,7 @@
 
                             <div class="entry-meta">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a
-                                            href="blog-single.html">John Doe</a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a>Autor: {{single.user.nombre}} {{single.user.apellidos}}</a></li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i>
                                         <a>{{single.fecha}}</a>
                                     </li>

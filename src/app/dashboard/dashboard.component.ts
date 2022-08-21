@@ -2,6 +2,8 @@ import { Component, OnInit, DoCheck } from '@angular/core';
 import { CycleService } from '../modules/cycle/services/cycle.service';
 import { UserPagesService } from 'src/app/user-pages/services/user-pages.service';
 import Swal from 'sweetalert2';
+import { HomepageService } from '../modules/homepage/services/homepage.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,28 +30,45 @@ export class DashboardComponent implements OnInit, DoCheck {
   totalGastos = 0;
   gastos = [];
   presupuestoCiclo = 0;
+  url = 'http://127.0.0.1:8000/storage/images/';
+  p:any;
+  noticias;
+  noticia;
 
 
-  constructor(private cycleService: CycleService, private usersPagesService: UserPagesService) {
+  constructor(private cycleService: CycleService, private usersPagesService: UserPagesService,  private homepageService: HomepageService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
 
   ngOnInit() {
     this.checkSystem();
+    this.listAllNews();
   }
 
   ngDoCheck(): void {
+    this.user = this.usersPagesService.getUser();
     if (this.cycleService.cycle.id != undefined) {
       this.cicloNew = this.cycleService.cycle;
       if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
-        this.user = this.usersPagesService.getUser();
+        console.log(this.user);
         if (this.cicloOld.id != undefined) {
           this.getCycle(this.cicloOld.id);
         }
       }
     }
+  }
+
+  listAllNews() {
+    this.homepageService.getNews().subscribe((resp: any) => {
+      this.noticias = resp.noticias;
+    })
+  }
+  
+  setNew(news, modal){
+    this.noticia = JSON.parse(JSON.stringify(news));
+    this.modalService.open(modal, {size: 'xl'})
   }
 
   checkSystem() {
@@ -78,7 +97,6 @@ export class DashboardComponent implements OnInit, DoCheck {
     });
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       if (resp.code == 200) {
-        console.log(resp);
         this.ciclo = resp.ciclo;
         this.gastos = resp.ciclo.gastos;
         this.presupuestoCiclo = Number(resp.ciclo.presupuesto);

@@ -12,6 +12,7 @@ import { AboutHomepageComponent } from './components/about-homepage/about-homepa
 import { NewsHomepageComponent } from './components/news-homepage/news-homepage.component';
 import { NewsSingleHomepageComponent } from './components/news-single-homepage/news-single-homepage.component';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     HomepageRoutingModule,
-    FormsModule
+    FormsModule,
+    NgxPaginationModule
   ]
 })
 export class HomepageModule { }

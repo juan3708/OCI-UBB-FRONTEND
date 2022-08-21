@@ -39,6 +39,7 @@ import { StudentsCandidatesModule } from './modules/students-candidates/students
 import { AllStudentsModule } from './modules/all-students/all-students.module';
 import { AllNewsModule } from './modules/all-news/all-news.module';
 import { UsersModule } from './modules/users/users.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 registerLocaleData(es);
@@ -88,7 +89,8 @@ registerLocaleData(es);
     StudentsCandidatesModule,
     DataTablesModule,
     AllNewsModule,
-    UsersModule
+    UsersModule,
+    NgxPaginationModule
   ],
   providers: [ThemeService, {provide: LOCALE_ID, useValue: 'es-CL'}],
   bootstrap: [AppComponent]
