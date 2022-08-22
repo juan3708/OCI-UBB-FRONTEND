@@ -146,80 +146,35 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row" *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
     <div class="col-xl-12 ">
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Alumnos participantes por establecimientos</h4>
-          <ngx-charts-pie-chart [view]="view" scheme="forest" [results]="single" [gradient]="gradient"
-            [legend]="showLegend" [legendPosition]="legendPosition" legendTitle="Leyenda" [labels]="showLabels"
-            [doughnut]="isDoughnut" >
+          <ngx-charts-pie-chart scheme="forest"  [results]="single" [gradient]="gradient" [legend]="showLegend"
+            [legendPosition]="legendPosition" legendTitle="Leyenda" [labels]="showLabels" [doughnut]="isDoughnut">
           </ngx-charts-pie-chart>
-
         </div>
       </div>
     </div>
-    <!-- <div class="col-lg-7 grid-margin stretch-card">
+  </div>
+  <div class="row">
+    <div class="col-xl-12">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Accesos directos</h4>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>
-
-                  </th>
-                  <th>
-
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngIf="user.rol.nombre == 'admin' ||user.rol.nombre == 'coordinador'">
-                  <td>
-                    <i class="mdi mdi-note-text menu-icon"
-                      style="color: #b66dff;font-size: 18px;padding-right: 5px;"></i>
-                    Actividades
-                  </td>
-                  <td>
-                    <button class="btn btn-gradient-info btn-rounded btn-sm" style="background:#b66dff ;"
-                      routerLink="/activities">
-                      <i class="mdi mdi-keyboard-tab"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="mdi mdi-seal menu-icon" style="color: #b66dff;font-size: 18px;padding-right: 5px;"></i>
-                    Competencias
-                  </td>
-                  <td>
-                    <button class="btn btn-gradient-info btn-rounded btn-sm" style="background:#b66dff ;"
-                      routerLink="/competencies">
-                      <i class="mdi mdi-keyboard-tab"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="mdi mdi-newspaper menu-icon"
-                      style="color: #b66dff;font-size: 18px;padding-right: 5px;"></i>
-                    Noticias
-                  </td>
-                  <td>
-                    <button class="btn btn-gradient-info btn-rounded btn-sm" style="background:#b66dff ;"
-                      routerLink="/all-news">
-                      <i class="mdi mdi-keyboard-tab"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <h4 class="card-title" *ngIf="multi.length ==3">Presupuesto y total gastado en comparación de los ultimos
+            dos ciclos</h4>
+          <h4 class="card-title" *ngIf="multi.length ==2">Presupuesto y total gastado en comparación con el ultimo
+            ciclo</h4>
+          <h4 class="card-title" *ngIf="multi.length ==1">Presupuesto y total gastado</h4>
+          <ngx-charts-bar-vertical-2d scheme="forest"  [results]="multi" [gradient]="gradient" [xAxis]="showXAxis"
+            [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+            [legendTitle]="legendTitle" noBarWhenZero="false">
+          </ngx-charts-bar-vertical-2d>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
   <!-- <div class="row">
     <div class="col-12 grid-margin">

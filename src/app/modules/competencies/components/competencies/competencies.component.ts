@@ -147,6 +147,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     };
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       this.competencies = resp.ciclo.competencias;
+      console.log(this.competencies);
       this.rerender();
     })
   }
@@ -213,7 +214,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
           icon: 'success',
           title: 'Se ha creado correctamente'
         });
-        this.listCompetenciesPerCycle();
+        this.getCycle(this.cycle.id);
       } else {
         if (resp.code == 400) {
           this.Toast.fire({

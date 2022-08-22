@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit, DoCheck {
   noticias;
   noticia;
 
-  // options
+  // options pie chart
   gradient: boolean = true;
   showLegend: boolean = true;
   showLabels: boolean = true;
@@ -44,6 +44,16 @@ export class DashboardComponent implements OnInit, DoCheck {
   legendPosition: string = 'below';
   view: any[] = [850, 500];
   single: any[];
+
+  // options bar chart
+  showXAxis: boolean = true;
+  showYAxis: boolean = true;
+  showXAxisLabel: boolean = true;
+  xAxisLabel: string = 'Ciclos';
+  showYAxisLabel: boolean = true;
+  yAxisLabel: string = 'Dinero';
+  legendTitle: string = 'Leyenda';
+  multi: any[] = [];
 
 
 
@@ -64,10 +74,10 @@ export class DashboardComponent implements OnInit, DoCheck {
       this.cicloNew = this.cycleService.cycle;
       if (this.cicloOld != this.cicloNew) {
         this.cicloOld = this.cicloNew;
-        console.log(this.user);
         if (this.cicloOld.id != undefined) {
           this.getCycle(this.cicloOld.id);
           this.getStudentPerEstablishment(this.cicloOld.id);
+          this.getLastTwoCyclesWithTotal(this.cicloOld.id)
 
         }
       }
@@ -97,11 +107,20 @@ export class DashboardComponent implements OnInit, DoCheck {
     let data = {
       ciclo_id: id
     }
-    console.log(data);
     this.cycleService.getStudentPerEstablishment(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.single = resp.establecimientosConTotalAlumnos;
-        console.log(this.single);
+      }
+    })
+  }
+
+  getLastTwoCyclesWithTotal(id) {
+    let data = {
+      ciclo_id: id
+    }
+    this.cycleService.getLastTwoCyclesWithTotal(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.multi = resp.CiclosConTotalYPresupuesto;
       }
     })
   }
@@ -125,7 +144,7 @@ export class DashboardComponent implements OnInit, DoCheck {
     this.cycleService.getCycleById(data).subscribe((resp: any) => {
       if (resp.code == 200) {
         this.ciclo = resp.ciclo;
-        this.gastos = resp.ciclo.gastos;
+        this.totalGastos = resp.totalGastos;
         this.presupuestoCiclo = Number(resp.ciclo.presupuesto);
         Swal.close();
       }

@@ -132,4 +132,9 @@ export class CycleService {
     const option = { headers: this.headers };
     return this.http.post(url+'/ciclo/studentsperestablishments', data, option);
   }
+
+  getLastTwoCyclesWithTotal(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/getlasttwocycleswithtotal', data, option);
+  }
 }
