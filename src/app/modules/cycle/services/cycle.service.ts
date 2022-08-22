@@ -128,4 +128,8 @@ export class CycleService {
     return this.http.get(url +'/ciclo/check');
   }
 
+  getStudentPerEstablishment(data) {
+    const option = { headers: this.headers };
+    return this.http.post(url+'/ciclo/studentsperestablishments', data, option);
+  }
 }

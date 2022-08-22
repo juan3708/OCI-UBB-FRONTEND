@@ -40,6 +40,7 @@ import { AllStudentsModule } from './modules/all-students/all-students.module';
 import { AllNewsModule } from './modules/all-news/all-news.module';
 import { UsersModule } from './modules/users/users.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 registerLocaleData(es);
@@ -90,7 +91,8 @@ registerLocaleData(es);
     DataTablesModule,
     AllNewsModule,
     UsersModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgxChartsModule
   ],
   providers: [ThemeService, {provide: LOCALE_ID, useValue: 'es-CL'}],
   bootstrap: [AppComponent]

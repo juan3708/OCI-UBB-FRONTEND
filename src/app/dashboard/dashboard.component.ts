@@ -16,7 +16,8 @@ export class DashboardComponent implements OnInit, DoCheck {
   cicloNew;
   ciclo = {
     alumnosParticipantes: 0,
-    establecimientos: Array()
+    establecimientos: Array(),
+    id: 0
   }
   user = {
     rol: {
@@ -31,12 +32,23 @@ export class DashboardComponent implements OnInit, DoCheck {
   gastos = [];
   presupuestoCiclo = 0;
   url = 'http://127.0.0.1:8000/storage/images/';
-  p:any;
+  p: any;
   noticias;
   noticia;
 
+  // options
+  gradient: boolean = true;
+  showLegend: boolean = true;
+  showLabels: boolean = true;
+  isDoughnut: boolean = false;
+  legendPosition: string = 'below';
+  view: any[] = [850, 500];
+  single: any[];
 
-  constructor(private cycleService: CycleService, private usersPagesService: UserPagesService,  private homepageService: HomepageService, private modalService: NgbModal) {
+
+
+
+  constructor(private cycleService: CycleService, private usersPagesService: UserPagesService, private homepageService: HomepageService, private modalService: NgbModal) {
     this.cicloOld = {};
   }
 
@@ -55,6 +67,8 @@ export class DashboardComponent implements OnInit, DoCheck {
         console.log(this.user);
         if (this.cicloOld.id != undefined) {
           this.getCycle(this.cicloOld.id);
+          this.getStudentPerEstablishment(this.cicloOld.id);
+
         }
       }
     }
@@ -65,10 +79,10 @@ export class DashboardComponent implements OnInit, DoCheck {
       this.noticias = resp.noticias;
     })
   }
-  
-  setNew(news, modal){
+
+  setNew(news, modal) {
     this.noticia = JSON.parse(JSON.stringify(news));
-    this.modalService.open(modal, {size: 'xl'})
+    this.modalService.open(modal, { size: 'xl' })
   }
 
   checkSystem() {
@@ -76,6 +90,19 @@ export class DashboardComponent implements OnInit, DoCheck {
       this.checkCiclos = resp.ciclos;
       this.checkCoordinadores = resp.coordinadores;
       this.checkEstablecimientos = resp.establecimientos;
+    })
+  }
+
+  getStudentPerEstablishment(id) {
+    let data = {
+      ciclo_id: id
+    }
+    console.log(data);
+    this.cycleService.getStudentPerEstablishment(data).subscribe((resp: any) => {
+      if (resp.code == 200) {
+        this.single = resp.establecimientosConTotalAlumnos;
+        console.log(this.single);
+      }
     })
   }
 
