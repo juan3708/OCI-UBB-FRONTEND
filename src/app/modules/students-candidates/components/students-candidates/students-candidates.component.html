@@ -545,13 +545,13 @@
                     <div class="card-body">
                         <h4 class="card">Inscribir estudiantes a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Ingrese los estudiantes que participaran de las OCI.
+                            Ingrese los estudiantes que participarán de las OCI.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
                                 <ngb-panel id="collapse-{{indexEstablishments}}"
                                     *ngFor="let establishment of  establishments;let indexEstablishments = index"
-                                    title="{{establishment.nombre}} Cupos Maximos: {{establishment.cupos}} Cupos Utilizados: {{cupos[indexEstablishments]}} ">
+                                    title="{{establishment.nombre}} Cupos Máximos: {{establishment.cupos}} Cupos Utilizados: {{cupos[indexEstablishments]}} ">
                                     <ng-template ngbPanelContent>
                                         <div class="table-responsive"
                                             *ngIf="establishments[indexEstablishments].alumnosParticipantes.length >=1">
