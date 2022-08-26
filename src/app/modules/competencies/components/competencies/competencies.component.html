@@ -51,7 +51,7 @@
                 (click)="deleteCompetition(competition.id)" title="Eliminar competencia"
                 *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                (click)="getCompetition(competition.id,ModalAddStudents)" title="Asignar Alumnos"
+                (click)="getCompetition(competition.id,ModalAddStudents)" title="Asignar Estudiantes"
                 *ngIf="cycle.fecha_termino >= currentDate"><i class="fa-solid fa-person-circle-plus"></i></button>
               <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
                 (click)="getCompetition(competition.id,ModalEditScores)" *ngIf="competition.alumnos.length >=1"
@@ -172,7 +172,7 @@
       <div class="col-12 stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card">Alumnos que participaran de la competición</h4>
+            <h4 class="card">Estudiantes que participaran de la competición</h4>
             <br>
             <div *ngIf="students.length >=1">
               <div class="table-responsive">
@@ -196,7 +196,7 @@
                   <tbody class="table table-bordered">
                     <tr *ngFor="let student of students">
                       <td>
-                        {{student.rut}}
+                        {{student.rut | rut}}
                       </td>
                       <td>
                         {{student.nombre}}
@@ -214,10 +214,10 @@
               </div>
             </div>
             <div *ngIf="students.length == 0">
-              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ALUMNOS ASOCIADOS A LA COMPETENCIA</h5>
+              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ESTUDIANTES ASOCIADOS A LA COMPETENCIA</h5>
             </div>
             <br>
-            <h4 class="card">Alumnos participantes de la OCI: {{cycle.nombre}}</h4>
+            <h4 class="card">Estudiantes participantes de la OCI: {{cycle.nombre}}</h4>
             <div *ngIf="studentsPerCycle.length >=1">
               <form class="forms-sample">
                 <div class="form-group">
@@ -242,7 +242,7 @@
                       <tbody class="table table-bordered">
                         <tr *ngFor="let student of studentsPerCycle">
                           <td>
-                            {{student.rut}}
+                            {{student.rut | rut}}
                           </td>
                           <td>
                             {{student.nombre}}
@@ -264,7 +264,7 @@
               </form>
             </div>
             <div *ngIf="studentsPerCycle.length == 0">
-              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ALUMNOS PARTCIPANTES EN LAS OCI</h5>
+              <h5 style="font-weight: bold;text-align: center;">NO EXISTEN ESTUDIANTES PARTCIPANTES EN LAS OCI</h5>
             </div>
           </div>
         </div>
@@ -317,7 +317,7 @@
                     <ng-container *ngFor="let student of studentScore.controls; let i = index">
                       <tr [formGroupName]="i">
                         <td>
-                          {{student.controls.rut.value}}
+                          {{student.controls.rut.value | rut}}
                         </td>
                         <td>
                           {{student.controls.nombre.value}}

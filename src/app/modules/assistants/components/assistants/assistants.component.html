@@ -37,7 +37,7 @@
                 <tbody class="table table-bordered">
                     <tr *ngFor="let assistant of assistants">
                         <td>
-                            {{assistant.rut}}
+                            {{assistant.rut | rut}}
                         </td>
                         <td>
                             {{assistant.nombre}}

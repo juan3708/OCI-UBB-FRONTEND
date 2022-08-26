@@ -149,16 +149,46 @@
   <div class="row" *ngIf="user.rol.nombre == 'admin' || user.rol.nombre == 'coordinador'">
     <div class="col-xl-12 ">
       <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Alumnos participantes por establecimientos</h4>
-          <ngx-charts-pie-chart scheme="forest"  [results]="single" [gradient]="gradient" [legend]="showLegend"
-            [legendPosition]="legendPosition" legendTitle="Leyenda" [labels]="showLabels" [doughnut]="isDoughnut">
-          </ngx-charts-pie-chart>
+        <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="students-tab" data-toggle="tab" data-target="#students"
+              role="tab" aria-controls="students" aria-selected="true">
+              <h4 >Alumnos participantes por establecimientos</h4>
+            </a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="cost-tab" data-toggle="tab" data-target="#cost" role="tab"
+              aria-controls="cost" aria-selected="false">
+              <h4  *ngIf="multi.length == 3">Presupuesto y total gastado en comparación de los ultimos
+                dos ciclos</h4>
+              <h4  *ngIf="multi.length == 2">Presupuesto y total gastado en comparación con el ultimo
+                ciclo</h4>
+              <h4  *ngIf="multi.length == 1 || multi.length == 0">Presupuesto y total gastado</h4>
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="students" role="tabpanel" aria-labelledby="students-tab">
+            <ngx-charts-pie-chart scheme="forest" [results]="single" [gradient]="gradient" [legend]="showLegend"
+              [legendPosition]="legendPosition" legendTitle="Leyenda" [labels]="showLabels" [doughnut]="isDoughnut">
+            </ngx-charts-pie-chart>
+          </div>
+          <div class="tab-pane fade" id="cost" role="tabpanel" aria-labelledby="cost-tab">
+            <div class="chart-container">
+              <div class="spectre-line-chart">
+                <ngx-charts-bar-vertical-2d scheme="forest" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis"
+                  [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                  [legendTitle]="legendTitle" noBarWhenZero="false" >
+                </ngx-charts-bar-vertical-2d>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-xl-12">
       <div class="card">
         <div class="card-body">
@@ -167,7 +197,7 @@
           <h4 class="card-title" *ngIf="multi.length ==2">Presupuesto y total gastado en comparación con el ultimo
             ciclo</h4>
           <h4 class="card-title" *ngIf="multi.length ==1">Presupuesto y total gastado</h4>
-          <ngx-charts-bar-vertical-2d scheme="forest"  [results]="multi" [gradient]="gradient" [xAxis]="showXAxis"
+          <ngx-charts-bar-vertical-2d scheme="forest" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis"
             [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
             [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
             [legendTitle]="legendTitle" noBarWhenZero="false">
@@ -175,7 +205,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <!-- <div class="row">
     <div class="col-12 grid-margin">
       <div class="card">

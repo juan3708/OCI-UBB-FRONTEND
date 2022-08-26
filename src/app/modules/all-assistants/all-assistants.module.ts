@@ -6,6 +6,7 @@ import { DataTablesModule } from 'angular-datatables';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AllAssistantsComponent } from './components/all-assistants/all-assistants.component';
+import { Ng9RutModule } from 'ng9-rut';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { AllAssistantsComponent } from './components/all-assistants/all-assistan
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    DataTablesModule
+    DataTablesModule,
+    Ng9RutModule
   ]
 })
 export class AllAssistantsModule { }

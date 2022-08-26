@@ -44,6 +44,7 @@ export class NewsHomepageComponent implements OnInit {
       this.homepageService.getNewsLikeWord(data).subscribe((resp: any) => {
         if (resp.code == 200) {
           this.noticias = resp.noticias;
+          console.log(this.noticias);
         }
       })
     } else {

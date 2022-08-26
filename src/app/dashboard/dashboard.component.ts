@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit, DoCheck {
   showLabels: boolean = true;
   isDoughnut: boolean = false;
   legendPosition: string = 'below';
-  view: any[] = [850, 500];
+  view: any[] = [800, 600];
   single: any[];
 
   // options bar chart

@@ -41,6 +41,7 @@ import { AllNewsModule } from './modules/all-news/all-news.module';
 import { UsersModule } from './modules/users/users.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { Ng9RutModule } from 'ng9-rut';
 
 
 registerLocaleData(es);
@@ -92,7 +93,8 @@ registerLocaleData(es);
     AllNewsModule,
     UsersModule,
     NgxPaginationModule,
-    NgxChartsModule
+    NgxChartsModule,
+    Ng9RutModule
   ],
   providers: [ThemeService, {provide: LOCALE_ID, useValue: 'es-CL'}],
   bootstrap: [AppComponent]

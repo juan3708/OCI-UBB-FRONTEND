@@ -33,9 +33,9 @@
       <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" routerLink="/students" routerLinkActive="active"
-              #students="routerLinkActive">Alumnos participantes</a></li>
+              #students="routerLinkActive">Estudiantes participantes</a></li>
           <li class="nav-item"> <a class="nav-link" routerLink="/studentscandidates" routerLinkActive="active"
-              #studentscandidates="routerLinkActive">Alumnos postulantes</a></li>
+              #studentscandidates="routerLinkActive">Estudiantes postulantes</a></li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/cycle" routerLinkActive #cycle="routerLinkActive">
               Ciclos
@@ -110,7 +110,7 @@
       <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" routerLink="/studentscandidates" routerLinkActive="active"
-              #studentscandidates="routerLinkActive">Alumnos postulantes</a></li>
+              #studentscandidates="routerLinkActive">Estudiantes postulantes</a></li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/establishments" routerLinkActive="active"
               #establishments="routerLinkActive">Establecimientos</a>
@@ -135,9 +135,9 @@
       <div class="collapse" id="ui-basic" [ngbCollapse]="!cyclesCollapsed">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" routerLink="/students" routerLinkActive="active"
-              #students="routerLinkActive">Alumnos participantes</a></li>
+              #students="routerLinkActive">Estudiantes participantes</a></li>
           <li class="nav-item"> <a class="nav-link" routerLink="/studentscandidates" routerLinkActive="active"
-              #studentscandidates="routerLinkActive">Alumnos postulantes</a></li>
+              #studentscandidates="routerLinkActive">Estudiantes postulantes</a></li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/establishments" routerLinkActive="active"
               #establishments="routerLinkActive">Establecimientos</a>
@@ -154,7 +154,7 @@
     <li class="nav-item" *ngIf="(rolName == 'profesor' ||rolName == 'ayudante')&& ciclo.id != undefined">
       <a class="nav-link" [ngClass]="{ 'active': students.isActive }" routerLink="/students" routerLinkActive
         #students="routerLinkActive">
-        <span class="menu-title">Alumnos participantes</span>
+        <span class="menu-title">Estudiantes participantes</span>
         <i class="mdi mdi-account-multiple-outline menu-icon"></i>
       </a>
     </li>
@@ -269,7 +269,7 @@
       <div class="collapse" id="ui-basic" [ngbCollapse]="!settingsCollapsed">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" routerLink="/all-students" routerLinkActive="active"
-              #allstudents="routerLinkActive">Alumnos</a></li>
+              #allstudents="routerLinkActive">Estudiantes</a></li>
           <li class="nav-item"> <a class="nav-link" routerLink="/all-assistants" routerLinkActive="active"
               #allasistants="routerLinkActive">Ayudantes</a></li>
           <li class="nav-item"><a class="nav-link" routerLink="/coordinators" routerLinkActive="active"

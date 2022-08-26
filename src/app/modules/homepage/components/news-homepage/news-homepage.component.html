@@ -42,7 +42,8 @@
 
                     <div class="col-lg-8 entries">
 
-                        <article class="entry" *ngFor="let noticia of noticias | paginate: {itemsPerPage: 3, currentPage: p}">
+                        <article class="entry"
+                            *ngFor="let noticia of noticias | paginate: {itemsPerPage: 3, currentPage: p}">
                             <!-- <div *ngIf="noticia.adjuntos.length < 2">
                                 <div class="entry-img" *ngFor="let adjunto of noticia.adjuntos">
                                     <img src="{{url}}{{adjunto.url}}" alt="" class="img-fluid">
@@ -80,7 +81,8 @@
 
                             <div class="entry-meta">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a>Autor: {{noticia.user.nombre}} {{noticia.user.apellidos}}</a>
+                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a>Autor:
+                                            {{noticia.user.nombre}} {{noticia.user.apellidos}}</a>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i>
                                         <a>{{noticia.fecha}}</a>
@@ -103,7 +105,7 @@
 
                         <div class="blog-pagination">
                             <pagination-controls (pageChange)="p= $event" responsive="true" autoHide="true"
-                            previousLabel="Anterior" nextLabel="Siguiente" class="float-right">
+                                previousLabel="Anterior" nextLabel="Siguiente" class="float-right">
 
                             </pagination-controls>
                         </div>
@@ -117,12 +119,14 @@
                         <div class="sidebar">
 
                             <h3 class="sidebar-title">Buscar</h3>
-                            <div class="card">
-                                    <input type="text" class="form-control search-word" style="width: 200px;" #word>
-                                    <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see search-word" (click)="listNewsForWord(word.value)"><i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
-                          
-                            </div>
+                            <!-- <div class="card"> -->
+                            <input type="text" class="form-control search-word" style="width: 200px;" #word>
+                            <button type="button"
+                                class="btn btn-gradient-success btn-rounded btn-sm btn-see search-word"
+                                (click)="listNewsForWord(word.value)" style="margin-left:8px ;"><i
+                                    class="fa-solid fa-magnifying-glass"></i></button>
+
+                            <!-- </div> -->
                             <!-- End sidebar search form-->
 
                             <!-- <h3 class="sidebar-title">Categories</h3>

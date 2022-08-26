@@ -21,12 +21,12 @@
                         <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length == 0'
                             class="step-wizard-item ">
                             <span class="progress-count">3</span>
-                            <span class="progress-label">Cargar alumnos (Alumnos Postulantes)</span>
+                            <span class="progress-label">Cargar estudiante (Estudiantes Postulantes)</span>
                         </li>
                         <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length >= 1 && cycleSee.alumnosParticipantes == 0'
                             class="step-wizard-item ">
                             <span class="progress-count">4</span>
-                            <span class="progress-label">Inscribir alumnos (Alumnos Postulantes)</span>
+                            <span class="progress-label">Inscribir estudiante (Estudiantes Postulantes)</span>
                         </li>
                         <li [class.current-item]='cycleSee.establecimientoTieneCupos == true && cycleSee.establecimientos.length >= 1 && cycleSee.alumnos.length >= 1 && cycleSee.alumnosParticipantes >= 1 && cycleSee.niveles.length == 0'
                             class="step-wizard-item ">
@@ -569,7 +569,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Cantidad de alumnos
+                                                <label class="col-sm-3 col-form-label label-ident">Cantidad de estudiantes
                                                     inscritos:</label>
                                                 <div class="col-sm-9">
                                                     <label
@@ -598,7 +598,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Cantidad de alumnos
+                                                <label class="col-sm-3 col-form-label label-ident">Cantidad de estudiantes
                                                     participantes:</label>
                                                 <div class="col-sm-9">
                                                     <label
@@ -630,28 +630,28 @@
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Establecimiento con
-                                                    mas alumnos
+                                                    mas estudiantes
                                                     inscritos:</label>
                                                 <div class="col-sm-9">
                                                     <label
                                                         class="col-sm-9 col-form-label label-result">{{establecimientoMaxInscritos.nombre}}
                                                         con la
                                                         cantidad de
-                                                        {{establecimientoMaxInscritos.Alumnos}} alumnos</label>
+                                                        {{establecimientoMaxInscritos.Alumnos}} estudiantes</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Establecimiento con
-                                                    menos alumnos
+                                                    menos estudiantes
                                                     inscritos: </label>
                                                 <div class="col-sm-9">
                                                     <label
                                                         class="col-sm-9 col-form-label label-result">{{establecimientoMinInscritos.nombre}}
                                                         con la
                                                         cantidad de
-                                                        {{establecimientoMinInscritos.Alumnos}} alumnos</label>
+                                                        {{establecimientoMinInscritos.Alumnos}} estudiantes</label>
 
                                                 </div>
                                             </div>
@@ -661,7 +661,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Establecimiento con
-                                                    mas alumnos
+                                                    mas estudiantes
                                                     participantes:</label>
                                                 <div class="col-sm-9">
                                                     <label
@@ -669,21 +669,21 @@
                                                         con
                                                         la
                                                         cantidad de {{establecimientoMaxParticipantes.Alumnos}}
-                                                        alumnos</label>
+                                                        estudiantes</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Establecimiento con
-                                                    menos alumnos
+                                                    menos estudiantes
                                                     participantes: </label>
                                                 <div class="col-sm-9">
                                                     <label
                                                         class="col-sm-9 col-form-label label-result">{{establecimientoMinParticipantes.nombre}}
                                                         con la
                                                         cantidad de {{establecimientoMinParticipantes.Alumnos}}
-                                                        alumnos</label>
+                                                        estudiantes</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -707,7 +707,7 @@
                                     <ng-template ngbPanelContent>
                                         <div *ngIf="establishment.alumnos.length >=1">
                                             <div class="table-responsive">
-                                                <h5>Alumnos</h5>
+                                                <h5>Estudiantes</h5>
                                                 <table class="table table-striped" style="text-align: center;">
                                                     <thead class="table table-bordered">
                                                         <tr>
@@ -740,7 +740,7 @@
                                                     <tbody class="table table-bordered">
                                                         <tr *ngFor="let student of establishment.alumnos">
                                                             <td>
-                                                                {{student.rut}}
+                                                                {{student.rut | rut}}
                                                             </td>
                                                             <td>
                                                                 {{student.nombre}}
@@ -820,7 +820,7 @@
                                                     Puntaje promedio: {{competition.promedioPuntaje}}
                                                 </th>
                                                 <th class="thGastos">
-                                                    Cantidad total de alumnos: {{competition.alumnos.length}}
+                                                    Cantidad total de estudiantes: {{competition.alumnos.length}}
                                                 </th>
                                             </tr>
                                         </thead>
@@ -848,7 +848,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of competition.alumnos">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}

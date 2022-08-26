@@ -163,7 +163,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div *ngIf="studentsPerLevel.length >= 1">
-                            <h4 class="card">Alumnos inscritos en el nivel</h4>
+                            <h4 class="card">Estudiantes inscritos en el nivel</h4>
                             <div class="table-responsive">
                                 <table class="table table-striped" style="text-align: center;">
                                     <thead class="table table-bordered">
@@ -185,7 +185,7 @@
                                     <tbody class="table table-bordered">
                                         <tr *ngFor="let student of studentsPerLevel">
                                             <td>
-                                                {{student.rut}}
+                                                {{student.rut | rut}}
                                             </td>
                                             <td>
                                                 {{student.nombre}}
@@ -204,13 +204,13 @@
                             </div>
                         </div>
                         <div *ngIf="studentsPerLevel.length == 0">
-                            <h4 style="font-weight:bold;">NO EXISTEN ALUMNOS ASOCIADOS AL NIVEL</h4>
+                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES ASOCIADOS AL NIVEL</h4>
                         </div>
                         <br>
                         <hr>
                         <br>
                         <div *ngIf="students.length >= 1">
-                            <h4 class="card">Alumnos participantes del ciclo</h4>
+                            <h4 class="card">Estudiantes participantes del ciclo</h4>
                             <form class="forms-sample">
                                 <div class="form-group">
                                     <div class="table-responsive">
@@ -234,7 +234,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of students">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}
@@ -258,7 +258,7 @@
                             </form>
                         </div>
                         <div *ngIf="students.length == 0">
-                            <h4 style="font-weight:bold;">NO EXISTEN ALUMNOS PARTICIPANTES DEL CICLO</h4>
+                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES PARTICIPANTES DEL CICLO</h4>
                         </div>
                     </div>
                 </div>
@@ -288,7 +288,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Alumnos de la clase</h4>
+                        <h4 class="card">Estudiante de la clase</h4>
                         <div *ngIf="studentsLesson.length >=1">
                             <div class="table-responsive">
                                 <table class="table table-striped" style="text-align: center;">
@@ -311,7 +311,7 @@
                                     <tbody class="table table-bordered">
                                         <tr *ngFor="let student of studentsLesson">
                                             <td>
-                                                {{student.rut}}
+                                                {{student.rut | rut}}
                                             </td>
                                             <td>
                                                 {{student.nombre}}
@@ -330,10 +330,10 @@
                             </div>
                         </div>
                         <div *ngIf="studentsLesson.length == 0">
-                            <h5> NO EXISTEN ALUMNOS ASOCIADOS A LA CLASE.</h5>
+                            <h5> NO EXISTEN ESTUDIANTES ASOCIADOS A LA CLASE.</h5>
                         </div>
                         <br>
-                        <h4 class="card">Alumnos</h4>
+                        <h4 class="card">Estudiante</h4>
                         <div *ngIf="students.length >=1">
                             <form class="forms-sample">
                                 <div class="form-group">
@@ -358,7 +358,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of students">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}
@@ -382,7 +382,7 @@
                             </form>
                         </div>
                         <div *ngIf="students.length ==0">
-                            <h5>NO EXISTEN ALUMNOS PARA ASOCIAR A LA CLASE.</h5>
+                            <h5>NO EXISTEN ESTUDIANTES PARA ASOCIAR A LA CLASE.</h5>
                         </div>
                     </div>
                 </div>
@@ -413,7 +413,7 @@
                         <h4 class="card-title">Registrar Asistencia</h4>
                         <form class="forms-sample">
                             <div class="form-group">
-                                <label for="studentList">Alumnos</label>
+                                <label for="studentList">Estudiantes</label>
                                 <div class="table-responsive">
                                     <table class="table table-striped" style="text-align: center;">
                                         <thead class="table table-bordered">
@@ -435,7 +435,7 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let student of studentsLesson;">
                                                 <td>
-                                                    {{student.rut}}
+                                                    {{student.rut | rut}}
                                                 </td>
                                                 <td>
                                                     {{student.nombre}}
@@ -565,7 +565,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" id="students-tab" data-toggle="tab" href="#students" role="tab"
                                     aria-controls="students" aria-selected="false" style="box-sizing: border-box;"><i
-                                        class="fa-solid fa-rectangle-list"></i> Alumnos</a>
+                                        class="fa-solid fa-rectangle-list"></i> Estudiantes</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="teachersAndAssistants-tab" data-toggle="tab"
@@ -625,7 +625,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of studentsLesson;">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}
@@ -647,7 +647,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="studentsLesson.length == 0">
-                                    <h5>NO EXISTEN ALUMNOS ASOCIADOS A LA CLASE.</h5>
+                                    <h5>NO EXISTEN ESTUDIANTES ASOCIADOS A LA CLASE.</h5>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="teachersAndAssistants" role="tabpanel"
@@ -671,7 +671,7 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let teacher of lessonTeachers">
                                                 <td>
-                                                    {{teacher.rut}}
+                                                    {{teacher.rut | rut}}
                                                 </td>
                                                 <td>
                                                     {{teacher.nombre}}
@@ -706,7 +706,7 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let assistant of lessonAssistants">
                                                 <td>
-                                                    {{assistant.rut}}
+                                                    {{assistant.rut | rut}}
                                                 </td>
                                                 <td>
                                                     {{assistant.nombre}}
@@ -795,7 +795,7 @@
                                                     <tbody class="table table-bordered">
                                                         <tr *ngFor="let teacher of lessonTeachers">
                                                             <td>
-                                                                {{teacher.rut}}
+                                                                {{teacher.rut | rut}}
                                                             </td>
                                                             <td>
                                                                 {{teacher.nombre}}
@@ -836,7 +836,7 @@
                                                         <tbody class="table table-bordered">
                                                             <tr *ngFor="let teacher of teachers">
                                                                 <td>
-                                                                    {{teacher.rut}}
+                                                                    {{teacher.rut | rut}}
                                                                 </td>
                                                                 <td>
                                                                     {{teacher.nombre}}
@@ -887,7 +887,7 @@
                                                     <tbody class="table table-bordered">
                                                         <tr *ngFor="let assistant of lessonAssistants">
                                                             <td>
-                                                                {{assistant.rut}}
+                                                                {{assistant.rut | rut}}
                                                             </td>
                                                             <td>
                                                                 {{assistant.nombre}}
@@ -931,7 +931,7 @@
                                                         <tbody class="table table-bordered">
                                                             <tr *ngFor="let assistant of assistants">
                                                                 <td>
-                                                                    {{assistant.rut}}
+                                                                    {{assistant.rut | rut}}
                                                                 </td>
                                                                 <td>
                                                                     {{assistant.nombre}}
@@ -1006,16 +1006,16 @@
                                     </th>
 
                                     <th class="thGastos">
-                                        Total alumnos: {{totalStudents}}
+                                        Total estudiantes: {{totalStudents}}
                                     </th>
 
                                     <th class="thGastos">
                                         Establecimiento con menos estudiantes: {{establishmentMinStudent.nombre}} con
-                                        {{establishmentMinStudent.alumnos.length}} alumnos
+                                        {{establishmentMinStudent.alumnos.length}} estudiantes
                                     </th>
                                     <th class="thGastos">
                                         Establecimiento con mas estudiantes: {{establishmentMaxStudent.nombre}} con
-                                        {{establishmentMaxStudent.alumnos.length}} alumnos
+                                        {{establishmentMaxStudent.alumnos.length}} estudiantes
                                     </th>
                                 </tr>
                             </thead>
@@ -1026,7 +1026,7 @@
                                 title="{{establishment.nombre}} - TOTAL ALUMNOS: {{establishment.alumnos.length}}">
                                 <ng-template ngbPanelContent>
                                     <div class="table-responsive" *ngIf="establishment.alumnos.length >=1">
-                                        <h5>Alumnos</h5>
+                                        <h5>Estudiantes</h5>
                                         <table class="table table-striped" style="text-align: center;">
                                             <thead class="table table-bordered">
                                                 <tr>
@@ -1059,7 +1059,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of establishment.alumnos">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}

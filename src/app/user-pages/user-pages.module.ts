@@ -7,6 +7,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { FormsModule } from '@angular/forms';
 import { ChangeEmailComponent } from './change-email/change-email.component';
 import { AuthGuard } from '../guards/auth.guard';
+import { Ng9RutModule } from 'ng9-rut';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,7 +23,8 @@ const routes: Routes = [
     CommonModule,
     NgbModule,
     FormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    Ng9RutModule
   ]
 })
 export class UserPagesModule { }

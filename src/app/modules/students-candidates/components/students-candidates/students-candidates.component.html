@@ -2,14 +2,14 @@
   <div class="col-lg-10 grid-margin stretch-card"> -->
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title"><b>Alumnos postulantes</b></h4>
+        <h4 class="card-title"><b>Estudiantes postulantes</b></h4>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContentEnrolled)"
             *ngIf="(studentsPerCycle.length >=1 || studentsEnrolled.length >=1)&& cycle.fecha_termino >= currentDate "><i
-                class="fa-solid fa-clipboard-list"></i> Inscribir alumnos</button>
+                class="fa-solid fa-clipboard-list"></i> Inscribir estudiantes</button>
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalChargeStudent)" *ngIf="cycle.fecha_termino >= currentDate"><i
-                class="fa-solid fa-file-arrow-up"></i> Cargar alumnos</button>
+                class="fa-solid fa-file-arrow-up"></i> Cargar estudiantes</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -49,7 +49,7 @@
                             {{student.apellidos}}
                         </td>
                         <td>
-                            {{student.rut}}
+                            {{student.rut | rut}}
                         </td>
                         <td>
                             {{student.establecimiento.nombre}}
@@ -59,7 +59,7 @@
                                 (click)="openModal(ModalContentStatistics);setStudent(student);getLastCyclesPerStudent(student.id)"
                                 title="Ver estadisticas de los ultimos dos ciclos"><i class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteStudent(student.id)" title="Eliminar alumno"
+                                (click)="deleteStudent(student.id)" title="Eliminar estudiante"
                                 *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
 
                         </td>
@@ -131,7 +131,7 @@
                                                 <label class="col-sm-3 col-form-label label-ident">RUT:</label>
                                                 <div class="col-sm-9">
                                                     <label
-                                                        class="col-sm-5 col-form-label label-result">{{student.rut}}</label>
+                                                        class="col-sm-5 col-form-label label-result">{{student.rut | rut}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -320,7 +320,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci1.PorcentajeAsistencia == -1"
-                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO</div>
                             </div>
                             <!-- SECOND TAB -->
                             <div class="tab-pane fade" id="second" role="tabpanel" aria-labelledby="second-tab">
@@ -397,7 +397,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci2.PorcentajeAsistencia == -1"
-                                    style="text-align: center;font-weight:bold;"> ALUMNO NO INSCRITO</div>
+                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO</div>
                             </div>
                         </div>
                     </div>
@@ -466,7 +466,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci1.Competencias.length == 0" style="text-align: center;font-weight:bold;">
-                                    ALUMNO NO INSCRITO</div>
+                                    ESTUDIANTE NO INSCRITO</div>
                             </div>
                             <!-- SEGUNDO TAB -->
                             <div class="tab-pane fade" id="secondScore" role="tabpanel"
@@ -518,7 +518,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci2.Competencias.length == 0" style="text-align: center;font-weight:bold;">
-                                    ALUMNO NO INSCRITO</div>
+                                    ESTUDIANTE NO INSCRITO</div>
                             </div>
                         </div>
                     </div>
@@ -543,9 +543,9 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Inscribir alumnos a {{cycle.nombre}}</h4>
+                        <h4 class="card">Inscribir estudiantes a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Ingrese los alumnos que participaran de las OCI.
+                            Ingrese los estudiantes que participaran de las OCI.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
@@ -555,7 +555,7 @@
                                     <ng-template ngbPanelContent>
                                         <div class="table-responsive"
                                             *ngIf="establishments[indexEstablishments].alumnosParticipantes.length >=1">
-                                            <h5>Alumnos Participantes</h5>
+                                            <h5>Estudiantes Participantes</h5>
                                             <table class="table table-striped" style="text-align: center;">
                                                 <thead class="table table-bordered">
                                                     <tr>
@@ -586,7 +586,7 @@
                                                             {{student.apellidos}}
                                                         </td>
                                                         <td>
-                                                            {{student.rut}}
+                                                            {{student.rut | rut}}
                                                         </td>
                                                         <td>
                                                             <button type="button"
@@ -606,7 +606,7 @@
                                         </div>
                                         <br>
                                         <div class="table-responsive">
-                                            <h5>Alumnos Inscritos</h5>
+                                            <h5>Estudiantes Inscritos</h5>
                                             <table class="table table-striped" style="text-align: center;">
                                                 <thead class="table table-bordered">
                                                     <tr>
@@ -637,7 +637,7 @@
                                                             {{student.apellidos}}
                                                         </td>
                                                         <td>
-                                                            {{student.rut}}
+                                                            {{student.rut | rut}}
                                                         </td>
                                                         <td>
                                                             <button type="button"
@@ -689,9 +689,9 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Cargar alumnos a {{cycle.nombre}}</h4>
+                        <h4 class="card">Cargar estudiantes a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Cargue el archivo con los datos de los alumnos.
+                            Cargue el archivo con los datos de los estudiantes.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="custom-file">

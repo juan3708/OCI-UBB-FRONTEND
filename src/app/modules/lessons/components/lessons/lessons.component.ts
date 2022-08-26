@@ -389,10 +389,8 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       ciclo_id: this.cycle.id,
       nivel_id: level
     };
-    console.log(data);
     if (this.studentsId.length >= 1) {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
-        console.log(resp);
         if (resp.code == 200) {
           this.AssignStudentToLesson(resp.clase.id);
           await new Promise(f => setTimeout(f, 500));
@@ -406,7 +404,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               clase_id: resp.clase.id
             }
             this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
-              console.log(resp1);
             });
             this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
           } else {
@@ -432,7 +429,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       })
     } else {
       this.lessonsService.createLesson(data).subscribe(async (resp: any) => {
-        console.log(resp);
         if (resp.code == 200) {
           this.Toast.fire({
             icon: 'success',
@@ -444,7 +440,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
               clase_id: resp.clase.id
             }
             this.lessonsService.ChargeTeachers(data).subscribe((resp1: any) => {
-              console.log(resp1);
             });
             this.listLessonsPerTeacher(this.user.rut, this.cycle.id);
           } else {
@@ -564,7 +559,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       this.studentsAdd.splice(this.studentsAdd.indexOf(student), 1);
     }
-    console.log(this.studentsAdd);
   }
 
   addOrRemoveTeacherAdd(event, teacher) {
@@ -676,7 +670,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     }).then((result) => {
       if (result.isConfirmed) {
         this.lessonsService.DeleteAssistants(data).subscribe((resp: any) => {
-          console.log(resp);
           if (resp.code == 200) {
             this.lessonAssistants.splice(this.lessonAssistants.indexOf(assistant), 1);
             this.Toast.fire({

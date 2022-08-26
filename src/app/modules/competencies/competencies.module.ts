@@ -6,6 +6,7 @@ import { CompetenciesComponent } from './components/competencies/competencies.co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DataTablesModule } from 'angular-datatables';
+import { Ng9RutModule } from 'ng9-rut';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { DataTablesModule } from 'angular-datatables';
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    DataTablesModule
+    DataTablesModule,
+    Ng9RutModule
   ]
 })
 export class CompetenciesModule { }

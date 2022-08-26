@@ -38,7 +38,7 @@
                         <tbody class="table table-bordered">
                             <tr *ngFor="let teacher of teachers">
                                 <td>
-                                    {{teacher.rut}}
+                                    {{teacher.rut | rut}}
                                 </td>
                                 <td>
                                     {{teacher.nombre}}

@@ -346,7 +346,7 @@
                         <br>
                         <div *ngIf="contentSee == 1">
                             <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
-                                NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
+                                NO HAY ESTUDIANTES CON ASISTENCIAS REGISTRADAS
                             </div>
                             <div *ngIf="students.length >= 1">
                                 <div class="table-responsive">
@@ -379,7 +379,7 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let student of students">
                                                 <td>
-                                                    {{student.rut}}
+                                                    {{student.rut | rut}}
                                                 </td>
                                                 <td>
                                                     {{student.nombre}}
@@ -467,7 +467,7 @@
                         <div *ngIf="contentSee == 1">
                             <div>
                                 <div *ngIf="costsExport.length == 0" style="text-align: center;font-weight:bold;">
-                                    NO HAY ALUMNOS CON ASISTENCIAS REGISTRADAS
+                                    NO EXISTEN ESTUDIANTES CON ASISTENCIAS REGISTRADAS
                                 </div>
                                 <br>
                                 <div *ngIf="costsExport.length >= 1">

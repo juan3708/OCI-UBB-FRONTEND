@@ -38,7 +38,7 @@
                         <td *ngIf="level.alumnos.length >=1 && cycle.fecha_termino >= currentDate">
                             <button type="button" class="btn" style="border: transparent;background: transparent;"
                                 (click)="openModal(ModalStudentPerLevel);setLevel(level)"
-                                title="Ver alumnos asociados">{{level.nombre}}</button>
+                                title="Ver estudiantes asociados">{{level.nombre}}</button>
                         </td>
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
@@ -49,11 +49,11 @@
                                 (click)="deleteLevel(level.id)" title="Eliminar nivel"
                                 *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
-                                (click)="getLevel(level.id,ModalAddStudentLevel)" title="Asignar alumnos"
+                                (click)="getLevel(level.id,ModalAddStudentLevel)" title="Asignar estudiantes"
                                 *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-account-multiple-plus"></i></button>
                             <button type="button" class="btn btn-gradient-success btn-rounded btn-sm btn-see"
-                                (click)="openModal(ModalStudentPerLevel);setLevel(level)" title="Ver alumnos asociados"
+                                (click)="openModal(ModalStudentPerLevel);setLevel(level)" title="Ver estudiantes asociados"
                                 *ngIf="cycle.fecha_termino <= currentDate"><i class="mdi mdi-eye"></i></button>
 
                         </td>
@@ -148,11 +148,11 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Asignar alumnos al Nivel: {{level.nombre}}</h4>
+                        <h4 class="card">Asignar estudiantes al Nivel: {{level.nombre}}</h4>
                         <form class="forms-sample">
                             <div class="form-group">
                                 <div class="table-responsive" *ngIf="studentsPerLevel.length >= 1">
-                                    <h4 class="card">Alumnos del nivel</h4>
+                                    <h4 class="card">Estudiantes del nivel</h4>
                                     <table class="table table-striped" style="text-align: center;">
                                         <thead class="table table-bordered">
                                             <tr>
@@ -173,7 +173,7 @@
                                         <tbody class="table table-bordered">
                                             <tr *ngFor="let student of studentsPerLevel">
                                                 <td>
-                                                    {{student.rut}}
+                                                    {{student.rut | rut}}
                                                 </td>
                                                 <td>
                                                     {{student.nombre}}
@@ -192,7 +192,7 @@
                                     </table>
                                 </div>
                                 <br>
-                                <h4 class="card">Alumnos</h4>
+                                <h4 class="card">Estudiantes</h4>
                                 <div *ngIf="students.length >=1">
                                     <div class="table-responsive">
                                         <table class="table table-striped" style="text-align: center;">
@@ -215,7 +215,7 @@
                                             <tbody class="table table-bordered">
                                                 <tr *ngFor="let student of students">
                                                     <td>
-                                                        {{student.rut}}
+                                                        {{student.rut | rut}}
                                                     </td>
                                                     <td>
                                                         {{student.nombre}}
@@ -238,7 +238,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="students.length == 0">
-                                    <h5>NO EXISTEN ALUMNOS PARA ASIGNAR.</h5>
+                                    <h5>NO EXISTEN ESTUDIANTES PARA ASIGNAR.</h5>
                                 </div>
                             </div>
                         </form>
@@ -268,7 +268,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Alumnos por nivel</h4>
+                        <h4 class="card">Estudiantes por nivel</h4>
                         <table class="table table-striped" style="text-align: center;">
                             <thead class="table table-bordered">
                                 <tr>
@@ -292,7 +292,7 @@
                                         {{student.apellidos}}
                                     </td>
                                     <td>
-                                        {{student.rut}}
+                                        {{student.rut | rut}}
                                     </td>
                                 </tr>
                             </tbody>

@@ -6,6 +6,7 @@ import { EstablishmentsComponent } from './components/establishments/establishme
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
+import { Ng9RutModule } from 'ng9-rut';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { DataTablesModule } from 'angular-datatables';
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    DataTablesModule
+    DataTablesModule,
+    Ng9RutModule
   ]
 })
 export class EstablishmentsModule { }

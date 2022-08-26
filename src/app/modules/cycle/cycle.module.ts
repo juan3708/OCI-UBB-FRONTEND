@@ -6,6 +6,7 @@ import { CycleComponent } from './components/cycle/cycle.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Ng9RutModule } from 'ng9-rut';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     ReactiveFormsModule,
     DataTablesModule,
-    NgbModule
+    NgbModule,
+    Ng9RutModule
   ]
 })
 export class CycleModule { }

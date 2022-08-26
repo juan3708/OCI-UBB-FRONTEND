@@ -334,7 +334,6 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
 
   setStudent(student) {
     this.student = JSON.parse(JSON.stringify(student));
-    console.log(this.student);
 
   }
 
@@ -618,10 +617,8 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       prespuestoRestante: this.prespuestoRestante,
       ciclo: this.cycle
     }
-    console.log(data);
     this.spinnerSee = true;
     this.usersService.exportGeneralStatisticToPDF(data).subscribe((resp: any) => {
-      console.log(resp);
       if (resp.code == 200) {
         this.fileName = resp.fileName;
         this.Toast.fire({
