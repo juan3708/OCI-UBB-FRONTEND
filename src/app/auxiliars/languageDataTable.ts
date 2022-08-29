@@ -8,8 +8,8 @@ export class LanguageDataTable {
       infoFiltered: "(filtrado _MAX_ elementos total)",
       infoPostFix: "",
       loadingRecords: "Cargando registros...",
-      zeroRecords: "No se encontraron registros",
-      emptyTable: "No hay datos disponibles en la tabla",
+      zeroRecords: "No se encontraron registros.",
+      emptyTable: "No hay datos disponibles en la tabla.",
       paginate: {
         first: "Primero",
         previous: "Anterior",
@@ -17,8 +17,8 @@ export class LanguageDataTable {
         last: "Último"
       },
       aria: {
-        sortAscending: ": Activar para ordenar la tabla en orden ascendente",
-        sortDescending: ": Activar para ordenar la tabla en orden descendente"
+        sortAscending: ": Activar para ordenar la tabla en orden ascendente.",
+        sortDescending: ": Activar para ordenar la tabla en orden descendente."
       }
     }
   }

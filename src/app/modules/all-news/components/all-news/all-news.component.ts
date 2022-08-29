@@ -138,7 +138,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         let noticia_id = resp.noticia.id;
         if (this.selectedFiles.length >= 1) {
           Swal.fire({
-            title: 'Espere porfavor...',
+            title: 'Espere por favor...',
             didOpen: () => {
               Swal.showLoading()
             },
@@ -198,7 +198,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
         }
         if (bool == true) {
           Swal.fire({
-            title: 'Noticia editada correctamente. Cargando imagenes, espere porfavor',
+            title: 'Noticia editada correctamente. Cargando imágenes, espere por favor',
             timer: 2000,
             didOpen: async () => {
               Swal.showLoading();
@@ -244,7 +244,7 @@ export class AllNewsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       id: image
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar esta imagen?',
+      title: '¿Está seguro que desea eliminar esta imagen?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

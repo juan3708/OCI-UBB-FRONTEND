@@ -130,7 +130,7 @@ export class DashboardComponent implements OnInit, DoCheck {
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },

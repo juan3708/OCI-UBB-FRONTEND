@@ -303,7 +303,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese un detalle porfavor'
+        title: 'Ingrese un detalle por favor'
       });
     }
   }
@@ -475,7 +475,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese un detalle porfavor'
+        title: 'Ingrese un detalle por favor'
       });
     }
   }
@@ -540,7 +540,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       });
     } else {
       Swal.fire({
-        title: 'Espere porfavor...',
+        title: 'Espere por favor...',
         didOpen: () => {
           Swal.showLoading()
         },
@@ -595,7 +595,7 @@ export class CostsComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       this.start_date = start_date;
       this.finish_date = finish_date;
       Swal.fire({
-        title: 'Espere porfavor...',
+        title: 'Espere por favor...',
         didOpen: () => {
           Swal.showLoading()
         },

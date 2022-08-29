@@ -158,7 +158,7 @@ export class AllStudentsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.see = 0;
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },

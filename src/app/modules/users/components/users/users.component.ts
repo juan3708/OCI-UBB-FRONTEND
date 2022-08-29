@@ -160,7 +160,7 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
       admin: 0
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -259,7 +259,7 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Error al editar al Usuario',
+            title: 'Error al editar el usuario',
             text: resp.message
           });
         }
@@ -271,7 +271,7 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
     if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+        title: 'Por favor llenar todo los campos con asterisco(*)'
       });
     } else {
       let data = {

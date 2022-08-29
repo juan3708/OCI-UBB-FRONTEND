@@ -80,21 +80,21 @@
             <form class="forms-sample">
               <div class="form-group">
                 <label for="establishmentName">Nombre del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentName" placeholder="Nombre del establecimiento"
+                <input type="text" class="form-control" id="establishmentName" placeholder="Ingrese el nombre del establecimiento."
                   #establishmentName>
               </div>
               <div class="form-group">
                 <label for="director">Director del establecimiento</label>
-                <input type="text" class="form-control" id="director" placeholder="Nombre del director" #director>
+                <input type="text" class="form-control" id="director" placeholder="Ingrese el nombre del director." #director>
               </div>
               <div class="form-group">
                 <label for="establishmentAddress">Dirección del establecimiento</label>
-                <input type="text" class="form-control" id="establishmentAddress" placeholder="Dirección"
+                <input type="text" class="form-control" id="establishmentAddress" placeholder="Ingrese la dirección del establecimiento."
                   #establishmentAddress>
               </div>
               <div class="form-group">
                 <label for="establishmentEmail">Correo del establecimiento</label>
-                <input type="email" class="form-control" id="establishmentEmail" placeholder="Ejemplo: email@correo.com"
+                <input type="email" class="form-control" id="establishmentEmail" placeholder="Ingrese el correo del establecimiento. Ejemplo: ejemplo@correo.com"
                   #establishmentEmail>
               </div>
               <div class="form-group">
@@ -104,12 +104,12 @@
               </div>
               <div class="form-group">
                 <label for="teacherName">Profesor encargado</label>
-                <input type="text" class="form-control" id="teacherName" placeholder="Nombre del profesor encargado"
+                <input type="text" class="form-control" id="teacherName" placeholder="Ingrese el nombre del profesor encargado."
                   #teacherName>
               </div>
               <div class="form-group">
                 <label for="teacherEmail">Correo del profesor encargado</label>
-                <input type="email" class="form-control" id="teacherEmail" placeholder="Ejemplo: email@correo.com"
+                <input type="email" class="form-control" id="teacherEmail" placeholder="Ingrese el correo del profesor encargado. Ejemplo: ejemplo@correo.com"
                   #teacherEmail>
               </div>
               <div class="form-group">
@@ -145,7 +145,7 @@
           <div class="card-body">
             <h4 class="card-title">Editar establecimiento</h4>
             <p class="card-description">
-              Ingrese los campos para la modificacion del establecimiento.
+              Ingrese los campos para la modificación del establecimiento.
             </p>
             <form class="forms-sample" #f="ngForm">
               <div class="form-group">
@@ -217,12 +217,12 @@
             <h4 class="card" style="text-align: center">Enviar mensaje</h4>
             <p class="card-description">
               Ingrese los campos para enviar un mensaje a los establecimientos.
-              Si desea enviar una invitacion masiva, llene el campo formulario con un formulario Google.
+              Si desea enviar una invitación masiva, llene el campo formulario con un formulario de Google.
             </p>
             <form class="forms-sample">
               <div class="form-group">
                 <input type="email" class="form-control to" id="to"
-                  placeholder="Destinatarios (No incluidos en la lista de emails de establecimientos)" #to>
+                  placeholder="Destinatarios (No incluidos en la lista de correos de establecimientos)" #to>
               </div>
               <div class="form-group">
                 <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
@@ -244,7 +244,7 @@
       <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
         <div class="spinner-border text-success" role="status">
         </div>
-        <span>Enviando correo, espere porfavor</span>
+        <span>Enviando correo, espere por favor</span>
       </div>
       <button type="button" class="btn btn-success"
         (click)="sendInvitations(to.value, subject.value, content.value, link.value, modal)">Enviar</button>
@@ -296,7 +296,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label label-ident">Correo del Establecimiento:</label>
+                <label class="col-sm-3 col-form-label label-ident">Correo del establecimiento:</label>
                 <div class="col-sm-9">
                   <label class="col-sm-5 col-form-label">{{establishment.email}}</label>
                 </div>
@@ -314,7 +314,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label label-ident">Profesor Encargado:</label>
+                <label class="col-sm-3 col-form-label label-ident">Profesor encargado:</label>
                 <div class="col-sm-9">
                   <label class="col-sm-9 col-form-label">{{establishment.nombre_profesor}}</label>
                 </div>
@@ -324,7 +324,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label label-ident">Correo del Profesor: </label>
+                <label class="col-sm-3 col-form-label label-ident">Correo del profesor: </label>
                 <div class="col-sm-9">
                   <label class="col-sm-9 col-form-label">{{establishment.email_profesor}}</label>
                 </div>
@@ -332,7 +332,7 @@
             </div>
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label label-ident">Teléfono del Profesor: </label>
+                <label class="col-sm-3 col-form-label label-ident">Teléfono del profesor: </label>
                 <div class="col-sm-9">
                   <label class="col-sm-9 col-form-label">{{establishment.telefono_profesor}}</label>
                 </div>

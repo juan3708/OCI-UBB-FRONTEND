@@ -38,7 +38,7 @@ export class ChangeEmailComponent implements OnInit {
           user_id: this.user.id
         };
         Swal.fire({
-          title: 'Espere porfavor...',
+          title: 'Espere por favor...',
           didOpen: () => {
             Swal.showLoading()
           },
@@ -83,7 +83,7 @@ export class ChangeEmailComponent implements OnInit {
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese todos los valores porfavor'
+        title: 'Ingrese todos los valores por favor'
       });
     }
   }

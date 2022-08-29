@@ -62,13 +62,13 @@ export class ContactHomepageComponent implements OnInit {
       } else {
         this.Toast.fire({
           icon: 'error',
-          title: 'Formato de email incorrecto'
+          title: 'Formato de correo incorrecto'
         });
       }
     }else{
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese todo los valores porfavor'
+        title: 'Ingrese todo los valores por favor'
       });
     }
   }

@@ -3,7 +3,8 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title"><b>Gastos</b></h4>
-        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto: ${{cycle.presupuesto |
+        <h5 style="float: left;margin-top: 18px;margin-right: 8px;font-weight: bold;">Presupuesto: ${{cycle.presupuesto
+            |
             currency: 'CLP':""}}</h5>
         <h5 style="float: left;margin-top: 18px;font-weight: bold;">Total gastado: ${{totalCost | currency: 'CLP':""}}
         </h5>
@@ -37,7 +38,7 @@
                             <b>Actividad/Competencia</b>
                         </th>
                         <th>
-                            <b>Acciones</b>
+                            <b>Acción</b>
                         </th>
                     </tr>
                 </thead>
@@ -66,11 +67,12 @@
                                 (click)="openModal(ModalContentDetails);setCost(cost)" title="Ver detalles"><i
                                     class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm"
-                                (click)="openModal(ModalContentEdit);setCost(cost)" title="Editar gastos" *ngIf="cycle.fecha_termino >= currentDate"><i
+                                (click)="openModal(ModalContentEdit);setCost(cost)" title="Editar gastos"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i
                                     class="mdi mdi-grease-pencil"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
-                                (click)="deleteCost(cost.id);setCost(cost)" title="Eliminar gastos" *ngIf="cycle.fecha_termino >= currentDate"><i
-                                    class="mdi mdi-delete"></i></button>
+                                (click)="deleteCost(cost.id);setCost(cost)" title="Eliminar gastos"
+                                *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -141,17 +143,18 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="costsFormCreate">
-                        <h4 class="card-title">Crear Gasto {{cycle.nombre}}</h4>
+                        <h4 class="card-title">Crear gasto {{cycle.nombre}}</h4>
                         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
                             (click)="openModal(ModalListStudentPerDatesAndCycle);" style="float: right; margin: 8px;"><i
-                                class="fa-solid fa-users-line"></i>Ver Asistencias</button>
+                                class="fa-solid fa-users-line"></i>Ver asistencia</button>
                         <p class="card-description">
-                            Ingrese los campos para la creacion del gasto.
+                            Ingrese los campos para la creación del gasto.
                         </p>
                         <div class="form-group">
                             <label for="date">Fecha</label>
                             <input style="width: 50%;" type="date" class="form-control" id="date"
-                                placeholder="aaaa-mm-dd" formControlName="date" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}">
+                                placeholder="aaaa-mm-dd" formControlName="date" min="{{cycle.fecha_inicio}}"
+                                max="{{cycle.fecha_termino}}">
                         </div>
                         <div class="form-group" *ngIf="activities.length >= 1">
                             <label for="activity">Actividad</label>
@@ -186,8 +189,8 @@
                                 <div [formGroupName]="i">
                                     <div>
                                         <label for="name">Nombre</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Nombre"
-                                            formControlName="name">
+                                        <input type="text" class="form-control" id="name"
+                                            placeholder="Ingrese el nombre del detalle." formControlName="name">
                                     </div>
                                     <div>
                                         <label for="priceDetail">Valor</label>
@@ -228,14 +231,15 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body" [formGroup]="costsFormCreate">
-                        <h4 class="card-title">Editar Gasto</h4>
+                        <h4 class="card-title">Editar gasto</h4>
                         <p class="card-description">
-                            Ingrese los campos para la creacion del gasto.
+                            Ingrese los campos para la modificación del gasto.
                         </p>
                         <div class="form-group">
                             <label for="date">Fecha</label>
                             <input style="width: 50%;" type="date" class="form-control" id="date"
-                                placeholder="aaaa-mm-dd" formControlName="date" min="{{cycle.fecha_inicio}}"  max="{{cycle.fecha_termino}}">
+                                placeholder="aaaa-mm-dd" formControlName="date" min="{{cycle.fecha_inicio}}"
+                                max="{{cycle.fecha_termino}}">
                         </div>
                         <div class="form-group" *ngIf="activities.length >= 1">
                             <label for="activity">Actividad</label>
@@ -270,15 +274,14 @@
                                 <div [formGroupName]="i">
                                     <div>
                                         <label for="name">Nombre</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Nombre"
-                                            formControlName="name">
+                                        <input type="text" class="form-control" id="name" formControlName="name">
                                     </div>
                                     <div class="form-group" style="display: none">
                                         <input type="text" class="form-control" id="id" formControlName="id">
                                     </div>
                                     <div>
                                         <label for="priceDetail">Valor</label>
-                                        <input type="number" class="form-control" id="priceDetail" placeholder="$"
+                                        <input type="number" class="form-control" id="priceDetail"
                                             formControlName="priceDetail">
                                     </div>
                                     <br>
@@ -318,7 +321,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Ver asistencia</h4>
                         <p class="card-description">
-                            Seleccione el rango de fecha para buscar
+                            Seleccione un rango de fecha para buscar
                         </p>
                         <form class="forms-sample"
                             style="float: left; display: flex; justify-content: rigth;flex-wrap: wrap;">
@@ -346,7 +349,7 @@
                         <br>
                         <div *ngIf="contentSee == 1">
                             <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
-                                NO HAY ESTUDIANTES CON ASISTENCIAS REGISTRADAS
+                                NO HAY ESTUDIANTES CON ASISTENCIAS REGISTRADAS.
                             </div>
                             <div *ngIf="students.length >= 1">
                                 <div class="table-responsive">
@@ -372,7 +375,7 @@
                                                     <b>Inasistencias</b>
                                                 </th>
                                                 <th>
-                                                    <b>Total Clases</b>
+                                                    <b>Total clases</b>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -467,7 +470,7 @@
                         <div *ngIf="contentSee == 1">
                             <div>
                                 <div *ngIf="costsExport.length == 0" style="text-align: center;font-weight:bold;">
-                                    NO EXISTEN ESTUDIANTES CON ASISTENCIAS REGISTRADAS
+                                    NO EXISTEN ESTUDIANTES CON ASISTENCIAS REGISTRADAS.
                                 </div>
                                 <br>
                                 <div *ngIf="costsExport.length >= 1">
@@ -500,17 +503,17 @@
                                                             No asociado.
                                                         </th>
                                                         <th *ngIf="cost.actividad &&cost.competencia" class="thGastos">
-                                                            Asociado con la Actividad: {{cost.actividad.nombre}} y
-                                                            Competencia:
+                                                            Asociado con la actividad: {{cost.actividad.nombre}} y
+                                                            competencia:
                                                             {{cost.competencia.tipo}}
                                                         </th>
                                                         <th *ngIf="cost.actividad && cost.competencia == null"
                                                             class="thGastos">
-                                                            Asociado con la Actividad: {{cost.actividad.nombre}}
+                                                            Asociado con la actividad: {{cost.actividad.nombre}}
                                                         </th>
                                                         <th *ngIf="cost.competencia && cost.actividad == null"
                                                             class="thGastos">
-                                                            Asociado con la Competencia: {{cost.competencia.tipo}}
+                                                            Asociado con la competencia: {{cost.competencia.tipo}}
                                                         </th>
                                                     </tr>
                                                 </thead>
@@ -521,7 +524,7 @@
                                                         <tr>
 
                                                             <th>
-                                                                <b>Nombre Detalle</b>
+                                                                <b>Nombre detalle</b>
                                                             </th>
                                                             <th>
                                                                 <b>Valor</b>
@@ -560,7 +563,7 @@
                 <div class="spinner-border text-success" role="status">
                 </div>
                 <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere
-                    porfavor.</span>
+                    por favor.</span>
             </div>
             <button type="button" class="btn btn-success" (click)="exportPdf(modal)">Exportar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"

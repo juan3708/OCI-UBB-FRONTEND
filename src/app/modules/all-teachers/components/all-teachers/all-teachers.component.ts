@@ -147,7 +147,7 @@ export class AllTeachersComponent implements OnInit, OnDestroy, AfterViewInit {
       id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar este profesor?',
+      title: '¿Está seguro que desea eliminar este profesor?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

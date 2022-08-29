@@ -111,10 +111,10 @@
     <div class="col-md-4 stretch-card grid-margin">
       <div class="card bg-gradient-success card-img-holder text-white">
         <div class="card-body">
-          <h4 class="font-weight-normal mb-3">Total de Gastos
+          <h4 class="font-weight-normal mb-3">Total de gastos
           </h4>
           <h2 class="mb-5">${{totalGastos | currency: 'CLP': ''}}</h2>
-          <h6 class="card-text">Presupuesto restante: ${{presupuestoCiclo - totalGastos| currency: 'CLP':''}}</h6>
+          <h4 class="card-text">Presupuesto restante: ${{presupuestoCiclo - totalGastos| currency: 'CLP':''}}</h4>
           <a routerLink="/costs" style="color: white;"><i class="mdi mdi-keyboard-tab mdi-24px float-right"></i>
           </a>
         </div>
@@ -159,9 +159,9 @@
           <li class="nav-item" role="presentation">
             <a class="nav-link" id="cost-tab" data-toggle="tab" data-target="#cost" role="tab"
               aria-controls="cost" aria-selected="false">
-              <h4  *ngIf="multi.length == 3">Presupuesto y total gastado en comparación de los ultimos
+              <h4  *ngIf="multi.length == 3">Presupuesto y total gastado en comparación a los últimos
                 dos ciclos</h4>
-              <h4  *ngIf="multi.length == 2">Presupuesto y total gastado en comparación con el ultimo
+              <h4  *ngIf="multi.length == 2">Presupuesto y total gastado en comparación al último
                 ciclo</h4>
               <h4  *ngIf="multi.length == 1 || multi.length == 0">Presupuesto y total gastado</h4>
             </a>
@@ -504,7 +504,7 @@
 <div *ngIf="user.rol.nombre == 'profesor' || user.rol.nombre == 'ayudante'">
 
   <!-- ======= Blog Section ======= -->
-  <h1> Noticias</h1>
+  <h1>Noticias</h1>
   <section id="blog" class="blog">
 
     <div class="container" data-aos="fade-up">

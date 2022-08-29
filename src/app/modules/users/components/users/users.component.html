@@ -64,7 +64,7 @@
                             </div>
                         </td>
                         <td>
-                            {{user.rut  | rut}}
+                            {{user.rut | rut}}
                         </td>
                         <td>
                             {{user.nombre | titlecase}}
@@ -112,27 +112,28 @@
                     <div class="card-body">
                         <h4 class="card-title">Crear usuario</h4>
                         <p class="card-description">
-                            Ingrese los campos para la creacion del usuario.
+                            Ingrese los campos para la creación del usuario.
                         </p>
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="rut">RUT</label>
                                 <input type="text" class="form-control" id="rut"
-                                    placeholder="Ingrese su rut sin puntos y con guion. Ej: 12345678-9" #rut>
+                                    placeholder="Ingrese el rut sin puntos y con guion. Ej: 12345678-9" #rut>
                             </div>
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" id="name" placeholder="Ingrese su Nombre" #name>
+                                <input type="text" class="form-control" id="name" placeholder="Ingrese el nombre."
+                                    #name>
                             </div>
                             <div class="form-group">
                                 <label for="surname">Apellidos</label>
                                 <input type="text" class="form-control" id="surname"
-                                    placeholder="Ingrese sus y Apellidos" #surname>
+                                    placeholder="Ingrese los apellidos." #surname>
                             </div>
                             <div class="form-group">
                                 <label for="email">Correo</label>
                                 <input type="email" class="form-control" id="email"
-                                    placeholder="Ingrese su correo. Ej: correo@email.cl" #email>
+                                    placeholder="Ingrese un correo. Ejemplo: ejemplo@correo.com" #email>
                             </div>
                             <div class="form-group">
                                 <label for="rol">Rol</label>
@@ -151,12 +152,14 @@
                                 <div class="form-group">
                                     <label for="faculty">Facultad</label>
                                     <input type="faculty" class="form-control" id="faculty"
-                                        placeholder="Ejemplo: Facultad de salud" name="faculty" [(ngModel)]="faculty">
+                                        placeholder="Ingrese una facultad. Ejemplo: Facultad de salud" name="faculty"
+                                        [(ngModel)]="faculty">
                                 </div>
                                 <div class="form-group">
                                     <label for="modality">Modalidad</label>
                                     <input type="modality" class="form-control" id="modality"
-                                        placeholder="Ejemplo: Jornada completa" name="modality" [(ngModel)]="modality">
+                                        placeholder="Ingrese una modalidad. Ejemplo: Jornada completa" name="modality"
+                                        [(ngModel)]="modality">
                                 </div>
                             </div>
                         </form>
@@ -186,29 +189,28 @@
                     <div class="card-body">
                         <h4 class="card-title">Editar usuario</h4>
                         <p class="card-description">
-                            Ingrese los campos para la modificacion del usuario.
+                            Ingrese los campos para la modificación del usuario.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
                                 <label for="rut">RUT</label>
-                                <input type="text" class="form-control"
-                                    placeholder="Ingrese su rut sin puntos y con guion. Ej: 12345678-9"
-                                    [(ngModel)]="user.rut" name="rut" #rut="ngModel">
+                                <input type="text" class="form-control" [(ngModel)]="user.rut" name="rut"
+                                    #rut="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="name">Nombre</label>
-                                <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="user.nombre"
-                                    name="name" #name="ngModel">
+                                <input type="text" class="form-control" [(ngModel)]="user.nombre" name="name"
+                                    #name="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="surname">Apellidos</label>
-                                <input type="text" class="form-control" placeholder="Apellidos"
-                                    [(ngModel)]="user.apellidos" name="surname" #surname="ngModel">
+                                <input type="text" class="form-control" [(ngModel)]="user.apellidos" name="surname"
+                                    #surname="ngModel">
                             </div>
                             <div class="form-group">
                                 <label for="email">Correo</label>
-                                <input type="email" class="form-control" id="email"
-                                    placeholder="Ingrese su correo. Ej: correo@email.cl"  [(ngModel)]="user.email" name="email" #email="ngModel">
+                                <input type="email" class="form-control" id="email" [(ngModel)]="user.email"
+                                    name="email" #email="ngModel">
                             </div>
                             <div class="form-group" *ngIf="user.admin == 0">
                                 <label for="rol">Rol</label>
@@ -240,42 +242,43 @@
 <!-- Modal Mail starts -->
 <ng-template class="modal fade" #EmailModal let-modal>
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-12 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card" style="text-align: center">Enviar mensaje</h4>
-              <p class="card-description">
-                Ingrese los campos para enviar un mensaje al usuario: {{user.nombre}} {{user.apellidos}}
-              </p>
-              <form class="forms-sample">
-                <div class="form-group">
-                  <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)" size="6" #subject>
+        <div class="modal-header">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card" style="text-align: center">Enviar mensaje</h4>
+                        <p class="card-description">
+                            Ingrese los campos para enviar un mensaje al usuario: {{user.nombre}} {{user.apellidos}}
+                        </p>
+                        <form class="forms-sample">
+                            <div class="form-group">
+                                <input type="text" class="form-control subject" id="subject" placeholder="Asunto (*)"
+                                    size="6" #subject>
+                            </div>
+                            <div class="form-group">
+                                <textarea type="text" class="form-control content" id="content" #content rows="20"
+                                    placeholder="(*)"></textarea>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <textarea type="text" class="form-control content" id="content" #content rows="20"
-                    placeholder="(*)"></textarea>
-                </div>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
-          <div class="spinner-border text-success" role="status">
-          </div>
-          <span>Enviando correo, espere porfavor</span>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
+                <div class="spinner-border text-success" role="status">
+                </div>
+                <span>Enviando correo, espere por favor</span>
+            </div>
+            <button type="button" class="btn btn-success"
+                (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
         </div>
-        <button type="button" class="btn btn-success"
-          (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
-        <button type="button" class="btn btn-light" data-dismiss="modal" (click)="modal.close()">Cancelar</button>
-      </div>
     </div>
-  </ng-template>
-  <!-- Modal Mail Ends -->
+</ng-template>
+<!-- Modal Mail Ends -->

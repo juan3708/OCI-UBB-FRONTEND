@@ -68,3 +68,7 @@ h5{
   text-align: center;
   border: transparent;
 }
+
+.custom-file-label::after {
+  content: "Buscar" !important; 
+}

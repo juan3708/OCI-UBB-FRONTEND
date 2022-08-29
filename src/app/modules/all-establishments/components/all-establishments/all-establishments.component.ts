@@ -70,7 +70,7 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
     if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+        title: 'Por favor llenar todo los campos con asterisco (*)'
       });
     } else {
       this.establishments.forEach(e => {
@@ -108,7 +108,7 @@ export class AllEstablishmentsComponent implements OnInit, OnDestroy, AfterViewI
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Formato de email incorrecto'
+            title: 'Formato de correo incorrecto'
           });
         }
       } else {

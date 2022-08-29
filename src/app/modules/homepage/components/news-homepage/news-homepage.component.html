@@ -125,6 +125,8 @@
                                 class="btn btn-gradient-success btn-rounded btn-sm btn-see search-word"
                                 (click)="listNewsForWord(word.value)" style="margin-left:8px ;"><i
                                     class="fa-solid fa-magnifying-glass"></i></button>
+                                    <br>
+                                    <br>
 
                             <!-- </div> -->
                             <!-- End sidebar search form-->
@@ -142,7 +144,7 @@
                 </div> -->
                             <!-- End sidebar categories-->
 
-                            <h3 class="sidebar-title">Post Recientes</h3>
+                            <h3 class="sidebar-title">Post recientes</h3>
                             <div class="sidebar-item recent-posts">
                                 <div *ngIf="recentPost.length >=1">
                                     <div class="post-item clearfix" *ngFor="let post of recentPost">
@@ -192,7 +194,7 @@
     <!-- End #main -->
 
     <!-- ======= Footer ======= -->
-    <app-footer-homepage></app-footer-homepage>>
+    <app-footer-homepage></app-footer-homepage>
     <!-- End Footer -->
 
 </body>

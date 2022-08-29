@@ -113,7 +113,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
       ciclo_id: this.cycle.id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -221,7 +221,7 @@ export class AssistantsComponent implements OnInit, OnDestroy, AfterViewInit, Do
       id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar este ayudante?',
+      title: '¿Está seguro que desea eliminar este ayudante?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

@@ -222,7 +222,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
       establecimiento_id: id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -293,7 +293,7 @@ export class EstablishmentsComponent implements OnInit, OnDestroy, AfterViewInit
     if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+        title: 'Por favor llenar todo los campos con asterisco(*)'
       });
     } else {
       this.establishments.forEach(e => {

@@ -242,7 +242,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -274,7 +274,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       ciclo_id: this.cycle.id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -344,7 +344,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       clase_id: id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -501,7 +501,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       clase_id: id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar esta clase?',
+      title: '¿Está seguro que desea eliminar esta clase?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -548,7 +548,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor seleccione un nivel',
+        title: 'Por favor seleccione un nivel',
       });
     }
   }
@@ -587,7 +587,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       alumnos_id: student
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desasignar al alumno de la clase?',
+      title: '¿Está seguro que desea desasignar al alumno de la clase?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -623,7 +623,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       profesores_id: teacher
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desasignar al profesor de la clase?',
+      title: '¿Está seguro que desea desasignar al profesor de la clase?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -659,7 +659,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
       ayudantes_id: assistant
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desasignar al ayudante de la clase?',
+      title: '¿Está seguro que desea desasignar al ayudante de la clase?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -704,7 +704,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor seleccione un alumno',
+        title: 'Por favor seleccione un alumno',
       });
     }
   }

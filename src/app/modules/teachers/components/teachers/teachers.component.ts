@@ -93,7 +93,7 @@ export class TeachersComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
       ciclo_id: this.cycle.id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },

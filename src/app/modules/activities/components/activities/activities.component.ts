@@ -211,7 +211,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -373,7 +373,7 @@ export class ActivitiesComponent implements OnInit, OnDestroy, AfterViewInit, Do
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese un detalle porfavor'
+        title: 'Ingrese un detalle por favor'
       });
     }
 

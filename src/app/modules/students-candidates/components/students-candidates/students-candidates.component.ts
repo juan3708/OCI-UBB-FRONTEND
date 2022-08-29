@@ -169,7 +169,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       ciclo_id: this.cycle.id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -253,7 +253,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Seleccione un archivo porfavor',
+        title: 'Seleccione un archivo por favor',
       });
     }
   }
@@ -275,7 +275,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'El establecimiento ha superado sus cupos maximos.',
+        title: 'El establecimiento ha superado sus cupos máximos',
       });
     }
   }
@@ -284,7 +284,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
     if (this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'info',
-        title: 'No se efectuaron mas cambios',
+        title: 'No se efectuaron más cambios',
       });
       this.clearForm();
       this.getCycle(this.cycle.id);
@@ -360,7 +360,7 @@ export class StudentsCandidatesComponent implements OnInit, OnDestroy, AfterView
       participante: 0
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desincribir al alumno?',
+      title: '¿Está seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

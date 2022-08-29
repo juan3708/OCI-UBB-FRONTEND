@@ -6,12 +6,12 @@
         <button type="button" style="float: right; margin: 8px;" class="btn btn-gradient-info btn-rounded btn-sm"
             (click)="openModal(ModalContent)" title="Registrar Clase"
             *ngIf="user.rol.nombre != 'ayudante' && cycle.fecha_termino >= currentDate">Crear
-            Clase</button>
+            clase</button>
         <button type="button" class="btn btn-gradient-success btn-rounded btn-sm"
             (click)="getStudentAssistancePerCycle(ModalListStudentsAssistance)" style="float: right; margin: 8px;"
             *ngIf="lessons.length >=1 && (user.rol.nombre != 'profesor' && user.rol.nombre != 'ayudante')"
             title="Ver Asistencia"><i class="fa-solid fa-users-line"></i>Ver
-            Asistencias</button>
+            asistencia</button>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
             </div>
@@ -113,7 +113,7 @@
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="content">Contenido</label>
-                                <textarea class="form-control" id="content" rows="4" #content></textarea>
+                                <textarea class="form-control" id="content" rows="4" #content placeholder="Ingrese el contenido de la clase."></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="lessonDate">Fecha</label>
@@ -204,7 +204,7 @@
                             </div>
                         </div>
                         <div *ngIf="studentsPerLevel.length == 0">
-                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES ASOCIADOS AL NIVEL</h4>
+                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES ASOCIADOS AL NIVEL.</h4>
                         </div>
                         <br>
                         <hr>
@@ -258,7 +258,7 @@
                             </form>
                         </div>
                         <div *ngIf="students.length == 0">
-                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES PARTICIPANTES DEL CICLO</h4>
+                            <h4 style="font-weight:bold;">NO EXISTEN ESTUDIANTES PARTICIPANTES EN EL CICLO.</h4>
                         </div>
                     </div>
                 </div>
@@ -410,7 +410,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Registrar Asistencia</h4>
+                        <h4 class="card-title">Registrar asistencia</h4>
                         <form class="forms-sample">
                             <div class="form-group">
                                 <label for="studentList">Estudiantes</label>
@@ -502,7 +502,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Editar clase</h4>
                         <p class="card-description">
-                            Ingrese los campos para la modificacion la clase.
+                            Ingrese los campos para la modificación la clase.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
@@ -554,7 +554,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Informacion de la clase con fecha {{lesson.fecha}}</h4>
+                        <h4 class="card">Información de la clase con fecha {{lesson.fecha | date:"dd-MM-yyyy"}}</h4>
                         <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active " id="information-tab" data-toggle="tab" href="#information"
@@ -571,7 +571,7 @@
                                 <a class="nav-link" id="teachersAndAssistants-tab" data-toggle="tab"
                                     href="#teachersAndAssistants" role="tab" aria-controls="teachersAndAssistants"
                                     aria-selected="false" style="box-sizing: border-box;"><i
-                                        class="fa-solid fa-person-chalkboard"></i> Profesor(es) y Ayudante(s)</a>
+                                        class="fa-solid fa-person-chalkboard"></i> Profesor(es) y ayudante(s)</a>
                             </li>
                         </ul>
                         <div class="tab-content" id="myTabContent">
@@ -744,7 +744,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Asignar profesor(es) y ayudante(s) a la clase con fecha {{lesson.fecha}}</h4>
+                        <h4 class="card">Asignar profesor(es) y ayudante(s) a la clase con fecha {{lesson.fecha | date:"dd-MM-yyyy"}}</h4>
                         <form action="">
                             <div class="col-12 grid-margin">
                                 <div class="card">
@@ -987,7 +987,7 @@
             <div class="col-12 stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card">Asistencias general de la OCI: {{cycle.nombre}}</h4>
+                        <h4 class="card">Asistencia general de la OCI: {{cycle.nombre}}</h4>
                         <button type="button" style="float: right; margin: 8px;"
                             class="btn btn-gradient-info btn-rounded btn-sm export-pdf" (click)="exportPdf()"
                             style="float: right; margin: 8px;">Exportar a PDF <i
@@ -997,16 +997,16 @@
                             <div class="spinner-border text-success" role="status">
                             </div>
                             <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere
-                                porfavor.</span>
+                                por favor.</span>
                         </div>
                         <div class="table-responsive">
                             <thead class="table table-bordered">
                                 <tr>
-                                    <th style="border: transparent;">Establecimiento totales: {{establishments.length}}
+                                    <th style="border: transparent;">Establecimientos totales: {{establishments.length}}
                                     </th>
 
                                     <th class="thGastos">
-                                        Total estudiantes: {{totalStudents}}
+                                        Total de estudiantes: {{totalStudents}}
                                     </th>
 
                                     <th class="thGastos">
@@ -1014,7 +1014,7 @@
                                         {{establishmentMinStudent.alumnos.length}} estudiantes
                                     </th>
                                     <th class="thGastos">
-                                        Establecimiento con mas estudiantes: {{establishmentMaxStudent.nombre}} con
+                                        Establecimiento con más estudiantes: {{establishmentMaxStudent.nombre}} con
                                         {{establishmentMaxStudent.alumnos.length}} estudiantes
                                     </th>
                                 </tr>
@@ -1049,7 +1049,7 @@
                                                         <b>Inasistencias</b>
                                                     </th>
                                                     <th>
-                                                        <b>Total Clases</b>
+                                                        <b>Total clases</b>
                                                     </th>
                                                     <th>
                                                         <b>Ver clases</b>

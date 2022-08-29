@@ -145,7 +145,7 @@ export class AllAssistantsComponent implements OnInit, OnDestroy, AfterViewInit 
       id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar este ayudante?',
+      title: '¿Está seguro que desea eliminar este ayudante?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

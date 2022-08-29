@@ -18,8 +18,9 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
         <img src="assets/images/logo_web.png" alt="" class="img-fluid">
-        <img style="padding-left:20px; width: 115px;" src="assets/images/Escudo-UBB-cropped.svg" alt="" class="img-fluid">
-    </a>
+        <img style="padding-left:20px; width: 115px;" src="assets/images/Escudo-UBB-cropped.svg" alt=""
+          class="img-fluid">
+      </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
         aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -44,29 +45,31 @@
 
   <div class="d-flex align-items-center auth px-0" style="background: #f9f9f9 !important">
     <div class="row w-100 mx-0">
-      <div class="col-lg-4 mx-auto" >
-        <div class="auth-form-light text-left py-5 px-4 px-sm-5"style="background: #f9f9f9;">
+      <div class="col-lg-4 mx-auto">
+        <div class="auth-form-light text-left py-5 px-4 px-sm-5" style="background: #f9f9f9;">
           <div class="brand-logo" style="margin-bottom: 0px !important;text-align: center;">
             <img src="assets/images/escudo_color_gradiente.png" alt="logo">
             <img src="assets/images/logo_web.png" alt="logo">
           </div>
           <h4 style="color: black !important;font-weight: bold;">Hola! Bienvenido.</h4>
-          <h6 class="font-weight-light" style="color: black !important;">Inicie sesión para continuar.</h6>
+          <h6 class="font-weight-light" style="color: black !important;">Inicia sesión para continuar.</h6>
           <form class="pt-3">
             <div class="form-group">
               <input type="text" class="form-control form-control-lg" id="rut"
                 placeholder="Ingrese su rut, sin puntos y con guion. Ej: 12345678-9" #rut>
             </div>
             <div class="form-group">
-              <input type="password" class="form-control form-control-lg" id="password" placeholder="Contraseña"
+              <input type="password" class="form-control form-control-lg" id="password" placeholder="Ingrese su contraseña."
                 #password>
             </div>
             <div class="mt-3">
               <button type="button" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
                 (click)="login(rut.value, password.value)">INICIAR SESIÓN</button>
             </div>
-            <button type="button" class="btn reset-pass" (click)="openModal(ModalContent);isError=false">¿Olvidó su
-              contraseña?</button>
+            <div style="text-align: center; padding-top: 15px;">
+              <a type="button" class="btn reset-pass" (click)="openModal(ModalContent);isError=false">¿Olvidó su
+                contraseña?</a>
+            </div>
             <div class="mt-3" *ngIf="isError">
               <div class="alert alert-danger" role="alert">
                 {{error}}
@@ -80,18 +83,21 @@
       </div>
     </div>
   </div>
-</body>
-<!-- ======= Footer ======= -->
-<footer id="footer">
-  <div class="container">
-    <div class="copyright">
-      &copy; Copyright OCI UBB. Todos los derechos reservados
-      <a href="#" class="instagram" style="padding-left: 5px;"><i class="fa-brands fa-instagram" style="color: white;width: 10px;height: 10px;"></i></a>
-      <a href="#" class="facebook" style="padding-left: 10px;"><i class="fa-brands fa-facebook" style="color: white;width: 10px;height: 10px;"></i></a>
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright OCI UBB. Todos los derechos reservados
+        <a href="#" class="instagram" style="padding-left: 5px;"><i class="fa-brands fa-instagram"
+            style="color: white;width: 10px;height: 10px;"></i></a>
+        <a href="#" class="facebook" style="padding-left: 10px;"><i class="fa-brands fa-facebook"
+            style="color: white;width: 10px;height: 10px;"></i></a>
+      </div>
     </div>
-  </div>
-</footer>
-<!-- End Footer -->
+  </footer>
+  <!-- End Footer -->
+</body>
+
 </html>
 
 <!-- Modal Create starts  -->

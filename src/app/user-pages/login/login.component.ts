@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
           if (resp.code == 200) {
             this.Toast.fire({
               icon: 'success',
-              title: 'Se ha iniciado sesion correctamente'
+              title: 'Se ha iniciado sesión correctamente'
             });
             this.userPagesService.saveToken(resp.access_token);
             this.router.navigateByUrl("/dashboard");
@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
       }
       this.isError = false;
       Swal.fire({
-        title: 'Espere porfavor...',
+        title: 'Espere por favor...',
         didOpen: () => {
           Swal.showLoading()
         },

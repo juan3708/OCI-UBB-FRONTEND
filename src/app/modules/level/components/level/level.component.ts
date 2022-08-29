@@ -174,7 +174,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -320,7 +320,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           modal.dismiss();
           this.Toast.fire({
             icon: 'success',
-            title: 'Se asigno correctamente el nivel'
+            title: 'Se asignó correctamente el nivel'
           });
           this.clearForm();
           this.getCycle(this.cycle.id);
@@ -340,7 +340,7 @@ export class LevelComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       alumno_id: student
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desincribir al alumno?',
+      title: '¿Está seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

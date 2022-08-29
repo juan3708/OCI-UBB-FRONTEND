@@ -57,11 +57,10 @@
                         <td>
                             <button type="button" class="btn btn-gradient-info btn-rounded btn-sm btn-see"
                                 (click)="openModal(ModalContentStatistics);setStudent(student);getLastCyclesPerStudent(student.id)"
-                                title="Ver estadisticas de los ultimos dos ciclos"><i class="mdi mdi-eye"></i></button>
+                                title="Ver estadísticas de los últimos dos ciclos"><i class="mdi mdi-eye"></i></button>
                             <button type="button" class="btn btn-gradient-danger btn-rounded btn-sm"
                                 (click)="deleteStudent(student.id)" title="Eliminar estudiante"
                                 *ngIf="cycle.fecha_termino >= currentDate"><i class="mdi mdi-delete"></i></button>
-
                         </td>
                     </tr>
                 </tbody>
@@ -99,7 +98,7 @@
                             Puntajes</a>
                     </li>
                 </ul>
-                <!-- TAB INFORMACION ALUMNO -->
+                <!-- TAB INFORMACIÓN ALUMNO -->
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
                         <div class="col-12 grid-margin">
@@ -160,7 +159,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label label-ident">Correo
-                                                    electronico:</label>
+                                                    electrónico:</label>
                                                 <div class="col-sm-9">
                                                     <label
                                                         class="col-sm-9 col-form-label label-result">{{student.email}}</label>
@@ -172,7 +171,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Telefono: </label>
+                                                <label class="col-sm-3 col-form-label label-ident">Teléfono: </label>
                                                 <div class="col-sm-9">
                                                     <label
                                                         class="col-sm-9 col-form-label label-result">{{student.telefono}}</label>
@@ -203,7 +202,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label label-ident">Telefono del
+                                                <label class="col-sm-3 col-form-label label-ident">Teléfono del
                                                     apoderado: </label>
                                                 <div class="col-sm-9">
                                                     <label
@@ -320,7 +319,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci1.PorcentajeAsistencia == -1"
-                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO</div>
+                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO.</div>
                             </div>
                             <!-- SECOND TAB -->
                             <div class="tab-pane fade" id="second" role="tabpanel" aria-labelledby="second-tab">
@@ -397,7 +396,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci2.PorcentajeAsistencia == -1"
-                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO</div>
+                                    style="text-align: center;font-weight:bold;"> ESTUDIANTE NO INSCRITO.</div>
                             </div>
                         </div>
                     </div>
@@ -424,7 +423,7 @@
                                         <h4 style="  font-weight: bold !important; text-align: center !important;">
                                             Competencias
                                             asociadas al
-                                            estudiante.</h4>
+                                            estudiante</h4>
                                         <div class="card-body text-primary">
                                             <div class="table-responsive">
                                                 <table class="table table-striped" style="text-align: center;">
@@ -466,7 +465,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci1.Competencias.length == 0" style="text-align: center;font-weight:bold;">
-                                    ESTUDIANTE NO INSCRITO</div>
+                                    ESTUDIANTE NO INSCRITO.</div>
                             </div>
                             <!-- SEGUNDO TAB -->
                             <div class="tab-pane fade" id="secondScore" role="tabpanel"
@@ -476,7 +475,7 @@
                                         <h4 style="  font-weight: bold !important; text-align: center !important;">
                                             Competencias
                                             asociadas al
-                                            estudiante.</h4>
+                                            estudiante</h4>
                                         <div class="card-body text-primary">
                                             <div class="table-responsive">
                                                 <table class="table table-striped" style="text-align: center;">
@@ -518,7 +517,7 @@
                                     </div>
                                 </div>
                                 <div *ngIf="oci2.Competencias.length == 0" style="text-align: center;font-weight:bold;">
-                                    ESTUDIANTE NO INSCRITO</div>
+                                    ESTUDIANTE NO INSCRITO.</div>
                             </div>
                         </div>
                     </div>
@@ -545,7 +544,7 @@
                     <div class="card-body">
                         <h4 class="card">Inscribir estudiantes a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Ingrese los estudiantes que participarán de las OCI.
+                            Ingrese los estudiantes que participarán de las OCI
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <ngb-accordion [closeOthers]="false" activeIds="collapse-12" class="accordion-solid-header">
@@ -555,7 +554,7 @@
                                     <ng-template ngbPanelContent>
                                         <div class="table-responsive"
                                             *ngIf="establishments[indexEstablishments].alumnosParticipantes.length >=1">
-                                            <h5>Estudiantes Participantes</h5>
+                                            <h5>Estudiantes participantes</h5>
                                             <table class="table table-striped" style="text-align: center;">
                                                 <thead class="table table-bordered">
                                                     <tr>
@@ -606,7 +605,7 @@
                                         </div>
                                         <br>
                                         <div class="table-responsive">
-                                            <h5>Estudiantes Inscritos</h5>
+                                            <h5>Estudiantes inscritos</h5>
                                             <table class="table table-striped" style="text-align: center;">
                                                 <thead class="table table-bordered">
                                                     <tr>
@@ -691,7 +690,7 @@
                     <div class="card-body">
                         <h4 class="card">Cargar estudiantes a {{cycle.nombre}}</h4>
                         <p class="card-description">
-                            Cargue el archivo con los datos de los estudiantes.
+                            Cargue el archivo con los datos de los estudiantes
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="custom-file">
@@ -709,7 +708,7 @@
             <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
                 <div class="spinner-border text-success" role="status">
                 </div>
-                <span>Cargando archivo, espere porfavor</span>
+                <span>Cargando archivo, espere por favor</span>
             </div>
             <button type="button" class="btn btn-success" (click)="chargeStudentPerForm(modal)">Cargar</button>
             <button type="button" class="btn btn-light" data-dismiss="modal"

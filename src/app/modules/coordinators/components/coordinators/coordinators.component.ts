@@ -146,7 +146,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy, AfterViewInit {
       id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar este coordinador?',
+      title: '¿Está seguro que desea eliminar este coordinador?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

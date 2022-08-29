@@ -78,13 +78,13 @@
                             <div class="form-group">
                                 <label for="body">Cuerpo de la noticia</label>
                                 <textarea class="form-control" id="body" rows="15"
-                                    placeholder="Ingrese cuerpo de la noticia." #body></textarea>
+                                    placeholder="Ingrese el cuerpo de la noticia." #body></textarea>
                             </div>
-                            <label for="body">Adjunte imagen(es)</label>
+                            <label for="body">Adjuntar una o varias imágenes</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="customFile" name="myfile"
                                     (change)="onFileSelected($event)" multiple accept=".png, .jpg, .svg">
-                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione
+                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccionar
                                     archivo(s)'}}</label>
                             </div>
                         </form>
@@ -116,7 +116,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Editar noticia</h4>
                         <p class="card-description">
-                            Ingrese los campos para la modificacion del la noticia.
+                            Ingrese los campos para la modificación del la noticia.
                         </p>
                         <form class="forms-sample" #f="ngForm">
                             <div class="form-group">
@@ -134,7 +134,7 @@
                                 <textarea class="form-control" id="body" rows="15" [(ngModel)]="news.cuerpo" name="body"
                                     #body="ngModel"></textarea>
                             </div>
-                            <label for="body">Imagenes: </label>
+                            <label for="body">Imágenes: </label>
                             <div *ngIf="images.length >=1">
                                 <div class="table-responsive">
                                     <table style="text-align: left;border: hidden;">
@@ -161,11 +161,12 @@
                             <div *ngIf="images.length == 0" style="text-align: center;font-weight: bold;">
                                 <h5>No hay imagenes asociadas.</h5>
                             </div>
-                            <label for="body">Adjuntar imagen(es)</label>
+                            <br>
+                            <label for="body">Adjuntar una o varias imágenes</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="customFile" name="myfile"
                                     (change)="onFileSelected($event)" multiple accept=".png, .jpg, .svg">
-                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccione
+                                <label class="custom-file-label" for="customFile">{{fileNames || 'Seleccionar
                                     archivo(s)'}}</label>
                             </div>
                         </form>

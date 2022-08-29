@@ -207,7 +207,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
           title: 'Ciclo creado correctamente'
         });
         await new Promise(f => setTimeout(f, 1000));
-        Swal.fire('Se recargara el sistema para mejor funcionamiento');
+        Swal.fire('Se recargará el sistema para mejor funcionamiento');
         await new Promise(f => setTimeout(f, 1000));
         window.location.reload();
 
@@ -233,7 +233,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -274,7 +274,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     }
 
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -342,8 +342,8 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       id
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar este ciclo?',
-      text: "No se puede revertir esta operacion.",
+      title: '¿Está seguro que desea eliminar este ciclo?',
+      text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
@@ -413,14 +413,14 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     if (this.establishmentsPerCycleId.length < 1 && this.establishmentsPerCycle.length < 1) {
       this.Toast.fire({
         icon: 'info',
-        title: 'No se efectuaron cambios.'
+        title: 'No se efectuaron cambios'
       });
       this.assingCycle(this.cycle.id)
     } else {
       if (this.establishmentsPerCycleId.length == 0) {
         this.Toast.fire({
           icon: 'info',
-          title: 'No se efectuaron mas cambios'
+          title: 'No se efectuaron más cambios'
         });
         modal.dismiss();
         this.clearForm();
@@ -458,7 +458,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
       establecimiento_id: establishment
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar al establecimiento de las OCI?',
+      title: '¿Está seguro que desea eliminar el establecimiento de las OCI?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -526,7 +526,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
     if (subject == '' || content == '') {
       this.Toast.fire({
         icon: 'error',
-        title: 'Porfavor rellenar todo los campos con asterisco(*)'
+        title: 'Por favor llenar todo los campos con asterisco(*)'
       });
     } else {
       this.establishments.forEach(e => {
@@ -564,7 +564,7 @@ export class CycleComponent implements OnInit, OnDestroy, AfterViewInit, DoCheck
         } else {
           this.Toast.fire({
             icon: 'error',
-            title: 'Formato de email incorrecto'
+            title: 'Formato de correo incorrecto'
           });
         }
       } else {

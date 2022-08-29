@@ -78,7 +78,7 @@
           <div class="card-body">
             <h4 class="card-title">Editar establecimiento</h4>
             <p class="card-description">
-              Ingrese los campos para la modificacion del establecimiento.
+              Ingrese los campos para la modificación del establecimiento.
             </p>
             <form class="forms-sample" #f="ngForm">
               <div class="form-group">
@@ -169,7 +169,7 @@
       <div class="d-flex justify-content-center" *ngIf="spinnerSee == true">
         <div class="spinner-border text-success" role="status">
         </div>
-        <span>Enviando correo, espere porfavor</span>
+        <span>Enviando correo, espere por favor</span>
       </div>
       <button type="button" class="btn btn-success"
         (click)="sendMessages(subject.value, content.value, modal)">Enviar</button>
@@ -193,8 +193,10 @@
         <div class="card">
           <div class="card-body">
             <h4 class="card">Asistencia de los estudiantes del establecimiento en el ciclo: {{cycle.nombre}}</h4>
+            <br>
+            <br>
             <div *ngIf="students.length == 0" style="text-align: center;font-weight:bold;">
-              NO EXISTEN ESTUDIANTES CON ASISTENCIAS REGISTRADAS
+              NO EXISTEN ESTUDIANTES CON ASISTENCIAS REGISTRADAS.
             </div>
             <button type="button" style="float: right; margin: 8px;"
               class="btn btn-gradient-info btn-rounded btn-sm export-pdf" (click)="exportPdf()"
@@ -203,7 +205,7 @@
               style="float: right;padding-top: 10px;">
               <div class="spinner-border text-success" role="status">
               </div>
-              <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere porfavor.</span>
+              <span style="padding-top: 7px;padding-left: 6px;">Generando documento, espere por favor.</span>
             </div>
             <div *ngIf="students.length >= 1">
               <div class="table-responsive">
@@ -229,7 +231,7 @@
                         <b>Inasistencias</b>
                       </th>
                       <th>
-                        <b>Total Clases</b>
+                        <b>Total clases</b>
                       </th>
                       <th>
                         <b>Ver clases</b>

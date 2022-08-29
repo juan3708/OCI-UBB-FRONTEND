@@ -206,7 +206,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
       alumno_id: this.student.id
     }
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -288,7 +288,7 @@ export class StudentsComponent implements OnInit, OnDestroy, AfterViewInit, DoCh
       participante: 0
     };
     Swal.fire({
-      title: '¿Esta seguro que desea desincribir al alumno?',
+      title: '¿Está seguro que desea desincribir al alumno?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,

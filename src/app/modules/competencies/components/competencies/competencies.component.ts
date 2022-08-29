@@ -237,7 +237,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
       id
     };
     Swal.fire({
-      title: 'Espere porfavor...',
+      title: 'Espere por favor...',
       didOpen: () => {
         Swal.showLoading()
       },
@@ -298,7 +298,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     if (this.studentsAdd.length == 0) {
       this.Toast.fire({
         icon: 'info',
-        title: 'No se efectuaron mas cambios'
+        title: 'No se efectuaron más cambios'
       });
       modal.dismiss();
       this.clearForm();
@@ -334,7 +334,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
       alumno_id: student
     };
     Swal.fire({
-      title: '¿Esta seguro que desea eliminar al alumno de la competencia?',
+      title: '¿Está seguro que desea eliminar al alumno de la competencia?',
       text: "No se puede revertir esta operación.",
       icon: 'warning',
       showCancelButton: true,
@@ -539,7 +539,7 @@ export class CompetenciesComponent implements OnInit, OnDestroy, AfterViewInit, 
     } else {
       this.Toast.fire({
         icon: 'error',
-        title: 'Ingrese un detalle porfavor'
+        title: 'Ingrese un detalle por favor'
       });
     }
   }
