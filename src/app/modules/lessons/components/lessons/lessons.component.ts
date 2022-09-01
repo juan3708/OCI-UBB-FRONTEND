@@ -726,6 +726,7 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
 
   async chargeAssistance(lesson, ModalContent) {
     this.getLesson(lesson, ModalContent);
+    await new Promise(f => setTimeout(f, 2000));
     this.studentsAssistance = this.studentsLesson.map((s: any) => {
       let assistance = {
         alumno_id: s.id,
@@ -736,7 +737,6 @@ export class LessonsComponent implements OnInit, OnDestroy, AfterViewInit, DoChe
     this.studentsId = this.studentsAssistance.map((s: any) => {
       return s.alumno_id;
     });
-
   }
 
   editAssistancePerStudent(modal) {
